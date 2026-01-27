@@ -35,7 +35,7 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
 
 4. **Start the frontend** (in `lineup-client/`)
    ```bash
-   pnpm start
+   pnpm run dev
    ```
 
 #### API Client Generation
