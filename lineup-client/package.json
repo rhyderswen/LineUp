@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "gen": "openapi-ts",
-    "prepare": "husky"
+    "prepare": "cd .. && husky install lineup-client/.husky"
   },
   "dependencies": {
     "@auth0/auth0-react": "~2.11.0",
@@ -38,7 +38,7 @@
     "vite": "npm:rolldown-vite@7.2.5"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "cd lineup-client; prettier --write --ignore-unknown"
   },
   "pnpm": {
     "overrides": {
