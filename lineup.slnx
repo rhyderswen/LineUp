@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="LineUp.AppHost/LineUp.AppHost.csproj" />
   <Project Path="LineUp.Backend/LineUp.Backend.csproj" />
+  <Project Path="LineUp.ServiceDefaults/LineUp.ServiceDefaults.csproj" />
 </Solution>
