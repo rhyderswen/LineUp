@@ -31,4 +31,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LineUp.ServiceDefaults\LineUp.ServiceDefaults.csproj" />
+  </ItemGroup>
+
 </Project>
