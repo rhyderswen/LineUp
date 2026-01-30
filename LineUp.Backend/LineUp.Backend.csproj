@@ -35,5 +35,4 @@
   <ItemGroup>
     <ProjectReference Include="..\LineUp.ServiceDefaults\LineUp.ServiceDefaults.csproj" />
   </ItemGroup>
-
 </Project>
