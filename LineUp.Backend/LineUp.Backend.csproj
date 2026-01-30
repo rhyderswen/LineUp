@@ -35,13 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <ProjectReference Include="..\LineUp.ServiceDefaults\LineUp.ServiceDefaults.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
+    
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
