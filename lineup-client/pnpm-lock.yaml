@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@auth0/auth0-react':
+        specifier: ^2.12.0
+        version: 2.12.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react:
         specifier: ^19.2.0
         version: 19.2.4
@@ -59,6 +62,18 @@ importers:
         version: rolldown-vite@7.2.5(@types/node@24.10.9)(jiti@2.6.1)
 
 packages:
+
+  '@auth0/auth0-auth-js@1.4.0':
+    resolution: {integrity: sha512-ShA7KT4KvcBEtxsXZTcrmoNxai5q1JXhB2aEBFnZD1L6LNLzzmiUWiFTtGMsaaITCylr8TJ/onEQk6XZmUHXbg==}
+
+  '@auth0/auth0-react@2.12.0':
+    resolution: {integrity: sha512-EPLe1OYYlnxoz7GR6hbe+eGCuzllWkq+O9FxZYrH9la9Rn98BhGu515LrK5AtWOhq2iE/RuHFcvb926yK0iNhw==}
+    peerDependencies:
+      react: ^16.11.0 || ^17 || ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
+      react-dom: ^16.11.0 || ^17 || ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
+
+  '@auth0/auth0-spa-js@2.12.0':
+    resolution: {integrity: sha512-Hwn46rz1fqX2Wi2ddhqgE6rymDjZdFYIUL1PDMANLMtvYmeWjBovxcrN7QakeQ7wvmIfDNMqVc/bcByjJoUoBQ==}
 
   '@babel/code-frame@7.28.6':
     resolution: {integrity: sha512-JYgintcMjRiCvS8mMECzaEn+m3PfoQiyqukOMCCVQtoJGYJw8j/8LBJEiqkHLkfwCcs74E3pbAUFNg7d9VNJ+Q==}
@@ -478,6 +493,9 @@ packages:
   brace-expansion@2.0.2:
     resolution: {integrity: sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==}
 
+  browser-tabs-lock@1.3.0:
+    resolution: {integrity: sha512-g6nHaobTiT0eMZ7jh16YpD2kcjAp+PInbiVq3M1x6KKaEIVhT4v9oURNIpZLOZ3LQbQ3XYfNhMAb/9hzNLIWrw==}
+
   browserslist@4.28.1:
     resolution: {integrity: sha512-ZC5Bd0LgJXgwGqUknZY/vkUQ04r8NXnJZ3yYi4vDmSiZmC/pdSN0NbNRPxZpbtO4uAfDUAFffO8IZoM3Gj8IkA==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -589,8 +607,14 @@ packages:
     resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
 
+  dpop@2.1.1:
+    resolution: {integrity: sha512-J0Of2JTiM4h5si0tlbPQ/lkqfZ5wAEVkKYBhkwyyANnPJfWH4VsR5uIkZ+T+OSPIwDYUg1fbd5Mmodd25HjY1w==}
+
   electron-to-chromium@1.5.279:
     resolution: {integrity: sha512-0bblUU5UNdOt5G7XqGiJtpZMONma6WAfq9vsFmtn9x1+joAObr6x1chfqyxFSDCAFwFhCQDrqeAr6MYdpwJ9Hg==}
+
+  es-cookie@1.3.2:
+    resolution: {integrity: sha512-UTlYYhXGLOy05P/vKVT2Ui7WtC7NiRzGtJyAKKn32g5Gvcjn7KAClLPWlipCtxIus934dFg9o9jXiBL0nP+t9Q==}
 
   escalade@3.2.0:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
@@ -773,6 +797,9 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
+  jose@6.1.3:
+    resolution: {integrity: sha512-0TpaTfihd4QMNwrz/ob2Bp7X04yuxJkjRGi4aKmOqwhov54i6u79oCv7T+C7lo70MKH6BesI3vscD1yb/yzKXQ==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -918,12 +945,18 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  oauth4webapi@3.8.3:
+    resolution: {integrity: sha512-pQ5BsX3QRTgnt5HxgHwgunIRaDXBdkT23tf8dfzmtTIL2LTpdmxgbpbBm0VgFWAIDlezQvQCTgnVIUmHupXHxw==}
+
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
 
   open@11.0.0:
     resolution: {integrity: sha512-smsWv2LzFjP03xmvFoJ331ss6h+jixfA4UUV/Bsiyuu4YJPfN+FIQGOIiv4w9/+MoHkfkJ22UIaQWRVFRfH6Vw==}
     engines: {node: '>=20'}
+
+  openid-client@6.8.1:
+    resolution: {integrity: sha512-VoYT6enBo6Vj2j3Q5Ec0AezS+9YGzQo1f5Xc42lreMGlfP4ljiXPKVDvCADh+XHCV/bqPu/wWSiCVXbJKvrODw==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -1161,6 +1194,24 @@ packages:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
 snapshots:
+
+  '@auth0/auth0-auth-js@1.4.0':
+    dependencies:
+      jose: 6.1.3
+      openid-client: 6.8.1
+
+  '@auth0/auth0-react@2.12.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@auth0/auth0-spa-js': 2.12.0
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+
+  '@auth0/auth0-spa-js@2.12.0':
+    dependencies:
+      '@auth0/auth0-auth-js': 1.4.0
+      browser-tabs-lock: 1.3.0
+      dpop: 2.1.1
+      es-cookie: 1.3.2
 
   '@babel/code-frame@7.28.6':
     dependencies:
@@ -1639,6 +1690,10 @@ snapshots:
     dependencies:
       balanced-match: 1.0.2
 
+  browser-tabs-lock@1.3.0:
+    dependencies:
+      lodash: 4.17.23
+
   browserslist@4.28.1:
     dependencies:
       baseline-browser-mapping: 2.9.18
@@ -1734,7 +1789,11 @@ snapshots:
 
   dotenv@17.2.3: {}
 
+  dpop@2.1.1: {}
+
   electron-to-chromium@1.5.279: {}
+
+  es-cookie@1.3.2: {}
 
   escalade@3.2.0: {}
 
@@ -1914,6 +1973,8 @@ snapshots:
 
   jiti@2.6.1: {}
 
+  jose@6.1.3: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@4.1.1:
@@ -2024,6 +2085,8 @@ snapshots:
       pathe: 2.0.3
       tinyexec: 1.0.2
 
+  oauth4webapi@3.8.3: {}
+
   ohash@2.0.11: {}
 
   open@11.0.0:
@@ -2034,6 +2097,11 @@ snapshots:
       is-inside-container: 1.0.0
       powershell-utils: 0.1.0
       wsl-utils: 0.3.1
+
+  openid-client@6.8.1:
+    dependencies:
+      jose: 6.1.3
+      oauth4webapi: 3.8.3
 
   optionator@0.9.4:
     dependencies:
