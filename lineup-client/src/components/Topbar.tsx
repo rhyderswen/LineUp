@@ -1,14 +1,12 @@
-import { useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router";
 
 interface Props {
   children: React.ReactNode;
 }
 
-const Home = ({ children }: Props) => {
-  useEffect(() => {
-    console.log(`Home mounted`);
-  }, []);
+const Topbar = ({ children }: Props) => {
+  const { isAuthenticated, logout } = useAuth0();
 
   return (
     <div className="root">
@@ -17,7 +15,18 @@ const Home = ({ children }: Props) => {
           <Link to="/">Line Up</Link>
         </div>
         <div className="signOutButton">
-          <a href="#">Sign Out</a>
+          {isAuthenticated && (
+            <button
+              onClick={() =>
+                logout({
+                  logoutParams: { returnTo: globalThis.location.origin },
+                })
+              }
+              className="inlineButton"
+            >
+              Log Out
+            </button>
+          )}
         </div>
       </div>
       <hr
@@ -32,4 +41,4 @@ const Home = ({ children }: Props) => {
   );
 };
 
-export default Home;
+export default Topbar;

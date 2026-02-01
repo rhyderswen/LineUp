@@ -7,9 +7,14 @@ import "./index.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Auth0Provider
-      domain="dev-hwakn360ihxv0db6.us.auth0.com"
-      clientId="A1gTh2lbIMwTZHv6mO4B9OK0sAvfqtnC"
-      authorizationParams={{ redirect_uri: window.location.origin }}
+      domain={import.meta.env.VITE_AUTH0_DOMAIN}
+      clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+      authorizationParams={{
+        redirect_uri: globalThis.location.origin,
+        audience: "https://lineup-api/",
+      }}
+      cacheLocation="localstorage"
+      useRefreshTokens={true}
     >
       <App />
     </Auth0Provider>
