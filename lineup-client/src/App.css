@@ -1,15 +1,15 @@
 #root {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem 2rem;
   text-align: center;
 }
 
 .topbar {
-  font-size: 2rem;
   font-weight: 600;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0 1rem;
 }
 

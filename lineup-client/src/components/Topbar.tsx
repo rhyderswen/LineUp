@@ -1,5 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router";
+import lineupLogo from "../assets/lineup-full.png";
 
 interface Props {
   children: React.ReactNode;
@@ -12,7 +13,9 @@ const Topbar = ({ children }: Props) => {
     <div className="root">
       <div className="topbar">
         <div className="lineUpLogo">
-          <Link to="/">Line Up</Link>
+          <Link to="/">
+            <img src={lineupLogo} alt="Line Up Logo" height={50} />
+          </Link>
         </div>
         <div className="signOutButton">
           {isAuthenticated && (
