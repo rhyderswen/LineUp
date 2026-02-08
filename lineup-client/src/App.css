@@ -31,3 +31,85 @@
     color: var(--primary-hover);
   }
 }
+
+.rightButton {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  outline: none;
+  border: none;
+  text-decoration: underline;
+  transition: color 0.25s;
+
+  &:hover {
+    color: var(--primary-hover);
+  }
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.tableTitle {
+  color: var(--primary-active);
+}
+
+.scheduleTable {
+  width: 100%;
+  border: 3px solid var(--primary-active);
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.scheduleTable th,
+.scheduleTable td {
+  border: 1px solid var(--primary-active);
+  padding: 4px 8px;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.scheduleTable thead th {
+  border-bottom: 3px solid var(--primary-active);
+  font-weight: 600;
+}
+
+.scheduleBtn {
+  padding: 2px;
+  background-color: var(--primary-active);
+  color: var(--primary);
+  border-color: var(--primary);
+  border: solid;
+  border-radius: 2px;
+  transition: color 0.25s;
+
+  &:hover {
+    background-color: var(--primary-active-hover);
+    color: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+}
+
+.copyableLink {
+  cursor: pointer;
+  color: var(--primary);
+  text-decoration: underline;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &:hover {
+    color: var(--primary-hover);
+  }
+}
+
+.scheduleTable td.btnCol {
+  text-align: center;
+}
