@@ -1,3 +1,5 @@
+import "./table.css";
+
 interface TableProps<T> {
   headers: string[];
   data: T[];

@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import Table from "../components/Table";
 import CopyableLink from "../components/CopyableLink";
+import Table from "../components/Table";
 
 interface TableData {
   name: string;
@@ -22,7 +22,7 @@ const items: TableData[] = [
   },
 ];
 
-const headers = ["Name", "Respondents", "Link", "Schedule"];
+const headers = ["Name", "Respondents", "Availability Link", "Schedule"];
 
 const renderRow = (row: TableData) => (
   <>
@@ -46,10 +46,9 @@ const renderRow = (row: TableData) => (
 
 const LoggedInHome = () => {
   const { user } = useAuth0();
-  console.log(user);
   return (
     <div className="home">
-      <b>{user?.name}</b>'s Home
+      Welcome back, <b>{user?.given_name}</b>!
       <div className="tableHeader">
         <b className="tableTitle">My Schedules </b>
         <button
