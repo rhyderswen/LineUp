@@ -60,8 +60,11 @@
 .scheduleTable {
   width: 100%;
   border: 3px solid var(--primary-active);
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 5px;
   table-layout: fixed;
+  overflow: hidden;
 }
 
 .scheduleTable th,
@@ -85,7 +88,7 @@
   color: var(--primary);
   border-color: var(--primary);
   border: solid;
-  border-radius: 2px;
+  border-radius: 5px;
   transition: color 0.25s;
 
   &:hover {
