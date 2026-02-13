@@ -92,7 +92,14 @@ const BaseCalendar = ({ Cell, minutesPerCell, dates, range }: CalendarProps) => 
   }
 
   function extraColMargin(col: number) {
-    return needsSpaceAfterCol(col) ? "8px" : "0";
+    const style: React.CSSProperties = {};
+    if (col > 0 && needsSpaceAfterCol(col - 1)) {
+      style.marginLeft = "4px";
+    }
+    if (needsSpaceAfterCol(col)) {
+      style.marginRight = "4px";
+    }
+    return style;
   }
 
   return (
@@ -107,7 +114,7 @@ const BaseCalendar = ({ Cell, minutesPerCell, dates, range }: CalendarProps) => 
     >
       <div className="calendarBlankCell" />
       {getPageDates().map((date, col) => (
-        <div key={date.day} className="calendarLabel" style={{ marginRight: extraColMargin(col) }}>
+        <div key={date.day} className="calendarLabel" style={extraColMargin(col)}>
           {date.day}
           <br />
           {date.date}
@@ -120,11 +127,7 @@ const BaseCalendar = ({ Cell, minutesPerCell, dates, range }: CalendarProps) => 
             {getTimeIncrementLabel(row, range.start, minutesPerCell)}
           </div>
           {getPageDates().map((date, col) => (
-            <div
-              key={date.date}
-              className={calculateCellClasses(row, col)}
-              style={{ marginRight: extraColMargin(col) }}
-            >
+            <div key={date.date} className={calculateCellClasses(row, col)} style={extraColMargin(col)}>
               <Cell
                 time={addMinutesToTime(range.start, (minutesPerCell * row) as ValidMinutes)}
                 date={date}
