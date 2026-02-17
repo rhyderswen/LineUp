@@ -4,9 +4,9 @@ namespace LineUp.Backend.Models;
 
 public class Schedule
 {
-    public String ID { get; set; }
+    public string ID { get; set; }
 
-    public String authToken { get; set; }
+    public string authToken { get; set; }
 
     public DateOnly[] dateCoverage { get; set; }
 
@@ -16,9 +16,9 @@ public class Schedule
 
     //TimeOnly is an object that basically reads like a clock: e.g. 11:49:50.00
 
-    public String[][] shiftAssignment { get; set; } //an array that lists avail IDs.
+    public string[,] shiftAssignment { get; set; } //an array that lists avail IDs.
 
     //Indexing: For shiftAssignment[i][j],
 
-    public Object[] preferences { get; set; }
+    public Preferences preferences { get; set; }
 }
