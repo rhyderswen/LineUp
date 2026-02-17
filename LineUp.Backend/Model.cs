@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using LineUp.Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class LineUpContext : DbContext
 {
-    // public DbSet<Schedule> Schedules { get; set; }
-    // public DbSet<Availability> Availabilities { get; set; }
+    public DbSet<Schedule> Schedules { get; set; }
+    public DbSet<Availability> Availabilities { get; set; }
 
     public string DbPath { get; }
 

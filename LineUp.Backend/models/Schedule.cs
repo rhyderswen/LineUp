@@ -1,18 +1,24 @@
+using System;
+
+namespace LineUp.Backend.Models;
+
 public class Schedule
 {
-    public String ID = "";
+    public String ID { get; set; }
 
-    public String authToken;
+    public String authToken { get; set; }
 
-    public DateOnly[] dateCoverage;
+    public DateOnly[] dateCoverage { get; set; }
 
-    public bool[] weekdayCoverage; //which weekdays will need to be scheduled (7-variable array, [0] = Sunday).
+    public bool[] weekdayCoverage { get; set; } //which weekdays will need to be scheduled (7-variable array, [0] = Sunday).
 
-    public TimeOnly[] hourCoverage; //A two-object array, {Start, End}.
+    public TimeOnly[] hourCoverage { get; set; } //A two-object array, {Start, End}.
+
     //TimeOnly is an object that basically reads like a clock: e.g. 11:49:50.00
 
-    public String[][] shiftAssignment; //an array that lists avail IDs.
+    public String[][] shiftAssignment { get; set; } //an array that lists avail IDs.
+
     //Indexing: For shiftAssignment[i][j],
 
-    public Object[] preferences;
+    public Object[] preferences { get; set; }
 }
