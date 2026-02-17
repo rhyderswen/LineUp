@@ -11,8 +11,8 @@ interface ScheduleData {
   pplPerShift: number; //how many people should work simultaneously
 
   // optional parameters
-  maxShiftLength: number | null; //maximum length of time a single person can work continuously, in minutes
-  maxShifts: number | null; //maximum number of shifts a single person can work
+  maxShiftLength: number | undefined; //maximum length of time a single person can work continuously, in minutes
+  maxShifts: number | undefined; //maximum number of shifts a single person can work
 }
 
 const NewSchedule = () => {
@@ -25,8 +25,8 @@ const NewSchedule = () => {
     hours: { start: { hour: 9, minute: 0 }, end: { hour: 17, minute: 0 } } as TimeRange,
     pplPerShift: 1,
     //optional parameters
-    maxShiftLength: null,
-    maxShifts: null,
+    maxShiftLength: undefined,
+    maxShifts: undefined,
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
