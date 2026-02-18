@@ -77,30 +77,6 @@
         }
       }
     },
-    "/api/schedule/private": {
-      "get": {
-        "tags": [
-          "Schedule"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/schedule/private-scoped": {
-      "get": {
-        "tags": [
-          "Schedule"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/schedule/claims": {
       "get": {
         "tags": [
@@ -114,6 +90,16 @@
       }
     },
     "/api/schedule/dateCoverage": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "post": {
         "tags": [
           "Schedule"
