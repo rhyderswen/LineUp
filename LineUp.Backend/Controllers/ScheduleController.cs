@@ -1,12 +1,13 @@
 using LineUp.Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LineUp.Backend.Controllers;
 
 [Route("api/schedule")]
 [ApiController]
-public class ScheduleController : ControllerBase
+public class ScheduleController(LineUpContext context) : ControllerBase
 {
     [HttpGet("public")]
     public IActionResult Public()
@@ -26,27 +27,37 @@ public class ScheduleController : ControllerBase
         return Ok(User.Claims.Select(c => new { c.Type, c.Value }));
     }
 
-    [HttpGet("dateCoverage")]
-    public async Task<IActionResult> GetDateCoverage()
+    [HttpGet("id/{id:guid}")]
+    public async Task<IActionResult> GetDateCoverage(int id)
     {
-        LineUpContext db = new LineUpContext();
-        Schedule result = await db.FindAsync<Schedule>();
+        var result = await context.FindAsync<Schedule>(id);
         if (result != null)
-            return Ok(new { Message = "Querying a Date Coverage" + result.ID });
-        else
-            return NotFound(new { Message = "No Schedule Found" });
+            return Ok(result);
+        return NotFound();
     }
 
-    [HttpPost("dateCoverage")]
-    public IActionResult PostDateCoverage()
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> PostDateCoverage([FromBody] ScheduleDto schedule)
     {
-        LineUpContext db = new LineUpContext();
-        db.Add(
-            new Schedule()
-            {
-                // DateCoverage = new DateTime[];
-            }
+        var scheduleToInsert = new Schedule
+        {
+            Auth0UserId = User.FindFirst("sub")!.Value,
+            Guid = Guid.NewGuid(),
+            DateCoverage = schedule.DateCoverage,
+            WeekdayCoverage = schedule.WeekdayCoverage,
+            StartTime = schedule.StartTime,
+            EndTime = schedule.EndTime,
+            Preferences = schedule.Preferences,
+        };
+
+        context.Schedules.Add(scheduleToInsert);
+        await context.SaveChangesAsync();
+
+        return CreatedAtAction(
+            nameof(GetDateCoverage),
+            new { guid = scheduleToInsert.Guid },
+            schedule
         );
-        return Ok(new { Message = "Posted new date coverage" });
     }
 }
