@@ -1,18 +1,26 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 
 namespace LineUp.Backend.Models;
 
+[Index(nameof(Guid))]
 public class Availability
 {
     public int Id { get; set; }
-    public DateTime[] AvailabilitySlots { get; set; } //See https://github.com/user-attachments/assets/37a07d97-902a-4195-b558-985008aa8912 for a visual on how this works.
+    public Guid Guid { get; init; } = Guid.NewGuid();
 
-    [JsonIgnore]
-    public required Schedule Schedule { get; set; }
+    public DateTime[] AvailabilitySlots { get; set; } = [];
 
+    [MaxLength(64)]
     public required string UserName { get; set; } //NOT a "username" in the traditional sense. This holds the real name of the user.
 
+    [MaxLength(256)]
     public string? UserEmail { get; set; }
 
-    public Preferences? Preferences { get; set; }
+    public AvailabilityPreferences? Preferences { get; set; }
+
+    // Navigation properties, ignored in JSON to not loop forever
+    [JsonIgnore]
+    public required Schedule Schedule { get; set; }
 }

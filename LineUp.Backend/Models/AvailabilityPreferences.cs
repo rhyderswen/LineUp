@@ -1,6 +1,6 @@
 namespace LineUp.Backend.Models;
 
-public class Preferences
+public class AvailabilityPreferences
 {
     public Guid Id { get; set; }
 }

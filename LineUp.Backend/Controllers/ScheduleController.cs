@@ -27,37 +27,78 @@ public class ScheduleController(LineUpContext context) : ControllerBase
         return Ok(User.Claims.Select(c => new { c.Type, c.Value }));
     }
 
-    [HttpGet("id/{id:guid}")]
-    public async Task<IActionResult> GetDateCoverage(int id)
+    [HttpGet("{guid:guid}")]
+    public async Task<IActionResult> GetSchedule(Guid guid)
     {
-        var result = await context.FindAsync<Schedule>(id);
+        var result = await context.FindAsync<Schedule>(guid);
         if (result != null)
             return Ok(result);
         return NotFound();
     }
 
+    [HttpGet("/")]
+    [Authorize]
+    public async Task<IActionResult> GetSchedules()
+    {
+        var userId = User.FindFirst("sub")!.Value;
+        List<Schedule> result = await context
+            .Schedules.Where(s => s.Auth0UserId == userId)
+            .ToListAsync();
+        return Ok(result);
+    }
+
+    [HttpDelete("{guid:guid}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteSchedule(Guid guid)
+    {
+        var scheduleToDelete = await context.FindAsync<Schedule>(guid);
+        if (scheduleToDelete == null)
+            return NotFound();
+        if (scheduleToDelete.Auth0UserId != User.FindFirst("sub")!.Value)
+            return Unauthorized();
+        context.Schedules.Remove(scheduleToDelete);
+        await context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpPut("{guid:guid}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateSchedule(Guid guid, [FromBody] ScheduleDto schedule)
+    {
+        var scheduleToUpdate = await context.FindAsync<Schedule>(guid);
+        if (scheduleToUpdate == null)
+            return NotFound();
+        if (scheduleToUpdate.Auth0UserId != User.FindFirst("sub")!.Value)
+            return Unauthorized();
+        scheduleToUpdate.DateCoverage = schedule.DateCoverage;
+        scheduleToUpdate.StartTime = schedule.StartTime;
+        scheduleToUpdate.EndTime = schedule.EndTime;
+        scheduleToUpdate.SchedulePreferences = schedule.SchedulePreferences;
+        await context.SaveChangesAsync();
+        return NoContent();
+    }
+
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> PostDateCoverage([FromBody] ScheduleDto schedule)
+    public async Task<IActionResult> CreateSchedule([FromBody] ScheduleDto schedule)
     {
         var scheduleToInsert = new Schedule
         {
             Auth0UserId = User.FindFirst("sub")!.Value,
             Guid = Guid.NewGuid(),
             DateCoverage = schedule.DateCoverage,
-            WeekdayCoverage = schedule.WeekdayCoverage,
             StartTime = schedule.StartTime,
             EndTime = schedule.EndTime,
-            Preferences = schedule.Preferences,
+            SchedulePreferences = schedule.SchedulePreferences,
         };
 
         context.Schedules.Add(scheduleToInsert);
         await context.SaveChangesAsync();
 
         return CreatedAtAction(
-            nameof(GetDateCoverage),
+            nameof(GetSchedule),
             new { guid = scheduleToInsert.Guid },
-            schedule
+            scheduleToInsert
         );
     }
 }

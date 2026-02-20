@@ -8,9 +8,8 @@ public class ShiftAssignment
 
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
-    public string? DayOfWeek { get; set; } // Optional: "Monday", "Tuesday", etc.
 
-    // Navigation property
+    // Navigation properties, ignored in JSON to not loop forever
     [JsonIgnore]
     public Availability Availability { get; set; } = null!;
 
