@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LineUp.Backend.Models.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace LineUp.Backend.Models;
@@ -16,6 +17,9 @@ public class Schedule
 
     public required TimeOnly StartTime { get; set; }
     public required TimeOnly EndTime { get; set; }
+
+    public Form? Form { get; set; }
+    public int? FormId { get; set; }
 
     public ICollection<ShiftAssignment> ShiftAssignments { get; set; } =
         new List<ShiftAssignment>();

@@ -74,6 +74,101 @@ namespace LineUp.Backend.Migrations
                     b.ToTable("AvailabilityPreferences");
                 });
 
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.Form", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Forms");
+                });
+
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.FormQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("FormId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormId");
+
+                    b.ToTable("FormQuestions");
+                });
+
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.FormQuestionAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnswerId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AnswerText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("AvailabilityId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FormQuestionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AvailabilityId");
+
+                    b.HasIndex("FormQuestionId");
+
+                    b.ToTable("FormQuestionAnswers");
+                });
+
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.QuestionOptions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("FormQuestionId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OptionText")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FormQuestionId");
+
+                    b.ToTable("QuestionOptions");
+                });
+
             modelBuilder.Entity("LineUp.Backend.Models.Schedule", b =>
                 {
                     b.Property<int>("Id")
@@ -94,6 +189,9 @@ namespace LineUp.Backend.Migrations
                     b.Property<TimeOnly>("EndTime")
                         .HasColumnType("time without time zone");
 
+                    b.Property<int?>("FormId")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("Guid")
                         .HasColumnType("uuid");
 
@@ -104,6 +202,9 @@ namespace LineUp.Backend.Migrations
                         .HasColumnType("time without time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FormId")
+                        .IsUnique();
 
                     b.HasIndex("SchedulePreferencesId");
 
@@ -152,7 +253,7 @@ namespace LineUp.Backend.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.ToTable("ShiftAssignment");
+                    b.ToTable("ShiftAssignments");
                 });
 
             modelBuilder.Entity("LineUp.Backend.Models.Availability", b =>
@@ -172,13 +273,48 @@ namespace LineUp.Backend.Migrations
                     b.Navigation("Schedule");
                 });
 
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.FormQuestion", b =>
+                {
+                    b.HasOne("LineUp.Backend.Models.Forms.Form", null)
+                        .WithMany("Questions")
+                        .HasForeignKey("FormId");
+                });
+
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.FormQuestionAnswer", b =>
+                {
+                    b.HasOne("LineUp.Backend.Models.Availability", null)
+                        .WithMany("FormAnswers")
+                        .HasForeignKey("AvailabilityId");
+
+                    b.HasOne("LineUp.Backend.Models.Forms.FormQuestion", "Question")
+                        .WithMany()
+                        .HasForeignKey("FormQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.QuestionOptions", b =>
+                {
+                    b.HasOne("LineUp.Backend.Models.Forms.FormQuestion", null)
+                        .WithMany("Options")
+                        .HasForeignKey("FormQuestionId");
+                });
+
             modelBuilder.Entity("LineUp.Backend.Models.Schedule", b =>
                 {
+                    b.HasOne("LineUp.Backend.Models.Forms.Form", "Form")
+                        .WithOne("Schedule")
+                        .HasForeignKey("LineUp.Backend.Models.Schedule", "FormId");
+
                     b.HasOne("LineUp.Backend.Models.SchedulePreferences", "SchedulePreferences")
                         .WithMany()
                         .HasForeignKey("SchedulePreferencesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Form");
 
                     b.Navigation("SchedulePreferences");
                 });
@@ -200,6 +336,24 @@ namespace LineUp.Backend.Migrations
                     b.Navigation("Availability");
 
                     b.Navigation("Schedule");
+                });
+
+            modelBuilder.Entity("LineUp.Backend.Models.Availability", b =>
+                {
+                    b.Navigation("FormAnswers");
+                });
+
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.Form", b =>
+                {
+                    b.Navigation("Questions");
+
+                    b.Navigation("Schedule")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LineUp.Backend.Models.Forms.FormQuestion", b =>
+                {
+                    b.Navigation("Options");
                 });
 
             modelBuilder.Entity("LineUp.Backend.Models.Schedule", b =>

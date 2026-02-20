@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using LineUp.Backend.Models.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace LineUp.Backend.Models;
@@ -19,6 +20,9 @@ public class Availability
     public string? UserEmail { get; set; }
 
     public AvailabilityPreferences? Preferences { get; set; }
+
+    public ICollection<FormQuestionAnswer> FormAnswers { get; set; } =
+        new List<FormQuestionAnswer>();
 
     // Navigation properties, ignored in JSON to not loop forever
     [JsonIgnore]
