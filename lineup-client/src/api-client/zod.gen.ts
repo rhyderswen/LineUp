@@ -90,6 +90,14 @@ export const zGetApiAvailabilityPublicData = z.object({
   query: z.optional(z.never()),
 });
 
+export const zGetApiAvailabilityByGuidExistsData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    guid: z.uuid(),
+  }),
+  query: z.optional(z.never()),
+});
+
 export const zGetApiSchedulePublicData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),

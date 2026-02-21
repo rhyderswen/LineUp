@@ -5,6 +5,8 @@ import { client } from "./client.gen";
 import type {
   DeleteApiScheduleByGuidData,
   DeleteApiScheduleByGuidResponses,
+  GetApiAvailabilityByGuidExistsData,
+  GetApiAvailabilityByGuidExistsResponses,
   GetApiAvailabilityPublicData,
   GetApiAvailabilityPublicResponses,
   GetApiClaimsData,
@@ -86,6 +88,17 @@ export const getApiAvailabilityPublic = <ThrowOnError extends boolean = false>(
     unknown,
     ThrowOnError
   >({ url: "/api/availability/public", ...options });
+
+export const getApiAvailabilityByGuidExists = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<GetApiAvailabilityByGuidExistsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<
+    GetApiAvailabilityByGuidExistsResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/availability/{guid}/exists", ...options });
 
 export const getApiSchedulePublic = <ThrowOnError extends boolean = false>(
   options?: Options<GetApiSchedulePublicData, ThrowOnError>,

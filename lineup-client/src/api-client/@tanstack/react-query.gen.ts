@@ -10,6 +10,7 @@ import { client } from "../client.gen";
 import {
   deleteApiScheduleByGuid,
   get,
+  getApiAvailabilityByGuidExists,
   getApiAvailabilityPublic,
   getApiClaims,
   getApiPrivate,
@@ -24,6 +25,7 @@ import {
 } from "../sdk.gen";
 import type {
   DeleteApiScheduleByGuidData,
+  GetApiAvailabilityByGuidExistsData,
   GetApiAvailabilityPublicData,
   GetApiClaimsData,
   GetApiPrivateData,
@@ -191,6 +193,31 @@ export const getApiAvailabilityPublicOptions = (
       return data;
     },
     queryKey: getApiAvailabilityPublicQueryKey(options),
+  });
+
+export const getApiAvailabilityByGuidExistsQueryKey = (
+  options: Options<GetApiAvailabilityByGuidExistsData>,
+) => createQueryKey("getApiAvailabilityByGuidExists", options);
+
+export const getApiAvailabilityByGuidExistsOptions = (
+  options: Options<GetApiAvailabilityByGuidExistsData>,
+) =>
+  queryOptions<
+    unknown,
+    DefaultError,
+    unknown,
+    ReturnType<typeof getApiAvailabilityByGuidExistsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiAvailabilityByGuidExists({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getApiAvailabilityByGuidExistsQueryKey(options),
   });
 
 export const getApiSchedulePublicQueryKey = (

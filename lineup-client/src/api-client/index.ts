@@ -3,6 +3,7 @@
 export {
   deleteApiScheduleByGuid,
   get,
+  getApiAvailabilityByGuidExists,
   getApiAvailabilityPublic,
   getApiClaims,
   getApiPrivate,
@@ -19,6 +20,8 @@ export type {
   ClientOptions,
   DeleteApiScheduleByGuidData,
   DeleteApiScheduleByGuidResponses,
+  GetApiAvailabilityByGuidExistsData,
+  GetApiAvailabilityByGuidExistsResponses,
   GetApiAvailabilityPublicData,
   GetApiAvailabilityPublicResponses,
   GetApiClaimsData,

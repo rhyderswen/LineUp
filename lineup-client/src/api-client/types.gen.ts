@@ -95,6 +95,22 @@ export type GetApiAvailabilityPublicResponses = {
   200: unknown;
 };
 
+export type GetApiAvailabilityByGuidExistsData = {
+  body?: never;
+  path: {
+    guid: string;
+  };
+  query?: never;
+  url: "/api/availability/{guid}/exists";
+};
+
+export type GetApiAvailabilityByGuidExistsResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
+
 export type GetApiSchedulePublicData = {
   body?: never;
   path?: never;
