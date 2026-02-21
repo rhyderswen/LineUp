@@ -17,7 +17,7 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
             }
         );
     }
-    
+
     [HttpGet("{guid:guid}/exists")]
     public IActionResult Exists(Guid guid)
     {
@@ -25,7 +25,7 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
         {
             return Ok();
         }
-            
+
         return NotFound();
     }
 }
