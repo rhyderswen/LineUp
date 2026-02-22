@@ -39,7 +39,7 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
         {
             return NotFound();
         }
-        Availability availability = new Availability { UserName = "name", Schedule = schedule };
+        Availability availability = new Availability { UserName = "", Schedule = schedule };
         context.Availabilities.Add(availability);
         context.SaveChanges();
         return Ok(availability.Guid);
