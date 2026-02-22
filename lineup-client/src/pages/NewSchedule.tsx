@@ -1,14 +1,21 @@
-import type { DateDay, Time, TimeRange, ValidHours, ValidMinutes } from "@/types";
+import type { DateDay, Time, TimeRange, ValidHours, ValidMinutes, Weekday } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router";
 import React from "react";
+import DatePickerModule, { DateObject } from "react-multi-date-picker";
+
+// This is because importing DatePicker directly didn't work with Vite for some reason
+// Trust me that this is somehow the most elegant solution I could find
+// @ts-expect-error: react-multi-date-picker is funky with Vite
+const DatePicker = DatePickerModule.default || DatePickerModule;
 
 interface ScheduleData {
   name: string; //the name of the event
-  shiftTimes: ValidMinutes; //how the availability intervals are determined
-  dates: DateDay[]; //the dates being scheduled
+  shiftTimes: ValidMinutes | undefined; //how the availability intervals are determined
+  dates: Date[] | undefined; //the dates being scheduled (js Date version)
+  dateDays: DateDay[]; //the dates being schedules (DateDay version)
   hours: TimeRange; //the hours throughout the day that need covered
-  pplPerShift: number; //how many people should work simultaneously
+  pplPerShift: number | undefined; //how many people should work simultaneously
 
   // optional parameters
   maxShiftLength: number | undefined; //maximum length of time a single person can work continuously, in minutes
@@ -20,10 +27,11 @@ const NewSchedule = () => {
 
   const [scheduleData, setScheduleData] = React.useState<ScheduleData>({
     name: "",
-    shiftTimes: 0 as ValidMinutes,
-    dates: [{ date: "1/1", day: "Thursday" }] as DateDay[],
+    shiftTimes: "" as ValidMinutes,
+    dates: undefined,
+    dateDays: [{ date: "1/1", day: "Thursday" }] as DateDay[],
     hours: { start: { hour: 9, minute: 0 }, end: { hour: 17, minute: 0 } } as TimeRange,
-    pplPerShift: 1,
+    pplPerShift: undefined,
     //optional parameters
     maxShiftLength: undefined,
     maxShifts: undefined,
@@ -31,27 +39,32 @@ const NewSchedule = () => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
-    setScheduleData({
-      ...scheduleData,
-      [name]: value,
-    });
+
+    setScheduleData((prev) => ({
+      ...prev,
+      [name]: event.target.type === "number" || name === "shiftTimes" ? Number(value) : value,
+    }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     console.log(
-      "Updated name:",
+      "Submitted name:",
       scheduleData.name,
-      "; Updated avail. interval: ",
+      "; Submitted avail. interval: ",
       scheduleData.shiftTimes,
-      "; Updated duration: ",
+      "; Submitted dates: ",
+      scheduleData.dateDays,
+      "; Submitted duration: ",
       scheduleData.hours.start,
+      " to ",
       scheduleData.hours.end,
-      "; Updated pplpershift: ",
+      "; Submitted pplpershift: ",
       scheduleData.pplPerShift,
-      "; Updated maximum shift time: ",
+      "; Submitted maximum shift time: ",
       scheduleData.maxShiftLength,
-      "; Updated maximum shifts: ",
+      "; Submitted maximum shifts: ",
       scheduleData.maxShifts,
     );
 
@@ -109,23 +122,56 @@ const NewSchedule = () => {
     }
   };
 
+  const convertToDateDays = (dates: Date[]): DateDay[] => {
+    return dates.map((jsDate) => ({
+      date: `${jsDate.getMonth() + 1}/${jsDate.getDate()}`,
+      day: jsDate.toLocaleDateString("en-US", {
+        weekday: "long",
+      }) as Weekday,
+    }));
+  };
+
+  const handleDateChange = (value: DateObject | DateObject[] | null) => {
+    if (!value) {
+      setScheduleData((prev) => ({
+        ...prev,
+        dates: [],
+        dateDays: [],
+      }));
+      return;
+    }
+
+    const dateArray = Array.isArray(value) ? value : [value];
+    const jsDates = dateArray.map((d) => d.toDate());
+
+    setScheduleData((prev) => ({
+      ...prev,
+      dates: jsDates,
+      dateDays: convertToDateDays(jsDates),
+    }));
+  };
+
   return (
     <div className="newSchedule">
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="scheduleName">Schedule Name: </label>
+          <label htmlFor="scheduleName">
+            Schedule Name<label className="required">*</label>:{" "}
+          </label>
           <input type="text" id="name" name="name" value={scheduleData.name} onChange={handleInputChange} required />
         </div>
         <div>
-          <label htmlFor="">Shift Intervals (in minutes): </label>
+          <label htmlFor="shiftTimes">
+            Shift Intervals (in minutes)<label className="required">*</label>:{" "}
+          </label>
           <select
             name="shiftTimes"
             id="shiftTimes"
-            value={scheduleData.shiftTimes}
+            value={scheduleData.shiftTimes ?? ""}
             onChange={handleInputChange}
             required
           >
-            <option value="0" disabled>
+            <option value="" disabled>
               -- Select shift interval --
             </option>
             <option value="15">15</option>
@@ -135,7 +181,9 @@ const NewSchedule = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="scheduleDuration">Schedule Duration: </label>
+          <label htmlFor="scheduleDuration">
+            Schedule Duration<label className="required">*</label>:{" "}
+          </label>
           <input
             type="time"
             id="startTime"
@@ -155,20 +203,29 @@ const NewSchedule = () => {
             onChange={handleEndTimeChange}
             required
           />
-          <label> on </label>
           <br />
-          <label>//TODO: date picker</label>
+          <label>
+            Dates<label className="required">*</label>:{" "}
+          </label>
+          <DatePicker
+            multiple
+            value={scheduleData.dates?.map((d) => new DateObject(d)) || []}
+            onChange={handleDateChange}
+            required
+          />
           <br />
         </div>
         <div>
-          <label htmlFor="peoplePerShift">Workers per shift: </label>
+          <label htmlFor="peoplePerShift">
+            Workers per shift<label className="required">*</label>:{" "}
+          </label>
           <input
             type="number"
             id="pplPerShift"
             name="pplPerShift"
             step="1"
             min="1"
-            value={scheduleData.pplPerShift}
+            value={scheduleData.pplPerShift ?? ""}
             onChange={handleInputChange}
             required
           />
@@ -180,7 +237,7 @@ const NewSchedule = () => {
             id="maxShiftDuration"
             name="maxShiftDuration"
             step={scheduleData.shiftTimes as number}
-            value={scheduleData.maxShiftLength}
+            value={scheduleData.maxShiftLength ?? ""}
             onChange={handleInputChange}
           />
         </div>
@@ -191,7 +248,7 @@ const NewSchedule = () => {
             id="maxShifts"
             name="maxShifts"
             step="1"
-            value={scheduleData.maxShifts}
+            value={scheduleData.maxShifts ?? ""}
             onChange={handleInputChange}
           />
         </div>

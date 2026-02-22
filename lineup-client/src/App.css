@@ -66,3 +66,7 @@
   text-align: left;
   margin: 2rem;
 }
+
+.required {
+  color: #ff6666;
+}
