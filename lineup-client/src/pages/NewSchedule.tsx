@@ -220,13 +220,13 @@ const NewSchedule = () => {
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="scheduleName">
-            Schedule Name<label className="required">*</label>:{" "}
+            Schedule Name<label className="requiredStar">*</label>:{" "}
           </label>
           <input type="text" id="name" name="name" value={scheduleData.name} onChange={handleInputChange} required />
         </div>
         <div>
           <label htmlFor="shiftTimes">
-            Shift Intervals (in minutes)<label className="required">*</label>:{" "}
+            Shift Intervals (in minutes)<label className="requiredStar">*</label>:{" "}
           </label>
           <select
             name="shiftTimes"
@@ -248,7 +248,7 @@ const NewSchedule = () => {
         </div>
         <div>
           <label htmlFor="scheduleDuration">
-            Schedule Duration<label className="required">*</label>:{" "}
+            Schedule Duration<label className="requiredStar">*</label>:{" "}
           </label>
           <input
             type="time"
@@ -271,7 +271,7 @@ const NewSchedule = () => {
           />
           <br />
           <label>
-            Dates<label className="required">*</label>:{" "}
+            Dates<label className="requiredStar">*</label>:{" "}
           </label>
           <DatePicker
             multiple
@@ -283,7 +283,7 @@ const NewSchedule = () => {
         </div>
         <div>
           <label htmlFor="peoplePerShift">
-            Workers per shift<label className="required">*</label>:{" "}
+            Workers per shift<label className="requiredStar">*</label>:{" "}
           </label>
           <input
             type="number"
