@@ -1,8 +1,15 @@
-import type { DateDay, Time, TimeRange, ValidHours, ValidMinutes, Weekday } from "@/types";
+import type { DateDay, Time, TimeRange, ValidMinutes } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router";
 import React from "react";
 import DatePickerModule, { DateObject } from "react-multi-date-picker";
+import {
+  parseTimeString,
+  formatTimeForInput,
+  getValidMinutesForInterval,
+  toMinutes,
+  convertToDateDays,
+} from "@/utils/time.ts";
 
 // This is because importing DatePicker directly didn't work with Vite for some reason
 // Trust me that this is somehow the most elegant solution I could find
@@ -49,7 +56,24 @@ const NewSchedule = () => {
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isValidTimeRange(scheduleData.shiftTimes, scheduleData.hours)) {
+    switch (checkValidTimeRange(scheduleData.shiftTimes, scheduleData.hours)) {
+      case 1:
+        alert("Cannot have Schedule Duration end before it starts.");
+        return;
+      case 2:
+        alert("Duration start time minutes must be compatible with chosen shift interval.");
+        return;
+      case 3:
+        alert("Duration end time minutes must be compatible with chosen shift interval.");
+        return;
+      case 4:
+        alert("Total Duration must be divisible by chosen shift interval.");
+        return;
+      case 0:
+        break;
+    }
+
+    if (checkValidTimeRange(scheduleData.shiftTimes, scheduleData.hours) === 1) {
       alert("Invalid time range based on selected shift interval.");
       return;
     }
@@ -77,26 +101,6 @@ const NewSchedule = () => {
 
     //TODO: add to user's events
     //TODO: send data to backend
-  };
-
-  const parseTimeString = (time: string): Time | null => {
-    if (!time || !time.includes(":")) return null;
-
-    const [hourStr, minuteStr] = time.split(":");
-    const hour = Number(hourStr);
-    const minute = Number(minuteStr);
-
-    if (Number.isNaN(hour) || Number.isNaN(minute)) return null;
-
-    return {
-      hour: hour as ValidHours,
-      minute: minute as ValidMinutes,
-    };
-  };
-
-  // Reworked formatting just for time input (24H), which is incompatible with formatTime from time.ts (12H)
-  const formatTimeForInput = (time: Time): string => {
-    return `${time.hour.toString().padStart(2, "0")}:${time.minute.toString().padStart(2, "0")}`;
   };
 
   const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,45 +133,17 @@ const NewSchedule = () => {
     }));
   };
 
-  const getValidMinutesForInterval = (interval: number): number[] => {
-    switch (interval) {
-      case 15:
-        return [0, 15, 30, 45];
-      case 20:
-        return [0, 20, 40];
-      case 30:
-        return [0, 30];
-      case 40:
-        return [0, 20, 40];
-      case 45:
-        return [0, 15, 30, 45];
-      case 60:
-        return [0, 15, 20, 30, 40, 45];
-      default:
-        return [0];
-    }
-  };
-
   const snapToInterval = (time: Time, interval: number): Time => {
     const validMinutes = getValidMinutesForInterval(interval);
 
     const closestMinute = validMinutes.reduce((prev, curr) =>
-      Math.abs(curr - time.minute) < Math.abs(prev - time.minute) ? curr : prev,
+      Math.abs(curr - time.minute) <= Math.abs(prev - time.minute) ? curr : prev,
     );
 
     return {
       hour: time.hour,
       minute: closestMinute as ValidMinutes,
     };
-  };
-
-  const convertToDateDays = (dates: Date[]): DateDay[] => {
-    return dates.map((jsDate) => ({
-      date: `${jsDate.getMonth() + 1}/${jsDate.getDate()}`,
-      day: jsDate.toLocaleDateString("en-US", {
-        weekday: "long",
-      }) as Weekday,
-    }));
   };
 
   const handleDateChange = (value: DateObject | DateObject[] | null) => {
@@ -190,29 +166,20 @@ const NewSchedule = () => {
     }));
   };
 
-  // Used in validating start and end times on submission
-  const toMinutes = (time: Time, isEnd = false): number => {
-    // Needed to allow midnight as end time
-    if (isEnd && time.hour === 0 && time.minute === 0) {
-      return 1440;
-    }
-    return time.hour * 60 + time.minute;
-  };
-
-  const isValidTimeRange = (intervalLength: ValidMinutes | "" | undefined, hours: TimeRange): boolean => {
-    if (!intervalLength) return true;
+  const checkValidTimeRange = (intervalLength: ValidMinutes | "" | undefined, hours: TimeRange): number => {
+    if (!intervalLength) return 0;
 
     const interval = Number(intervalLength);
     const validMinutes = getValidMinutesForInterval(interval);
     const startMinutes = toMinutes(hours.start);
     const endMinutes = toMinutes(hours.end, true);
 
-    if (startMinutes >= endMinutes) return false;
-    if (!validMinutes.includes(hours.start.minute)) return false;
-    if (!validMinutes.includes(hours.end.minute)) return false;
-    if ((endMinutes - startMinutes) % interval !== 0) return false;
+    if (startMinutes >= endMinutes) return 1;
+    if (!validMinutes.includes(hours.start.minute)) return 2;
+    if (!validMinutes.includes(hours.end.minute)) return 3;
+    if ((endMinutes - startMinutes) % interval !== 0) return 4;
 
-    return true;
+    return 0;
   };
 
   return (
@@ -277,6 +244,7 @@ const NewSchedule = () => {
             multiple
             value={scheduleData.dates?.map((d) => new DateObject(d)) || []}
             onChange={handleDateChange}
+            minDate={new Date()}
             required
           />
           <br />
