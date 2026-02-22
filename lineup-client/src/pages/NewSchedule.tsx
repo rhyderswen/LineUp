@@ -11,7 +11,7 @@ const DatePicker = DatePickerModule.default || DatePickerModule;
 
 interface ScheduleData {
   name: string; //the name of the event
-  shiftTimes: ValidMinutes | undefined; //how the availability intervals are determined
+  shiftTimes: ValidMinutes | "" | undefined; //how the availability intervals are determined
   dates: Date[] | undefined; //the dates being scheduled (js Date version)
   dateDays: DateDay[]; //the dates being schedules (DateDay version)
   hours: TimeRange; //the hours throughout the day that need covered
@@ -27,7 +27,7 @@ const NewSchedule = () => {
 
   const [scheduleData, setScheduleData] = React.useState<ScheduleData>({
     name: "",
-    shiftTimes: "" as ValidMinutes,
+    shiftTimes: "",
     dates: undefined,
     dateDays: [{ date: "1/1", day: "Thursday" }] as DateDay[],
     hours: { start: { hour: 9, minute: 0 }, end: { hour: 17, minute: 0 } } as TimeRange,
@@ -49,12 +49,19 @@ const NewSchedule = () => {
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (!isValidTimeRange(scheduleData.shiftTimes, scheduleData.hours)) {
+      alert("Invalid time range based on selected shift interval.");
+      return;
+    }
+
     console.log(
       "Submitted name:",
       scheduleData.name,
       "; Submitted avail. interval: ",
       scheduleData.shiftTimes,
-      "; Submitted dates: ",
+      "; Submitted dates (Dates): ",
+      scheduleData.dates,
+      "; Submitted dates (DateDays): ",
       scheduleData.dateDays,
       "; Submitted duration: ",
       scheduleData.hours.start,
@@ -63,39 +70,23 @@ const NewSchedule = () => {
       "; Submitted pplpershift: ",
       scheduleData.pplPerShift,
       "; Submitted maximum shift time: ",
-      scheduleData.maxShiftLength,
+      scheduleData.maxShiftLength ?? 1440,
       "; Submitted maximum shifts: ",
-      scheduleData.maxShifts,
+      scheduleData.maxShifts ?? 99999,
     );
 
     //TODO: add to user's events
     //TODO: send data to backend
   };
 
-  const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newStart = parseTimeString(event.target.value);
-    setScheduleData((prev) => ({
-      ...prev,
-      hours: {
-        ...prev.hours,
-        start: newStart,
-      },
-    }));
-  };
+  const parseTimeString = (time: string): Time | null => {
+    if (!time || !time.includes(":")) return null;
 
-  const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newEnd = parseTimeString(event.target.value);
-    setScheduleData((prev) => ({
-      ...prev,
-      hours: {
-        ...prev.hours,
-        end: newEnd,
-      },
-    }));
-  };
+    const [hourStr, minuteStr] = time.split(":");
+    const hour = Number(hourStr);
+    const minute = Number(minuteStr);
 
-  const parseTimeString = (time: string): Time => {
-    const [hour, minute] = time.split(":").map(Number);
+    if (Number.isNaN(hour) || Number.isNaN(minute)) return null;
 
     return {
       hour: hour as ValidHours,
@@ -103,23 +94,71 @@ const NewSchedule = () => {
     };
   };
 
-  const formatTimeString = (hour: number, minute: number) => {
-    return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+  // Reworked formatting just for time input (24H), which is incompatible with formatTime from time.ts (12H)
+  const formatTimeForInput = (time: Time): string => {
+    return `${time.hour.toString().padStart(2, "0")}:${time.minute.toString().padStart(2, "0")}`;
   };
 
-  const checkForNull = () => {
-    if (scheduleData.maxShiftLength == null) {
-      setScheduleData((prev) => ({
-        ...prev,
-        maxShiftLength: 1440,
-      }));
+  const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const parsed = parseTimeString(event.target.value);
+    if (!parsed) return;
+
+    const snappedStart = snapToInterval(parsed, Number(scheduleData.shiftTimes));
+
+    setScheduleData((prev) => ({
+      ...prev,
+      hours: {
+        ...prev.hours,
+        start: snappedStart,
+      },
+    }));
+  };
+
+  const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const parsed = parseTimeString(event.target.value);
+    if (!parsed) return;
+
+    const snappedEnd = snapToInterval(parsed, Number(scheduleData.shiftTimes));
+
+    setScheduleData((prev) => ({
+      ...prev,
+      hours: {
+        ...prev.hours,
+        end: snappedEnd,
+      },
+    }));
+  };
+
+  const getValidMinutesForInterval = (interval: number): number[] => {
+    switch (interval) {
+      case 15:
+        return [0, 15, 30, 45];
+      case 20:
+        return [0, 20, 40];
+      case 30:
+        return [0, 30];
+      case 40:
+        return [0, 20, 40];
+      case 45:
+        return [0, 15, 30, 45];
+      case 60:
+        return [0, 15, 20, 30, 40, 45];
+      default:
+        return [0];
     }
-    if (scheduleData.maxShifts == null) {
-      setScheduleData((prev) => ({
-        ...prev,
-        maxShifts: 99999,
-      }));
-    }
+  };
+
+  const snapToInterval = (time: Time, interval: number): Time => {
+    const validMinutes = getValidMinutesForInterval(interval);
+
+    const closestMinute = validMinutes.reduce((prev, curr) =>
+      Math.abs(curr - time.minute) < Math.abs(prev - time.minute) ? curr : prev,
+    );
+
+    return {
+      hour: time.hour,
+      minute: closestMinute as ValidMinutes,
+    };
   };
 
   const convertToDateDays = (dates: Date[]): DateDay[] => {
@@ -151,6 +190,31 @@ const NewSchedule = () => {
     }));
   };
 
+  // Used in validating start and end times on submission
+  const toMinutes = (time: Time, isEnd = false): number => {
+    // Needed to allow midnight as end time
+    if (isEnd && time.hour === 0 && time.minute === 0) {
+      return 1440;
+    }
+    return time.hour * 60 + time.minute;
+  };
+
+  const isValidTimeRange = (intervalLength: ValidMinutes | "" | undefined, hours: TimeRange): boolean => {
+    if (!intervalLength) return true;
+
+    const interval = Number(intervalLength);
+    const validMinutes = getValidMinutesForInterval(interval);
+    const startMinutes = toMinutes(hours.start);
+    const endMinutes = toMinutes(hours.end, true);
+
+    if (startMinutes >= endMinutes) return false;
+    if (!validMinutes.includes(hours.start.minute)) return false;
+    if (!validMinutes.includes(hours.end.minute)) return false;
+    if ((endMinutes - startMinutes) % interval !== 0) return false;
+
+    return true;
+  };
+
   return (
     <div className="newSchedule">
       <form onSubmit={handleSubmit}>
@@ -177,6 +241,8 @@ const NewSchedule = () => {
             <option value="15">15</option>
             <option value="20">20</option>
             <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="45">45</option>
             <option value="60">60</option>
           </select>
         </div>
@@ -188,8 +254,8 @@ const NewSchedule = () => {
             type="time"
             id="startTime"
             name="startTime"
-            value={formatTimeString(scheduleData.hours.start.hour as number, scheduleData.hours.start.minute as number)}
-            step={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) * 60 : 15}
+            value={formatTimeForInput(scheduleData.hours.start)}
+            step={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) * 60 : 60}
             onChange={handleStartTimeChange}
             required
           />
@@ -198,8 +264,8 @@ const NewSchedule = () => {
             type="time"
             id="endTime"
             name="endTime"
-            value={formatTimeString(scheduleData.hours.end.hour as number, scheduleData.hours.end.minute as number)}
-            step={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) * 60 : 15}
+            value={formatTimeForInput(scheduleData.hours.end)}
+            step={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) * 60 : 60}
             onChange={handleEndTimeChange}
             required
           />
@@ -234,9 +300,10 @@ const NewSchedule = () => {
           <label htmlFor="maxShiftLength">Maximum Shift Duration (in minutes): </label>
           <input
             type="number"
-            id="maxShiftDuration"
-            name="maxShiftDuration"
-            step={scheduleData.shiftTimes as number}
+            id="maxShiftLength"
+            name="maxShiftLength"
+            step={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60}
+            min={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60}
             value={scheduleData.maxShiftLength ?? ""}
             onChange={handleInputChange}
           />
@@ -248,11 +315,12 @@ const NewSchedule = () => {
             id="maxShifts"
             name="maxShifts"
             step="1"
+            min="1"
             value={scheduleData.maxShifts ?? ""}
             onChange={handleInputChange}
           />
         </div>
-        <button type="submit" className="scheduleBtn" onClick={checkForNull}>
+        <button type="submit" className="scheduleBtn">
           Create Schedule
         </button>
       </form>
