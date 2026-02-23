@@ -1,6 +1,8 @@
 import CopyableLink from "@/components/CopyableLink";
 import Table from "@/components/Table";
+import { useApi } from "@/utils/api";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useQuery } from "@tanstack/react-query";
 
 interface TableData {
   name: string;
@@ -46,6 +48,20 @@ const renderRow = (row: TableData) => (
 
 const LoggedInHome = () => {
   const { user } = useAuth0();
+  const { fetchWithAuth } = useApi();
+
+  const { data: schedules = [] } = useQuery({
+    queryKey: ["schedule", "allSchedules"],
+    queryFn: () =>
+      fetchWithAuth("/api/schedule/").then(async (res) => {
+        if (!res.ok) throw new Error("Failed to fetch schedules");
+        console.log(res);
+        return await res.json();
+      }),
+  });
+
+  console.log(schedules);
+
   return (
     <div className="home">
       Welcome back, <b>{user?.given_name}</b>!

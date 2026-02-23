@@ -220,7 +220,7 @@
         }
       }
     },
-    "/": {
+    "/api/schedule": {
       "get": {
         "tags": [
           "Schedule"
@@ -230,9 +230,7 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/schedule": {
+      },
       "post": {
         "tags": [
           "Schedule"
