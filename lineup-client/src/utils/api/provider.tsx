@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { AuthContext, type AuthContextValue } from "./context";
 
 async function fetchWithoutAuth(path: string, init?: RequestInit) {
-  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}${path}`, {
+  const res = await fetch(path, {
     ...init,
     headers: {
       ...init?.headers,
@@ -23,7 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         res = await fetchWithoutAuth(path, init);
       } else {
         const token = await getAccessTokenSilently();
-        res = await fetch(`${import.meta.env.VITE_BACKEND_URL}${path}`, {
+        res = await fetch(path, {
           ...init,
           headers: {
             ...init?.headers,
