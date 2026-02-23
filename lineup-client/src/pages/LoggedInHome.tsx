@@ -3,6 +3,7 @@ import Table from "@/components/Table";
 import { useApi } from "@/utils/api";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 
 interface TableData {
   name: string;
@@ -48,6 +49,7 @@ const renderRow = (row: TableData) => (
 
 const LoggedInHome = () => {
   const { user } = useAuth0();
+  const navigate = useNavigate();
   const { fetchWithAuth } = useApi();
 
   const { data: schedules = [] } = useQuery({
@@ -70,7 +72,7 @@ const LoggedInHome = () => {
         <button
           className="rightButton"
           onClick={() => {
-            //TODO: make this button go to the NewSchedule screen
+            navigate("/newschedule");
           }}
         >
           New Schedule
