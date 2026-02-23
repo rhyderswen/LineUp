@@ -53,9 +53,9 @@ const LoggedInHome = () => {
   const { fetchWithAuth } = useApi();
 
   const { data: schedules = [] } = useQuery({
-    queryKey: ["schedule", "allSchedules"],
+    queryKey: ["schedules", "allSchedules"],
     queryFn: () =>
-      fetchWithAuth("/api/schedule/").then(async (res) => {
+      fetchWithAuth("/api/schedule").then(async (res) => {
         if (!res.ok) throw new Error("Failed to fetch schedules");
         console.log(res);
         return await res.json();

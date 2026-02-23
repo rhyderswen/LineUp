@@ -1,15 +1,17 @@
 import type { DateDay, Time, TimeRange, ValidMinutes } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router";
-import React from "react";
-import DatePickerModule, { DateObject } from "react-multi-date-picker";
+import { queryClient, useApi } from "@/utils/api";
 import {
-  parseTimeString,
+  convertToDateDays,
   formatTimeForInput,
   getValidMinutesForInterval,
+  parseTimeString,
   toMinutes,
-  convertToDateDays,
 } from "@/utils/time.ts";
+import { useMutation } from "@tanstack/react-query";
+import React from "react";
+import DatePickerModule, { DateObject } from "react-multi-date-picker";
+import { useNavigate } from "react-router";
 
 // This is because importing DatePicker directly didn't work with Vite for some reason
 // Trust me that this is somehow the most elegant solution I could find
@@ -31,6 +33,46 @@ interface ScheduleData {
 
 const NewSchedule = () => {
   const navigate = useNavigate();
+  const { fetchWithAuth } = useApi();
+
+  type CreateScheduleProps = {
+    name: string;
+    color: string;
+    emoji: string;
+    tags: number[];
+    folders: string[];
+    audio_file?: File;
+  };
+
+  const createScheduleMutation = useMutation({
+    mutationFn: async (newSchedule: CreateScheduleProps) => {
+      const formData = new FormData();
+      formData.append("sound[name]", newSchedule.name);
+      formData.append("sound[color]", newSchedule.color);
+      formData.append("sound[emoji]", newSchedule.emoji);
+      newSchedule.tags.forEach((tagId: number) => {
+        formData.append("sound[tag_ids][]", tagId.toString());
+      });
+      newSchedule.folders.forEach((folderSlug: string) => {
+        formData.append("sound[folder_slugs][]", folderSlug);
+      });
+
+      const res = await fetchWithAuth(`/api/schedule`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to add schedule");
+      }
+
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      navigate("/home");
+    },
+  });
 
   const [scheduleData, setScheduleData] = React.useState<ScheduleData>({
     name: "",
