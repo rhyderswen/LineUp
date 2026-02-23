@@ -270,7 +270,8 @@
           "dateCoverage",
           "startTime",
           "endTime",
-          "schedulePreferences"
+          "schedulePreferences",
+          "name"
         ],
         "type": "object",
         "properties": {
@@ -313,6 +314,9 @@
           },
           "schedulePreferences": {
             "$ref": "#/components/schemas/SchedulePreferences"
+          },
+          "name": {
+            "type": "string"
           }
         }
       },
@@ -324,6 +328,38 @@
             "format": "uuid"
           },
           "minutesPerSlot": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "shiftIntervals": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "usersPerShift": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "maximumShiftDurationMinutes": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "maximumShiftsPerWorker": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "integer",

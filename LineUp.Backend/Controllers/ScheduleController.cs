@@ -86,12 +86,14 @@ public class ScheduleController(LineUpContext context) : ControllerBase
     {
         var scheduleToInsert = new Schedule
         {
+            Id = 0,
             Auth0UserId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value,
             Guid = Guid.NewGuid(),
             DateCoverage = schedule.DateCoverage,
             StartTime = schedule.StartTime,
             EndTime = schedule.EndTime,
             SchedulePreferences = schedule.SchedulePreferences,
+            Name = schedule.Name,
         };
 
         context.Schedules.Add(scheduleToInsert);

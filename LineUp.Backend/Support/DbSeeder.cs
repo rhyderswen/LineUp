@@ -27,7 +27,15 @@ public class DbSeeder(LineUpContext context)
             ],
             StartTime = new TimeOnly(9, 0),
             EndTime = new TimeOnly(17, 0),
-            SchedulePreferences = new SchedulePreferences { MinutesPerSlot = 30 },
+            SchedulePreferences = new SchedulePreferences
+            {
+                MinutesPerSlot = 30,
+                ShiftIntervals = 30,
+                UsersPerShift = 1,
+                MaximumShiftDurationMinutes = 120,
+                MaximumShiftsPerWorker = 1,
+            },
+            Name = "Test Schedule",
         };
         context.Set<Schedule>().Add(schedule);
         context.SaveChanges();
