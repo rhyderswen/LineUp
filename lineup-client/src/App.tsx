@@ -17,7 +17,7 @@ function Layout() {
 }
 
 async function scheduleLoader({ params }: LoaderFunctionArgs) {
-  const res = await fetch(`/api/schedule/${params.guid}`, {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/schedule/${params.guid}`, {
     credentials: "include",
   });
 
