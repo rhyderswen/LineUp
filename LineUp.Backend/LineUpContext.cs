@@ -22,6 +22,12 @@ public class LineUpContext : DbContext
         optionsBuilder.UseSeeding(
             (context, _) =>
             {
+                // check to make sure we haven't seeded already
+                if (context.Set<Schedule>().Any())
+                {
+                    return;
+                }
+
                 #region  Seed Schedule
                 var schedule = new Schedule
                 {
