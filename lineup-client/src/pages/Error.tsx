@@ -3,6 +3,8 @@ import { isRouteErrorResponse, Link, useRouteError } from "react-router";
 export default function ErrorPage() {
   const error = useRouteError();
 
+  console.log(error);
+
   if (isRouteErrorResponse(error) && error.status === 404) {
     return (
       <div>
