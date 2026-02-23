@@ -31,7 +31,7 @@ public class ScheduleController(LineUpContext context) : ControllerBase
     [HttpGet("{guid:guid}")]
     public async Task<IActionResult> GetSchedule(Guid guid)
     {
-        var result = await context.FindAsync<Schedule>(guid);
+        var result = await context.Schedules.FirstOrDefaultAsync(s => s.Guid == guid);
         if (result != null)
             return Ok(result);
         return NotFound();
@@ -86,7 +86,6 @@ public class ScheduleController(LineUpContext context) : ControllerBase
     {
         var scheduleToInsert = new Schedule
         {
-            Id = 0,
             Auth0UserId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value,
             Guid = Guid.NewGuid(),
             DateCoverage = schedule.DateCoverage,
