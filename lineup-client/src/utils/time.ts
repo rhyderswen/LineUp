@@ -89,9 +89,8 @@ function getValidMinutesForInterval(interval: number): number[] {
     case 40:
       return [0, 20, 40];
     case 60:
-      return [0, 15, 20, 30, 40, 45];
     default:
-      return [0];
+      return [0, 15, 20, 30, 40, 45];
   }
 }
 
