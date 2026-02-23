@@ -37,29 +37,26 @@ const NewSchedule = () => {
 
   type CreateScheduleProps = {
     name: string;
-    color: string;
-    emoji: string;
-    tags: number[];
-    folders: string[];
-    audio_file?: File;
+    dateCoverage: string[];
+    startTime: string;
+    endTime: string;
+    schedulePreferences: {
+      minutesPerSlot: number;
+      shiftIntervals: number;
+      usersPerShift: number;
+      maximumShiftDurationMinutes: number;
+      maximumShiftsPerWorker: number;
+    };
   };
 
   const createScheduleMutation = useMutation({
     mutationFn: async (newSchedule: CreateScheduleProps) => {
-      const formData = new FormData();
-      formData.append("sound[name]", newSchedule.name);
-      formData.append("sound[color]", newSchedule.color);
-      formData.append("sound[emoji]", newSchedule.emoji);
-      newSchedule.tags.forEach((tagId: number) => {
-        formData.append("sound[tag_ids][]", tagId.toString());
-      });
-      newSchedule.folders.forEach((folderSlug: string) => {
-        formData.append("sound[folder_slugs][]", folderSlug);
-      });
-
       const res = await fetchWithAuth(`/api/schedule`, {
         method: "POST",
-        body: formData,
+        body: JSON.stringify(newSchedule),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       if (!res.ok) {
@@ -120,29 +117,19 @@ const NewSchedule = () => {
       return;
     }
 
-    console.log(
-      "Submitted name:",
-      scheduleData.name,
-      "; Submitted avail. interval: ",
-      scheduleData.shiftTimes,
-      "; Submitted dates (Dates): ",
-      scheduleData.dates,
-      "; Submitted dates (DateDays): ",
-      scheduleData.dateDays,
-      "; Submitted duration: ",
-      scheduleData.hours.start,
-      " to ",
-      scheduleData.hours.end,
-      "; Submitted pplpershift: ",
-      scheduleData.pplPerShift,
-      "; Submitted maximum shift time: ",
-      scheduleData.maxShiftLength ?? 1440,
-      "; Submitted maximum shifts: ",
-      scheduleData.maxShifts ?? 99999,
-    );
-
-    //TODO: add to user's events
-    //TODO: send data to backend
+    createScheduleMutation.mutate({
+      name: scheduleData.name,
+      dateCoverage: scheduleData.dates?.map((d) => d.toISOString().split("T")[0]) || [],
+      startTime: formatTimeForInput(scheduleData.hours.start),
+      endTime: formatTimeForInput(scheduleData.hours.end),
+      schedulePreferences: {
+        minutesPerSlot: Number(scheduleData.shiftTimes),
+        shiftIntervals: Number(scheduleData.shiftTimes),
+        usersPerShift: Number(scheduleData.pplPerShift),
+        maximumShiftDurationMinutes: scheduleData.maxShiftLength ?? 1440,
+        maximumShiftsPerWorker: scheduleData.maxShifts ?? 99999,
+      },
+    });
   };
 
   const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
