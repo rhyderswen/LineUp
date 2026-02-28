@@ -44,4 +44,13 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
         context.SaveChanges();
         return Ok(availability.Guid);
     }
+
+    [HttpPost("{guid:guid}/edit")]
+    public IActionResult EditAvailability(Guid guid, [FromBody] Availability availability)
+    {
+        Availability? old = context.Availabilities.FirstOrDefault<Availability>(a => a.Guid == guid); //find the original
+        old = availability;
+        context.SaveChanges();
+        return Ok();
+    }
 }
