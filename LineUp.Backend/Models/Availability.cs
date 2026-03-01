@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using LineUp.Backend.Attributes;
 using LineUp.Backend.Models.Forms;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,6 @@ public class Availability
         new List<FormQuestionAnswer>();
 
     // Navigation properties, ignored in JSON to not loop forever
-    [JsonIgnore]
+    [JsonDoNotSerialize]
     public required Schedule Schedule { get; set; }
 }
