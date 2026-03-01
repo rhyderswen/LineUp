@@ -13,6 +13,9 @@ import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import DatePickerModule, { DateObject } from "react-multi-date-picker";
 import { useNavigate } from "react-router";
+import "./newschedule.css";
+import "../dateinput.css";
+import { ArrowLeftIcon } from "@radix-ui/react-icons";
 
 // This is because importing DatePicker directly didn't work with Vite for some reason
 // Trust me that this is somehow the most elegant solution I could find
@@ -216,18 +219,42 @@ const NewSchedule = () => {
 
   return (
     <div className="newSchedule">
+      <button
+        className="returnButton"
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        <ArrowLeftIcon className="backIcon" />
+        Home
+      </button>{" "}
+      <div>
+        <h3 className="pageHeader">New Schedule</h3>
+      </div>
+      <hr />
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="scheduleName">
             Schedule Name<label className="requiredStar">*</label>:{" "}
           </label>
-          <input type="text" id="name" name="name" value={scheduleData.name} onChange={handleInputChange} required />
+          <br />
+          <input
+            className="input"
+            type="text"
+            id="name"
+            name="name"
+            value={scheduleData.name}
+            onChange={handleInputChange}
+            required
+          />
         </div>
         <div>
           <label htmlFor="shiftTimes">
             Shift Intervals (in minutes)<label className="requiredStar">*</label>:{" "}
           </label>
+          <br />
           <select
+            className="input"
             name="shiftTimes"
             id="shiftTimes"
             value={scheduleData.shiftTimes ?? ""}
@@ -249,7 +276,9 @@ const NewSchedule = () => {
           <label htmlFor="scheduleDuration">
             Schedule Duration<label className="requiredStar">*</label>:{" "}
           </label>
+          <br />
           <input
+            className="input"
             type="time"
             id="startTime"
             name="startTime"
@@ -260,6 +289,7 @@ const NewSchedule = () => {
           />
           <label> to </label>
           <input
+            className="endInput"
             type="time"
             id="endTime"
             name="endTime"
@@ -272,7 +302,10 @@ const NewSchedule = () => {
           <label>
             Dates<label className="requiredStar">*</label>:{" "}
           </label>
+          <br />
           <DatePicker
+            inputClass="input"
+            className="purple"
             multiple
             value={scheduleData.dates?.map((d) => new DateObject(d)) || []}
             onChange={handleDateChange}
@@ -285,7 +318,9 @@ const NewSchedule = () => {
           <label htmlFor="peoplePerShift">
             Workers per shift<label className="requiredStar">*</label>:{" "}
           </label>
+          <br />
           <input
+            className="input"
             type="number"
             id="pplPerShift"
             name="pplPerShift"
@@ -297,8 +332,10 @@ const NewSchedule = () => {
           />
         </div>
         <div>
-          <label htmlFor="maxShiftLength">Maximum Shift Duration (in minutes): </label>
+          <label htmlFor="maxShiftLength">Maximum Shift Duration (in minutes):</label>
+          <br />
           <input
+            className="input"
             type="number"
             id="maxShiftLength"
             name="maxShiftLength"
@@ -309,8 +346,10 @@ const NewSchedule = () => {
           />
         </div>
         <div>
-          <label htmlFor="maxShifts">Maximum Shifts per Worker: </label>
+          <label htmlFor="maxShifts">Maximum Shifts per Worker:</label>
+          <br />
           <input
+            className="input"
             type="number"
             id="maxShifts"
             name="maxShifts"
@@ -320,18 +359,13 @@ const NewSchedule = () => {
             onChange={handleInputChange}
           />
         </div>
-        <button type="submit" className="scheduleBtn">
-          Create Schedule
-        </button>
+        <br />
+        <div className="submitContainer">
+          <button type="submit" className="submitBtn">
+            Create Schedule
+          </button>
+        </div>
       </form>
-      <button
-        className="rightButton"
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        Back to Home
-      </button>{" "}
     </div>
   );
 };

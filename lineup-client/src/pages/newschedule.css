@@ -1,0 +1,27 @@
+.newSchedule {
+  text-align: left;
+  margin: 1rem;
+  font-size: 90%;
+}
+
+.requiredStar {
+  color: #ff6666;
+}
+
+.backIcon {
+  width: 50%;
+  height: 50%;
+}
+
+.endInput {
+  margin-bottom: 1em;
+  border-radius: 0.5em;
+  border: 0.25em var(--primary-active) outset;
+  padding: 0.3em;
+
+  &:focus {
+    outline: none;
+    border: 0.25em var(--primary-active) inset;
+    box-shadow: 0 0 0.1em 0.1em var(--primary-active-hover);
+  }
+}
