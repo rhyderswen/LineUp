@@ -178,6 +178,7 @@ const ViewEditSchedule = () => {
 
   const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    console.log("Delete button pressed");
     //TODO: warning message to confirm you want to delete
     //TODO: call backend to delete schedule
   };
@@ -198,6 +199,7 @@ const ViewEditSchedule = () => {
       </button>{" "}
       <div>
         <h3 className="pageHeader">{scheduleData.name}</h3>
+        {/* TODO: actually represent the number of respondents */}
         <h4 className="pageSubHeader">Respondents: {0}</h4>
       </div>
       <Calendar
