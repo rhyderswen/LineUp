@@ -1,18 +1,11 @@
-import type { DateDay, Time, TimeRange, ValidMinutes } from "@/types";
+import type { DateDay, TimeRange, ValidMinutes } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
 import { queryClient, useApi } from "@/utils/api";
 import { addToasts } from "@/utils/db";
 import toast from "react-hot-toast";
-import {
-  convertToDateDays,
-  formatTimeForInput,
-  getValidMinutesForInterval,
-  parseTimeString,
-  toMinutes,
-} from "@/utils/time.ts";
+import { convertToDateDays, formatTimeForInput, parseTimeString } from "@/utils/time.ts";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import React from "react";
-import DatePickerModule, { DateObject } from "react-multi-date-picker";
+import React, { type MouseEvent } from "react";
 import { useNavigate } from "react-router";
 import "./newschedule.css";
 import "../dateinput.css";
@@ -21,11 +14,6 @@ import { useParams } from "react-router";
 import { Calendar } from "@/components/Calendar";
 // TODO: Replace with availability viewable cell when that's made
 import { FillableCell } from "@/components/CalendarCells";
-
-// This is because importing DatePicker directly didn't work with Vite for some reason
-// Trust me that this is somehow the most elegant solution I could find
-// @ts-expect-error: react-multi-date-picker is funky with Vite
-const DatePicker = DatePickerModule.default || DatePickerModule;
 
 interface ScheduleData {
   name: string; //the name of the event
@@ -162,23 +150,9 @@ const ViewEditSchedule = () => {
       "; maxShifts: ",
       scheduleData.maxShifts,
     );
-    switch (checkValidTimeRange(scheduleData.shiftTimes, scheduleData.hours)) {
-      case 1:
-        alert("Cannot have Schedule Duration end before it starts.");
-        return;
-      case 2:
-        alert("Duration start time minutes must be compatible with chosen shift interval.");
-        return;
-      case 3:
-        alert("Duration end time minutes must be compatible with chosen shift interval.");
-        return;
-      case 4:
-        alert("Total Duration must be divisible by chosen shift interval.");
-        return;
-      case 0:
-        break;
-    }
 
+    //TODO: change to an edit schedule mutation
+    /*
     addToasts(
       createScheduleMutation.mutateAsync({
         name: scheduleData.name,
@@ -193,43 +167,19 @@ const ViewEditSchedule = () => {
           maximumShiftsPerWorker: scheduleData.maxShifts ?? 99999,
         },
       }),
-    );
+    );*/
   };
 
-  const handleDateChange = (value: DateObject | DateObject[] | null) => {
-    if (!value) {
-      setScheduleData((prev) => ({
-        ...prev,
-        dates: [],
-        dateDays: [],
-      }));
-      return;
-    }
-
-    const dateArray = Array.isArray(value) ? value : [value];
-    const jsDates = dateArray.map((d) => d.toDate());
-
-    setScheduleData((prev) => ({
-      ...prev,
-      dates: jsDates,
-      dateDays: convertToDateDays(jsDates),
-    }));
+  const handleGenerate = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    console.log("Generate Schedule button clicked");
+    //TODO: call backend to generate schedule
   };
 
-  const checkValidTimeRange = (intervalLength: ValidMinutes | "" | undefined, hours: TimeRange): number => {
-    if (!intervalLength) return 0;
-
-    const interval = Number(intervalLength);
-    const validMinutes = getValidMinutesForInterval(interval);
-    const startMinutes = toMinutes(hours.start);
-    const endMinutes = toMinutes(hours.end, true);
-
-    if (startMinutes >= endMinutes) return 1;
-    if (!validMinutes.includes(hours.start.minute)) return 2;
-    if (!validMinutes.includes(hours.end.minute)) return 3;
-    if ((endMinutes - startMinutes) % interval !== 0) return 4;
-
-    return 0;
+  const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    //TODO: warning message to confirm you want to delete
+    //TODO: call backend to delete schedule
   };
 
   if (isLoading || !scheduleData) return <div>Loading...</div>;
@@ -248,30 +198,25 @@ const ViewEditSchedule = () => {
       </button>{" "}
       <div>
         <h3 className="pageHeader">{scheduleData.name}</h3>
-        <h4></h4>
+        <h4 className="pageSubHeader">Respondents: {0}</h4>
       </div>
-      <hr />
       <Calendar
         Cell={FillableCell}
         minutesPerCell={scheduleData.shiftTimes as ValidMinutes}
         dates={scheduleData.dateDays}
         range={scheduleData.hours}
       ></Calendar>
+      <div className="submitContainer">
+        <button type="button" className="submitBtn" onClick={handleGenerate}>
+          Generate Schedule
+        </button>
+      </div>
+      <hr />
+      <div>
+        <h4 className="pageSubHeader">Edit Preferences:</h4>
+      </div>
+      <br />
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Dates: </label>
-          <br />
-          <DatePicker
-            inputClass="input"
-            className="purple"
-            multiple
-            value={scheduleData.dates?.map((d) => new DateObject(d)) || []}
-            onChange={handleDateChange}
-            minDate={new Date()}
-            required
-          />
-          <br />
-        </div>
         <div>
           <label htmlFor="peoplePerShift">Workers per shift: </label>
           <br />
@@ -319,6 +264,12 @@ const ViewEditSchedule = () => {
         <div className="submitContainer">
           <button type="submit" className="submitBtn">
             Confirm Changes
+          </button>
+        </div>
+        <br />
+        <div className="submitContainer">
+          <button type="button" className="deleteBtn" onClick={handleDelete}>
+            Delete Schedule
           </button>
         </div>
       </form>

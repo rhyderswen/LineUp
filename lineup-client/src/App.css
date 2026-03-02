@@ -76,6 +76,13 @@
 .pageHeader {
   text-align: center;
   font-size: 130%;
+  margin: 0.3em;
+}
+.pageSubHeader {
+  text-align: center;
+  font-size: 90%;
+  margin-top: 0;
+  margin-bottom: 1em;
 }
 
 .returnButton {
