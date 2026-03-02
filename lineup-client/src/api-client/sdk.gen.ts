@@ -23,10 +23,10 @@ import type {
   GetApiScheduleByGuidResponses,
   GetApiScheduleClaimsData,
   GetApiScheduleClaimsResponses,
+  GetApiScheduleData,
   GetApiSchedulePublicData,
   GetApiSchedulePublicResponses,
-  GetData,
-  GetResponses,
+  GetApiScheduleResponses,
   PostApiScheduleData,
   PostApiScheduleResponses,
   PutApiScheduleByGuidData,
@@ -137,8 +137,10 @@ export const putApiScheduleByGuid = <ThrowOnError extends boolean = false>(
     },
   });
 
-export const get = <ThrowOnError extends boolean = false>(options?: Options<GetData, ThrowOnError>) =>
-  (options?.client ?? client).get<GetResponses, unknown, ThrowOnError>({ url: "/", ...options });
+export const getApiSchedule = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiScheduleData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<GetApiScheduleResponses, unknown, ThrowOnError>({ url: "/api/schedule", ...options });
 
 export const postApiSchedule = <ThrowOnError extends boolean = false>(
   options: Options<PostApiScheduleData, ThrowOnError>,

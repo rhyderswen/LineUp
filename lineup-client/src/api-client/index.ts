@@ -2,7 +2,6 @@
 
 export {
   deleteApiScheduleByGuid,
-  get,
   getApiAvailabilityByGuidExists,
   getApiAvailabilityByGuidGenerateLink,
   getApiAvailabilityPublic,
@@ -10,6 +9,7 @@ export {
   getApiPrivate,
   getApiPrivateScoped,
   getApiPublic,
+  getApiSchedule,
   getApiScheduleByGuid,
   getApiScheduleClaims,
   getApiSchedulePublic,
@@ -39,10 +39,10 @@ export type {
   GetApiScheduleByGuidResponses,
   GetApiScheduleClaimsData,
   GetApiScheduleClaimsResponses,
+  GetApiScheduleData,
   GetApiSchedulePublicData,
   GetApiSchedulePublicResponses,
-  GetData,
-  GetResponses,
+  GetApiScheduleResponses,
   PostApiScheduleData,
   PostApiScheduleResponses,
   PutApiScheduleByGuidData,

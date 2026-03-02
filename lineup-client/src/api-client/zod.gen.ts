@@ -13,6 +13,42 @@ export const zSchedulePreferences = z.object({
       z.string().regex(/^-?(?:0|[1-9]\d*)$/),
     ]),
   ),
+  shiftIntervals: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  usersPerShift: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  maximumShiftDurationMinutes: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  maximumShiftsPerWorker: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
 });
 
 export const zShiftAssignment = z.object({
@@ -46,6 +82,7 @@ export const zScheduleDto = z.object({
   endTime: z.iso.time(),
   shiftAssignments: z.optional(z.array(zShiftAssignment)),
   schedulePreferences: zSchedulePreferences,
+  name: z.string(),
 });
 
 export const zGetApiPublicData = z.object({
@@ -130,7 +167,7 @@ export const zPutApiScheduleByGuidData = z.object({
   query: z.optional(z.never()),
 });
 
-export const zGetData = z.object({
+export const zGetApiScheduleData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
   query: z.optional(z.never()),

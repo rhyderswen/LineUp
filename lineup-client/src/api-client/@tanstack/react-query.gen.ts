@@ -5,7 +5,6 @@ import { type DefaultError, queryOptions, type UseMutationOptions } from "@tanst
 import { client } from "../client.gen";
 import {
   deleteApiScheduleByGuid,
-  get,
   getApiAvailabilityByGuidExists,
   getApiAvailabilityByGuidGenerateLink,
   getApiAvailabilityPublic,
@@ -13,6 +12,7 @@ import {
   getApiPrivate,
   getApiPrivateScoped,
   getApiPublic,
+  getApiSchedule,
   getApiScheduleByGuid,
   getApiScheduleClaims,
   getApiSchedulePublic,
@@ -31,8 +31,8 @@ import type {
   GetApiPublicData,
   GetApiScheduleByGuidData,
   GetApiScheduleClaimsData,
+  GetApiScheduleData,
   GetApiSchedulePublicData,
-  GetData,
   PostApiScheduleData,
   PutApiScheduleByGuidData,
 } from "../types.gen";
@@ -278,12 +278,13 @@ export const putApiScheduleByGuidMutation = (
   return mutationOptions;
 };
 
-export const getQueryKey = (options?: Options<GetData>) => createQueryKey("get", options);
+export const getApiScheduleQueryKey = (options?: Options<GetApiScheduleData>) =>
+  createQueryKey("getApiSchedule", options);
 
-export const getOptions = (options?: Options<GetData>) =>
-  queryOptions<unknown, DefaultError, unknown, ReturnType<typeof getQueryKey>>({
+export const getApiScheduleOptions = (options?: Options<GetApiScheduleData>) =>
+  queryOptions<unknown, DefaultError, unknown, ReturnType<typeof getApiScheduleQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await get({
+      const { data } = await getApiSchedule({
         ...options,
         ...queryKey[0],
         signal,
@@ -291,7 +292,7 @@ export const getOptions = (options?: Options<GetData>) =>
       });
       return data;
     },
-    queryKey: getQueryKey(options),
+    queryKey: getApiScheduleQueryKey(options),
   });
 
 export const postApiScheduleMutation = (

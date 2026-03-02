@@ -12,11 +12,16 @@ export type ScheduleDto = {
   endTime: string;
   shiftAssignments?: Array<ShiftAssignment>;
   schedulePreferences: SchedulePreferences;
+  name: string;
 };
 
 export type SchedulePreferences = {
   id?: string;
   minutesPerSlot?: number | string;
+  shiftIntervals?: number | string;
+  usersPerShift?: number | string;
+  maximumShiftDurationMinutes?: number | string;
+  maximumShiftsPerWorker?: number | string;
 };
 
 export type ShiftAssignment = {
@@ -203,14 +208,14 @@ export type PutApiScheduleByGuidResponses = {
   200: unknown;
 };
 
-export type GetData = {
+export type GetApiScheduleData = {
   body?: never;
   path?: never;
   query?: never;
-  url: "/";
+  url: "/api/schedule";
 };
 
-export type GetResponses = {
+export type GetApiScheduleResponses = {
   /**
    * OK
    */

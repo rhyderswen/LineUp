@@ -1,3 +1,4 @@
+using CSharpVitamins;
 using LineUp.Backend.Models;
 using LineUp.Backend.Models.Forms;
 using Microsoft.EntityFrameworkCore;
@@ -24,5 +25,10 @@ public class LineUpContext : DbContext
             .HasOne(f => f.Form)
             .WithOne(f => f.Schedule)
             .HasForeignKey<Schedule>(f => f.FormId);
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<ShortGuid>().HaveConversion<ShortGuidConverter>();
     }
 }
