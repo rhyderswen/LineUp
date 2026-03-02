@@ -49,13 +49,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
-builder.Services.AddDbContext<LineUpContext>(options =>
-{
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("LineUp")
-            ?? "Host=localhost;Username=postgres;Password=postgres;Database=my-database"
-    );
-});
+builder.AddNpgsqlDbContext<LineUpContext>("postgresdb");
 
 var app = builder.Build();
 
