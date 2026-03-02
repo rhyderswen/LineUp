@@ -84,8 +84,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
+var seed = app.Environment.IsDevelopment() && Environment.GetEnvironmentVariable("SEED") == "true";
+
+if (seed)
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<LineUpContext>();
     //TODO DONT DO THIS IN PROD!!!!!!!!!!!!!! :(((((
     db.Database.EnsureDeleted();
