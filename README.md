@@ -29,17 +29,18 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
    pnpm install
    ```
 
-3. **Start the app**
+3. **Start the app, seeding with test data**
    ```bash
-   aspire run
+   SEED=true aspire run
    ```
+   
+Note: On subsequent runs, do not use the `SEED` flag, unless you want to re-seed the database (which will delete all existing data).
 
 #### API Client Generation
 
 To regenerate the API client after backend changes:
 ```bash
-cd LineUp.Backend
-GEN=true dotnet build
+GEN=true aspire run
 ```
 
 ## Versions:
