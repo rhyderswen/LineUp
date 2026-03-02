@@ -12,32 +12,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="754d2aaf-ebaa-4029-a2bd-a89acc40c33b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.aspire/settings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.AppHost/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.AppHost/AppHost.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.AppHost/LineUp.AppHost.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.AppHost/Properties/launchSettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.AppHost/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.AppHost/appsettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.ServiceDefaults/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.ServiceDefaults/Extensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LineUp.ServiceDefaults/LineUp.ServiceDefaults.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup.dir/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup.dir/.idea/deviceManager.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup.dir/.idea/discord.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup.dir/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup.dir/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup/.idea/deviceManager.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup/.idea/discord.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.lineup/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/LineUp.Backend/LineUp.Backend.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/LineUp.Backend/LineUp.Backend.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LineUp.Backend/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LineUp.Backend/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lineup.slnx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +32,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/.aspire/settings.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/LineUp.Backend/Program.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LineUp.Backend/bin/Debug/net10.0/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.deps.json" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/dotnet-tools.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/global.json" root0="FORCE_HIGHLIGHTING" />
@@ -202,8 +178,33 @@
       <option name="presentableId" value="Default" />
       <updated>1772423524902</updated>
       <workItem from="1772423527215" duration="935000" />
-      <workItem from="1772424501645" duration="556000" />
+      <workItem from="1772424501645" duration="1095000" />
     </task>
+    <task id="LOCAL-00001" summary="add unversioned schemas file">
+      <option name="closed" value="true" />
+      <created>1772425185050</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1772425185050</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fix c# style of sln capitalization">
+      <option name="closed" value="true" />
+      <created>1772425230308</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1772425230308</updated>
+    </task>
+    <task id="LOCAL-00003" summary="initial aspireification">
+      <option name="closed" value="true" />
+      <created>1772425250183</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1772425250183</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -224,6 +225,10 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="add unversioned schemas file" />
+    <MESSAGE value="fix c# style of sln capitalization" />
+    <MESSAGE value="initial aspireification" />
+    <option name="LAST_COMMIT_MESSAGE" value="initial aspireification" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
