@@ -6,8 +6,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
     <OpenApiDocumentsDirectory>../openapi-spec</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--file-name api-spec</OpenApiGenerateDocumentsOptions>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration)=='Gen' Or $(GEN)=='true'">
+    <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
   </PropertyGroup>
 
   <Target
