@@ -13,12 +13,12 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
 - [.NET 10](https://dotnet.microsoft.com/en-us/download)
 - [Node.js](https://nodejs.org/en/download)
 - [PNPM](https://pnpm.io/installation)
+- [.NET Aspire CLI](https://aspire.dev/get-started/install-cli/)
 
 ### Setup and Run
 
 1. **Install backend dependencies**
    ```bash
-   cd LineUp.Backend
    dotnet restore
    ```
 
@@ -29,14 +29,9 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
    pnpm install
    ```
 
-3. **Start the backend** (in `LineUp.Backend/`)
+3. **Start the app**
    ```bash
-   dotnet run
-   ```
-
-4. **Start the frontend** (in `lineup-client/`)
-   ```bash
-   pnpm run dev
+   aspire run
    ```
 
 #### API Client Generation
@@ -48,4 +43,4 @@ GEN=true dotnet build
 ```
 
 ## Versions:
-Postrgess: 18.1
+Postgres: 18.1
