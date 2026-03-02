@@ -31,7 +31,9 @@ public class ScheduleController(LineUpContext context) : ControllerBase
     [HttpGet("{guid:guid}")]
     public async Task<IActionResult> GetSchedule(Guid guid)
     {
-        var result = await context.Schedules.FirstOrDefaultAsync(s => s.Guid == guid);
+        var result = await context
+            .Schedules.Include(s => s.SchedulePreferences)
+            .FirstOrDefaultAsync(s => s.Guid == guid);
         if (result != null)
             return Ok(result);
         return NotFound();
