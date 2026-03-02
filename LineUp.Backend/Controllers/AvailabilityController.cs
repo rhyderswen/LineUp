@@ -45,12 +45,30 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
         return Ok(availability.Guid);
     }
 
-    [HttpPost("{guid:guid}/edit")]
-    public IActionResult EditAvailability(Guid guid, [FromBody] Availability availability)
+    [HttpPatch("{guid:guid}/edit")]
+    public async Task<IActionResult> EditAvailability(
+        Guid guid,
+        [FromBody] Availability availability
+    )
     {
-        Availability? old = context.Availabilities.FirstOrDefault<Availability>(a => a.Guid == guid); //find the original
-        old = availability;
-        context.SaveChanges();
-        return Ok();
+        if (guid != availability.Guid)
+        {
+            return BadRequest();
+        }
+        context.Entry(availability).State = EntityState.Modified;
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!context.Availabilities.Any(a => a.Guid == guid))
+            {
+                return NotFound();
+            }
+            throw;
+        }
+
+        return NoContent();
     }
 }

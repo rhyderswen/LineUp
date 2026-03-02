@@ -113,11 +113,7 @@ public class ScheduleController(LineUpContext context) : ControllerBase
         {
             return NotFound();
         }
-        Availability availability = new Availability
-        {
-            UserName = "",
-            Schedule = schedule,
-        };
+        Availability availability = new Availability { UserName = "", Schedule = schedule };
         context.Availabilities.Add(availability);
         context.SaveChanges();
         return Ok(availability.Guid);

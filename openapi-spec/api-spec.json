@@ -112,7 +112,7 @@
       }
     },
     "/api/availability/{guid}/edit": {
-      "post": {
+      "patch": {
         "tags": [
           "Availability"
         ],
@@ -585,7 +585,10 @@
             "format": "int32"
           },
           "shiftAssignments": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/ShiftAssignment"
             }
@@ -717,6 +720,12 @@
           "endTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/Schedule"
           }
         }
       }
