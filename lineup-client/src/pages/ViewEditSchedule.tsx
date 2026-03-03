@@ -88,6 +88,49 @@ const ViewEditSchedule = () => {
     },
   });
 
+  const updateScheduleMutation = useMutation({
+    mutationFn: async (updatedSchedule: CreateScheduleProps) => {
+      const res = await fetchWithAuth(`/api/schedule/${guid}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedSchedule),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to edit schedule");
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedule", guid] });
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      toast.success("Schedule updated successfully");
+      navigate("/");
+    },
+  });
+
+  const deleteScheduleMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetchWithAuth(`/api/schedule/${guid}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete schedule");
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
+      toast.success("Schedule deleted");
+      navigate("/");
+    },
+  });
+
   const [scheduleData, setScheduleData] = React.useState<ScheduleData>({
     name: "",
     shiftTimes: "",
@@ -151,10 +194,8 @@ const ViewEditSchedule = () => {
       scheduleData.maxShifts,
     );
 
-    //TODO: change to an edit schedule mutation
-    /*
     addToasts(
-      createScheduleMutation.mutateAsync({
+      updateScheduleMutation.mutateAsync({
         name: scheduleData.name,
         dateCoverage: scheduleData.dates?.map((d) => d.toISOString().split("T")[0]) || [],
         startTime: formatTimeForInput(scheduleData.hours.start),
@@ -167,7 +208,7 @@ const ViewEditSchedule = () => {
           maximumShiftsPerWorker: scheduleData.maxShifts ?? 99999,
         },
       }),
-    );*/
+    );
   };
 
   const handleGenerate = (event: MouseEvent<HTMLButtonElement>) => {
@@ -179,8 +220,10 @@ const ViewEditSchedule = () => {
   const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     console.log("Delete button pressed");
-    //TODO: warning message to confirm you want to delete
-    //TODO: call backend to delete schedule
+
+    if (!confirm("Are you sure you want to delete this schedule?")) return;
+
+    addToasts(deleteScheduleMutation.mutateAsync());
   };
 
   if (isLoading || !scheduleData) return <div>Loading...</div>;
