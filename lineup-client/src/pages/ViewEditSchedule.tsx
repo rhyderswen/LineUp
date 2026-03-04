@@ -38,7 +38,7 @@ const ViewEditSchedule = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["schedule", guid],
+    queryKey: ["schedules", guid],
     queryFn: () =>
       fetchWithAuth(`/api/schedule/${guid}`).then(async (res) => {
         if (!res.ok) {
@@ -97,6 +97,7 @@ const ViewEditSchedule = () => {
       return true;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
       navigate("/");
     },
   });
