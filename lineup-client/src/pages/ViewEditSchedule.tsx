@@ -105,7 +105,6 @@ const ViewEditSchedule = () => {
       return true;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schedule", guid] });
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
       toast.success("Schedule updated successfully");
       navigate("/");
@@ -262,6 +261,19 @@ const ViewEditSchedule = () => {
       </div>
       <br />
       <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="scheduleName">Schedule Name: </label>
+          <br />
+          <input
+            className="input"
+            type="text"
+            id="name"
+            name="name"
+            value={scheduleData.name}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
         <div>
           <label htmlFor="peoplePerShift">Workers per shift: </label>
           <br />
