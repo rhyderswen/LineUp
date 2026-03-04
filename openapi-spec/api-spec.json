@@ -111,30 +111,6 @@
         }
       }
     },
-    "/api/schedule/public": {
-      "get": {
-        "tags": [
-          "Schedule"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/schedule/claims": {
-      "get": {
-        "tags": [
-          "Schedule"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/schedule/{guid}": {
       "get": {
         "tags": [
@@ -178,7 +154,7 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "tags": [
           "Schedule"
         ],

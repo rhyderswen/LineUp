@@ -48,8 +48,8 @@ const NewSchedule = () => {
       minutesPerSlot: number;
       shiftIntervals: number;
       usersPerShift: number;
-      maximumShiftDurationMinutes: number;
-      maximumShiftsPerWorker: number;
+      maximumShiftDurationMinutes: number | undefined;
+      maximumShiftsPerWorker: number | undefined;
     };
   };
 
@@ -90,10 +90,21 @@ const NewSchedule = () => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
 
-    setScheduleData((prev) => ({
-      ...prev,
-      [name]: event.target.type === "number" || name === "shiftTimes" ? Number(value) : value,
-    }));
+    setScheduleData((prev) => {
+      if (event.target instanceof HTMLInputElement && event.target.type === "number") {
+        if (value === "") return { ...prev, [name]: undefined };
+
+        let numericValue = Number(value);
+        const maxValue = event.target.max ? Number(event.target.max) : undefined;
+        const minValue = event.target.min ? Number(event.target.min) : undefined;
+
+        if (maxValue !== undefined && numericValue > maxValue) numericValue = maxValue;
+        if (minValue !== undefined && numericValue < minValue) numericValue = minValue;
+
+        return { ...prev, [name]: numericValue };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
@@ -126,8 +137,8 @@ const NewSchedule = () => {
           minutesPerSlot: Number(scheduleData.shiftTimes),
           shiftIntervals: Number(scheduleData.shiftTimes),
           usersPerShift: Number(scheduleData.pplPerShift),
-          maximumShiftDurationMinutes: scheduleData.maxShiftLength ?? 1440,
-          maximumShiftsPerWorker: scheduleData.maxShifts ?? 99999,
+          maximumShiftDurationMinutes: scheduleData.maxShiftLength,
+          maximumShiftsPerWorker: scheduleData.maxShifts,
         },
       }),
     );
@@ -336,6 +347,7 @@ const NewSchedule = () => {
             name="maxShiftLength"
             step={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60}
             min={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60}
+            max="1440"
             value={scheduleData.maxShiftLength ?? ""}
             onChange={handleInputChange}
           />
@@ -350,6 +362,7 @@ const NewSchedule = () => {
             name="maxShifts"
             step="1"
             min="1"
+            max="99999"
             value={scheduleData.maxShifts ?? ""}
             onChange={handleInputChange}
           />

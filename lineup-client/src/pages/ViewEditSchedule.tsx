@@ -3,7 +3,7 @@ import type { DateDay, TimeRange, ValidMinutes } from "@/types";
 import { queryClient, useApi } from "@/utils/api";
 import { addToasts } from "@/utils/db";
 import toast from "react-hot-toast";
-import { convertToDateDays, formatTimeForInput, parseTimeString } from "@/utils/time.ts";
+import { convertToDateDays, parseTimeString } from "@/utils/time.ts";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import React, { type MouseEvent } from "react";
 import { useNavigate } from "react-router";
@@ -58,8 +58,8 @@ const ViewEditSchedule = () => {
       minutesPerSlot: number;
       shiftIntervals: number;
       usersPerShift: number;
-      maximumShiftDurationMinutes: number;
-      maximumShiftsPerWorker: number;
+      maximumShiftDurationMinutes: number | undefined;
+      maximumShiftsPerWorker: number | undefined;
     };
   };
 
@@ -81,8 +81,6 @@ const ViewEditSchedule = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
-      toast.success("Schedule updated successfully");
-      navigate("/");
     },
   });
 
@@ -99,8 +97,6 @@ const ViewEditSchedule = () => {
       return true;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schedules"] });
-      toast.success("Schedule deleted");
       navigate("/");
     },
   });
@@ -132,41 +128,39 @@ const ViewEditSchedule = () => {
         end: parseTimeString(schedule.endTime)!,
       },
       pplPerShift: schedule.schedulePreferences?.usersPerShift || 1,
-      maxShiftLength: schedule.schedulePreferences?.maximumShiftDurationMinutes ?? undefined,
-      maxShifts: schedule.schedulePreferences?.maximumShiftsPerWorker ?? undefined,
+      maxShiftLength:
+        schedule.schedulePreferences?.maximumShiftDurationMinutes === 0
+          ? undefined
+          : schedule.schedulePreferences?.maximumShiftDurationMinutes,
+      maxShifts:
+        schedule.schedulePreferences?.maximumShiftsPerWorker === 0
+          ? undefined
+          : schedule.schedulePreferences?.maximumShiftsPerWorker,
     });
   }, [schedule]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
 
-    setScheduleData((prev) => ({
-      ...prev,
-      [name]: event.target.type === "number" || name === "shiftTimes" ? Number(value) : value,
-    }));
+    setScheduleData((prev) => {
+      if (event.target instanceof HTMLInputElement && event.target.type === "number") {
+        if (value === "") return { ...prev, [name]: undefined };
+
+        let numericValue = Number(value);
+        const maxValue = event.target.max ? Number(event.target.max) : undefined;
+        const minValue = event.target.min ? Number(event.target.min) : undefined;
+
+        if (maxValue !== undefined && numericValue > maxValue) numericValue = maxValue;
+        if (minValue !== undefined && numericValue < minValue) numericValue = minValue;
+
+        return { ...prev, [name]: numericValue };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    console.log(
-      "Name: ",
-      scheduleData.name,
-      "; Shift intervals: ",
-      scheduleData.shiftTimes,
-      "; Dates: ",
-      scheduleData.dates,
-      "; DateDays: ",
-      scheduleData.dateDays,
-      "; Hours: ",
-      scheduleData.hours,
-      "; PplPerShift: ",
-      scheduleData.pplPerShift,
-      "; maxShiftLength: ",
-      scheduleData.maxShiftLength,
-      "; maxShifts: ",
-      scheduleData.maxShifts,
-    );
 
     addToasts(
       updateScheduleMutation.mutateAsync({
@@ -175,8 +169,8 @@ const ViewEditSchedule = () => {
           minutesPerSlot: Number(scheduleData.shiftTimes),
           shiftIntervals: Number(scheduleData.shiftTimes),
           usersPerShift: Number(scheduleData.pplPerShift),
-          maximumShiftDurationMinutes: scheduleData.maxShiftLength ?? 1440,
-          maximumShiftsPerWorker: scheduleData.maxShifts ?? 99999,
+          maximumShiftDurationMinutes: scheduleData.maxShiftLength,
+          maximumShiftsPerWorker: scheduleData.maxShifts,
         },
       }),
     );
@@ -186,11 +180,11 @@ const ViewEditSchedule = () => {
     event.preventDefault();
     console.log("Generate Schedule button clicked");
     //TODO: call backend to generate schedule
+    // Note: when calling generate schedule, use 1440 and 99999 as default values for maxShiftDuration and maxShiftsPerWorker
   };
 
   const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    console.log("Delete button pressed");
 
     if (!confirm("Are you sure you want to delete this schedule?")) return;
 
@@ -271,6 +265,7 @@ const ViewEditSchedule = () => {
             name="maxShiftLength"
             step={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60}
             min={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60}
+            max="1440"
             value={scheduleData.maxShiftLength ?? ""}
             onChange={handleInputChange}
           />
@@ -285,6 +280,7 @@ const ViewEditSchedule = () => {
             name="maxShifts"
             step="1"
             min="1"
+            max="99999"
             value={scheduleData.maxShifts ?? ""}
             onChange={handleInputChange}
           />
