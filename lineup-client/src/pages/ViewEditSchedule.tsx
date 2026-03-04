@@ -52,11 +52,8 @@ const ViewEditSchedule = () => {
       }),
   });
 
-  type CreateScheduleProps = {
+  type EditScheduleProps = {
     name: string;
-    dateCoverage: string[];
-    startTime: string;
-    endTime: string;
     schedulePreferences: {
       minutesPerSlot: number;
       shiftIntervals: number;
@@ -66,32 +63,10 @@ const ViewEditSchedule = () => {
     };
   };
 
-  const createScheduleMutation = useMutation({
-    mutationFn: async (newSchedule: CreateScheduleProps) => {
-      const res = await fetchWithAuth(`/api/schedule`, {
-        method: "POST",
-        body: JSON.stringify(newSchedule),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to add schedule");
-      }
-
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schedules"] });
-      navigate("/");
-    },
-  });
-
   const updateScheduleMutation = useMutation({
-    mutationFn: async (updatedSchedule: CreateScheduleProps) => {
+    mutationFn: async (updatedSchedule: EditScheduleProps) => {
       const res = await fetchWithAuth(`/api/schedule/${guid}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(updatedSchedule),
         headers: {
           "Content-Type": "application/json",
@@ -196,9 +171,6 @@ const ViewEditSchedule = () => {
     addToasts(
       updateScheduleMutation.mutateAsync({
         name: scheduleData.name,
-        dateCoverage: scheduleData.dates?.map((d) => d.toISOString().split("T")[0]) || [],
-        startTime: formatTimeForInput(scheduleData.hours.start),
-        endTime: formatTimeForInput(scheduleData.hours.end),
         schedulePreferences: {
           minutesPerSlot: Number(scheduleData.shiftTimes),
           shiftIntervals: Number(scheduleData.shiftTimes),
@@ -240,7 +212,7 @@ const ViewEditSchedule = () => {
         Home
       </button>{" "}
       <div>
-        <h3 className="pageHeader">{scheduleData.name}</h3>
+        <h3 className="pageHeader">{schedule.name}</h3>
         {/* TODO: actually represent the number of respondents */}
         <h4 className="pageSubHeader">Respondents: {0}</h4>
       </div>
