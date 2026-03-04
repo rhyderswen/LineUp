@@ -10,24 +10,6 @@ namespace LineUp.Backend.Controllers;
 [ApiController]
 public class ScheduleController(LineUpContext context) : ControllerBase
 {
-    [HttpGet("public")]
-    public IActionResult Public()
-    {
-        return Ok(
-            new
-            {
-                Message = "Hello from a public endpoint! You don't need to be authenticated to see this.",
-            }
-        );
-    }
-
-    // This is a helper action. It allows you to easily view all the claims of the token.
-    [HttpGet("claims")]
-    public IActionResult Claims()
-    {
-        return Ok(User.Claims.Select(c => new { c.Type, c.Value }));
-    }
-
     [HttpGet("{guid:guid}")]
     public async Task<IActionResult> GetSchedule(Guid guid)
     {
