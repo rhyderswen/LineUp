@@ -55,7 +55,7 @@ public class ScheduleController(LineUpContext context) : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteSchedule(Guid guid)
     {
-        var scheduleToDelete = await context.FindAsync<Schedule>(guid);
+        var scheduleToDelete = await context.Schedules.FirstOrDefaultAsync(s => s.Guid == guid);
         if (scheduleToDelete == null)
             return NotFound();
         if (scheduleToDelete.Auth0UserId != User.FindFirst(ClaimTypes.NameIdentifier)!.Value)
@@ -65,19 +65,24 @@ public class ScheduleController(LineUpContext context) : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("{guid:guid}")]
+    [HttpPatch("{guid:guid}")]
     [Authorize]
-    public async Task<IActionResult> UpdateSchedule(Guid guid, [FromBody] ScheduleDto schedule)
+    public async Task<IActionResult> UpdateSchedule(
+        Guid guid,
+        [FromBody] ScheduleUpdateDto schedule
+    )
     {
-        var scheduleToUpdate = await context.FindAsync<Schedule>(guid);
+        var scheduleToUpdate = await context.Schedules.FirstOrDefaultAsync(s => s.Guid == guid);
         if (scheduleToUpdate == null)
             return NotFound();
         if (scheduleToUpdate.Auth0UserId != User.FindFirst(ClaimTypes.NameIdentifier)!.Value)
             return Unauthorized();
-        scheduleToUpdate.DateCoverage = schedule.DateCoverage;
-        scheduleToUpdate.StartTime = schedule.StartTime;
-        scheduleToUpdate.EndTime = schedule.EndTime;
-        scheduleToUpdate.SchedulePreferences = schedule.SchedulePreferences;
+        if (schedule.Name != null)
+            scheduleToUpdate.Name = schedule.Name;
+        if (schedule.SchedulePreferences != null)
+            scheduleToUpdate.SchedulePreferences = schedule.SchedulePreferences;
+        if (schedule.ShiftAssignments != null)
+            scheduleToUpdate.ShiftAssignments = schedule.ShiftAssignments;
         await context.SaveChangesAsync();
         return NoContent();
     }
