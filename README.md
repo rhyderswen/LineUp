@@ -14,6 +14,7 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
 - [Node.js](https://nodejs.org/en/download)
 - [PNPM](https://pnpm.io/installation)
 - [.NET Aspire CLI](https://aspire.dev/get-started/install-cli/)
+- Docker or Podman (Podman is lighter-weight)
 
 ### Setup and Run
 
