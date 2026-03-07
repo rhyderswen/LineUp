@@ -5,7 +5,7 @@ import { defineConfig, loadEnv } from "vite";
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
-
+  const port = Number(env.PORT) || 5173;
   return {
     plugins: [react()],
     resolve: {
@@ -14,8 +14,10 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      port,
+      strictPort: true,
       proxy: {
-        "/api": env.VITE_BACKEND_URL,
+        "/api": env.services__api__1,
       },
     },
   };
