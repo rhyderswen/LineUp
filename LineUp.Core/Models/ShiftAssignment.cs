@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using LineUp.Backend.Attributes;
 
-namespace LineUp.Backend.Models;
+namespace LineUp.Core.Models;
 
 public class ShiftAssignment
 {
