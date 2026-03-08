@@ -1,5 +1,6 @@
 using LineUp.Backend.Models;
-using LineUp.Backend.Models.Forms;
+using LineUp.Core.Models;
+using LineUp.Core.Models.Forms;
 
 namespace LineUp.Backend.Support;
 

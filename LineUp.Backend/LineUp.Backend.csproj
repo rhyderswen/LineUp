@@ -50,12 +50,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Models\ScheduleDto.cs">
-      <DependentUpon>Schedule.cs</DependentUpon>
-    </Compile>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\LineUp.Core\LineUp.Core.csproj" />
+    <ProjectReference Include="..\LineUp.Scheduler\LineUp.Scheduler.csproj" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 using LineUp.Backend.Models;
+using LineUp.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
     [HttpGet("{guid:guid}/generateLink")]
     public IActionResult GenerateLink(Guid guid)
     {
-        Schedule? schedule = context.Schedules.FirstOrDefault<Schedule>(s => s.Guid == guid);
+        Schedule? schedule = context.Schedules.FirstOrDefault(s => s.Guid == guid);
         if (schedule == null)
         {
             return NotFound();

@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using LineUp.Backend.Models.Forms;
+using LineUp.Core.Models.Forms;
 using Microsoft.EntityFrameworkCore;
 
-namespace LineUp.Backend.Models;
+namespace LineUp.Core.Models;
 
 [Index(nameof(Guid))]
 public class Availability
