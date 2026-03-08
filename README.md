@@ -34,7 +34,11 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
    ```bash
    SEED=true aspire run
    ```
-   
+   or for PowerShell users:
+   ```powershell
+   $env:SEED = "true"
+   aspire run
+   ```
 Note: On subsequent runs, do not use the `SEED` flag, unless you want to re-seed the database (which will delete all existing data).
 
 #### API Client Generation
@@ -42,6 +46,11 @@ Note: On subsequent runs, do not use the `SEED` flag, unless you want to re-seed
 To regenerate the API client after backend changes:
 ```bash
 GEN=true aspire run
+```
+or for PowerShell users:
+```powershell
+$env:GEN = "true"
+aspire run
 ```
 
 ## Versions:
