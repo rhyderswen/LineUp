@@ -1,7 +1,5 @@
-using FluentAssertions;
 using JetBrains.Annotations;
 using LineUp.Core.Models;
-using LineUp.Scheduler;
 
 namespace LineUp.Scheduler.Tests;
 
@@ -43,9 +41,9 @@ public class AvailabilityMatrixToolsTest
         var result = AvailabilityMatrixTools.GenerateMatrixFromSchedule(schedule);
         
         // Assert
-        result.Should().NotBeNull();
-        result.GetLength(0).Should().Be(3);
-        result.GetLength(1).Should().Be(4);
+        Assert.NotNull(result);
+        Assert.Equal(3, result.GetLength(0));
+        Assert.Equal(4, result.GetLength(1));
     }
 
     [Fact]
@@ -55,7 +53,8 @@ public class AvailabilityMatrixToolsTest
         Dictionary<TimeOnly, int> result = AvailabilityMatrixTools.GenerateMatrixPointerHashSet(schedule);
         
         // Assert
-        result.Count.Should().Be(4);
+        Assert.NotNull(result);
+        Assert.Equal(4, result.Count);
     }
 
 }
