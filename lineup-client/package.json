@@ -58,5 +58,5 @@
       "vite": "npm:rolldown-vite@7.2.5"
     }
   },
-  "packageManager": "pnpm@7.26.0"
+  "packageManager": "pnpm@10.31.0"
 }
