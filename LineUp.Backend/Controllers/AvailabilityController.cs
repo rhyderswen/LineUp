@@ -31,18 +31,13 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
         return NotFound();
     }
 
-    [HttpGet("{guid:guid}/generateLink")]
-    public IActionResult GenerateLink(Guid guid)
+    [HttpGet("{guid:guid}")]
+    public async Task<IActionResult> GetAvailability(Guid guid)
     {
-        Schedule? schedule = context.Schedules.FirstOrDefault<Schedule>(s => s.Guid == guid);
-        if (schedule == null)
-        {
-            return NotFound();
-        }
-        Availability availability = new Availability { UserName = "", Schedule = schedule };
-        context.Availabilities.Add(availability);
-        context.SaveChanges();
-        return Ok(availability.Guid);
+        var result = await context.Availabilities.FirstOrDefaultAsync(a => a.Guid == guid);
+        if (result != null)
+            return Ok(result);
+        return NotFound();
     }
 
     [HttpPatch("{guid:guid}/edit")]
