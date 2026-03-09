@@ -221,7 +221,7 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "tags": [
           "Schedule"
         ],
@@ -240,17 +240,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ScheduleDto"
+                "$ref": "#/components/schemas/ScheduleUpdateDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ScheduleDto"
+                "$ref": "#/components/schemas/ScheduleUpdateDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ScheduleDto"
+                "$ref": "#/components/schemas/ScheduleUpdateDto"
               }
             }
           },
@@ -699,6 +699,52 @@
               "string"
             ],
             "format": "int32"
+          }
+        }
+      },
+      "ScheduleUpdateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "guid": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "shiftAssignments": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ShiftAssignment"
+            }
+          },
+          "schedulePreferences": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SchedulePreferences"
+              }
+            ]
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

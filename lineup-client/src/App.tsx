@@ -5,6 +5,7 @@ import Error from "@/pages/Error";
 import Home from "@/pages/Home";
 import NewSchedule from "@/pages/NewSchedule";
 import Schedule from "@/pages/Schedule";
+import ViewEditSchedule from "@/pages/ViewEditSchedule";
 import { createBrowserRouter, Navigate, Outlet, RouterProvider, type LoaderFunctionArgs } from "react-router";
 
 // Wrap Topbar as a layout route so it wraps all pages
@@ -21,10 +22,8 @@ async function scheduleLoader({ params }: LoaderFunctionArgs) {
     credentials: "include",
   });
 
-  console.log(res);
-
   if (!res.ok) {
-    throw new Response("Schedule not found", { status: 404 });
+    throw new Response("Schedule not found", { status: res.status, statusText: res.statusText });
   }
 
   return res.json();
@@ -55,11 +54,12 @@ const router = createBrowserRouter([
             element: <Schedule />,
             loader: scheduleLoader,
           },
+          {
+            path: ":guid/edit", // matches /schedule/:guid/edit
+            element: <ViewEditSchedule />,
+            loader: scheduleLoader,
+          },
         ],
-      },
-      {
-        path: "*",
-        element: <Navigate to="/" replace />,
       },
     ],
   },
