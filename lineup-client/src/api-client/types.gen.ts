@@ -216,6 +216,22 @@ export type PatchApiAvailabilityByGuidEditResponses = {
   200: unknown;
 };
 
+export type GetApiScheduleByGuidDetailsData = {
+  body?: never;
+  path: {
+    guid: string;
+  };
+  query?: never;
+  url: "/api/schedule/{guid}/details";
+};
+
+export type GetApiScheduleByGuidDetailsResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
+
 export type DeleteApiScheduleByGuidData = {
   body?: never;
   path: {

@@ -22,6 +22,8 @@ import type {
   GetApiScheduleByGuidCreateAvailabilityData,
   GetApiScheduleByGuidCreateAvailabilityResponses,
   GetApiScheduleByGuidData,
+  GetApiScheduleByGuidDetailsData,
+  GetApiScheduleByGuidDetailsResponses,
   GetApiScheduleByGuidResponses,
   GetApiScheduleData,
   GetApiScheduleResponses,
@@ -103,6 +105,14 @@ export const patchApiAvailabilityByGuidEdit = <ThrowOnError extends boolean = fa
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+
+export const getApiScheduleByGuidDetails = <ThrowOnError extends boolean = false>(
+  options: Options<GetApiScheduleByGuidDetailsData, ThrowOnError>,
+) =>
+  (options.client ?? client).get<GetApiScheduleByGuidDetailsResponses, unknown, ThrowOnError>({
+    url: "/api/schedule/{guid}/details",
+    ...options,
   });
 
 export const deleteApiScheduleByGuid = <ThrowOnError extends boolean = false>(

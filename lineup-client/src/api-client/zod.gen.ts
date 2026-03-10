@@ -295,6 +295,14 @@ export const zGetApiAvailabilityByGuidData = z.object({
   query: z.optional(z.never()),
 });
 
+export const zGetApiScheduleByGuidDetailsData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    guid: z.uuid(),
+  }),
+  query: z.optional(z.never()),
+});
+
 export const zDeleteApiScheduleByGuidData = z.object({
   body: z.optional(z.never()),
   path: z.object({

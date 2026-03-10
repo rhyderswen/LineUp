@@ -15,6 +15,7 @@ import {
   getApiSchedule,
   getApiScheduleByGuid,
   getApiScheduleByGuidCreateAvailability,
+  getApiScheduleByGuidDetails,
   type Options,
   patchApiAvailabilityByGuidEdit,
   patchApiScheduleByGuid,
@@ -31,6 +32,7 @@ import type {
   GetApiPublicData,
   GetApiScheduleByGuidCreateAvailabilityData,
   GetApiScheduleByGuidData,
+  GetApiScheduleByGuidDetailsData,
   GetApiScheduleData,
   PatchApiAvailabilityByGuidEditData,
   PatchApiScheduleByGuidData,
@@ -207,6 +209,23 @@ export const patchApiAvailabilityByGuidEditMutation = (
   };
   return mutationOptions;
 };
+
+export const getApiScheduleByGuidDetailsQueryKey = (options: Options<GetApiScheduleByGuidDetailsData>) =>
+  createQueryKey("getApiScheduleByGuidDetails", options);
+
+export const getApiScheduleByGuidDetailsOptions = (options: Options<GetApiScheduleByGuidDetailsData>) =>
+  queryOptions<unknown, DefaultError, unknown, ReturnType<typeof getApiScheduleByGuidDetailsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getApiScheduleByGuidDetails({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: getApiScheduleByGuidDetailsQueryKey(options),
+  });
 
 export const deleteApiScheduleByGuidMutation = (
   options?: Partial<Options<DeleteApiScheduleByGuidData>>,
