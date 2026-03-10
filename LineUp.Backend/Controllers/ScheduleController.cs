@@ -3,6 +3,7 @@ using LineUp.Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Trace;
 
 namespace LineUp.Backend.Controllers;
 
@@ -11,14 +12,53 @@ namespace LineUp.Backend.Controllers;
 public class ScheduleController(LineUpContext context) : ControllerBase
 {
     [HttpGet("{guid:guid}")]
+    [Authorize]
+    [AllowAnonymous]
     public async Task<IActionResult> GetSchedule(Guid guid)
     {
-        var result = await context
+        var schedule = await context
             .Schedules.Include(s => s.SchedulePreferences)
             .FirstOrDefaultAsync(s => s.Guid == guid);
-        if (result != null)
-            return Ok(result);
-        return NotFound();
+        if (schedule == null)
+            return NotFound();
+
+        var isAuthenticatedAndCanAccessSchedule =
+            User.Identity?.IsAuthenticated == true
+            && User.FindFirstValue(ClaimTypes.NameIdentifier) == schedule.Auth0UserId;
+
+        if (isAuthenticatedAndCanAccessSchedule)
+        {
+            List<Availability> availabilities = await context
+                .Availabilities.Where(availability => availability.Schedule.Guid == guid)
+                .ToListAsync();
+            var dto = new GetScheduleAuthenticatedDto
+            {
+                Name = schedule.Name,
+                DateCoverage = schedule.DateCoverage,
+                StartTime = schedule.StartTime,
+                EndTime = schedule.EndTime,
+                Form = schedule.Form,
+                ShiftAssignments = schedule.ShiftAssignments,
+                SchedulePreferences = schedule.SchedulePreferences,
+                Availabilities = availabilities,
+            };
+            return Ok(dto);
+        }
+        else
+        {
+            var dto = new GetScheduleUnauthenticatedDto
+            {
+                Name = schedule.Name,
+                DateCoverage = schedule.DateCoverage,
+                StartTime = schedule.StartTime,
+                EndTime = schedule.EndTime,
+                Form = schedule.Form,
+                ShiftAssignments = schedule.ShiftAssignments,
+                SchedulePreferences = schedule.SchedulePreferences,
+            };
+
+            return Ok(dto);
+        }
     }
 
     [HttpGet]
