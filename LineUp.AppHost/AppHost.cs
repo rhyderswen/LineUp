@@ -25,6 +25,7 @@ builder.Eventing.Subscribe<ResourceEndpointsAllocatedEvent>((e, ct) => {
             {
                 var endpoint = api.GetEndpoint("http");
                 Console.WriteLine($"Backend: {endpoint.Url}");
+                Console.WriteLine($"Scalar: {endpoint.Url}/scalar");
                 break;
             }
         case "web":
