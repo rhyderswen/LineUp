@@ -18,15 +18,32 @@ function Layout() {
 }
 
 async function scheduleLoader({ params }: LoaderFunctionArgs) {
-  const res = await fetch(`/api/schedule/${params.guid}`, {
-    credentials: "include",
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
-  if (!res.ok) {
-    throw new Response("Schedule not found", { status: res.status, statusText: res.statusText });
+  try {
+    const res = await fetch(`/api/schedule/${params.guid}`, {
+      credentials: "include",
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      throw new Response("Schedule not found", {
+        status: res.status,
+        statusText: res.statusText,
+      });
+    }
+
+    return res.json();
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new Response("API request timed out", { status: 504, statusText: "Gateway Timeout" });
+    }
+
+    throw new Response("Failed to reach API", { status: 503, statusText: "Service Unavailable" });
+  } finally {
+    clearTimeout(timeout);
   }
-
-  return res.json();
 }
 
 const router = createBrowserRouter([
