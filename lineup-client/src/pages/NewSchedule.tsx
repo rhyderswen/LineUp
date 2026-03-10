@@ -9,13 +9,13 @@ import {
   parseTimeString,
   toMinutes,
 } from "@/utils/time.ts";
+import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import DatePickerModule, { DateObject } from "react-multi-date-picker";
 import { useNavigate } from "react-router";
-import "./newschedule.css";
 import "../dateinput.css";
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import "./newSchedule.css";
 
 // This is because importing DatePicker directly didn't work with Vite for some reason
 // Trust me that this is somehow the most elegant solution I could find
@@ -240,8 +240,8 @@ const NewSchedule = () => {
       <hr />
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="scheduleName">
-            Schedule Name<label className="requiredStar">*</label>:{" "}
+          <label htmlFor="scheduleName" className="required">
+            Schedule Name
           </label>
           <br />
           <input
@@ -255,8 +255,8 @@ const NewSchedule = () => {
           />
         </div>
         <div>
-          <label htmlFor="shiftTimes">
-            Shift Intervals (in minutes)<label className="requiredStar">*</label>:{" "}
+          <label htmlFor="shiftTimes" className="required">
+            Shift Intervals (in minutes)
           </label>
           <br />
           <select
@@ -279,8 +279,8 @@ const NewSchedule = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="scheduleDuration">
-            Schedule Duration<label className="requiredStar">*</label>:{" "}
+          <label htmlFor="scheduleDuration" className="required">
+            Schedule Duration
           </label>
           <br />
           <input
@@ -305,9 +305,7 @@ const NewSchedule = () => {
             required
           />
           <br />
-          <label>
-            Dates<label className="requiredStar">*</label>:{" "}
-          </label>
+          <label className="required">Dates</label>
           <br />
           <DatePicker
             inputClass="input"
@@ -321,8 +319,8 @@ const NewSchedule = () => {
           <br />
         </div>
         <div>
-          <label htmlFor="peoplePerShift">
-            Workers per shift<label className="requiredStar">*</label>:{" "}
+          <label htmlFor="peoplePerShift" className="required">
+            Workers per shift
           </label>
           <br />
           <input
@@ -338,7 +336,7 @@ const NewSchedule = () => {
           />
         </div>
         <div>
-          <label htmlFor="maxShiftLength">Maximum Shift Duration (in minutes):</label>
+          <label htmlFor="maxShiftLength">Maximum Shift Duration (in minutes)</label>
           <br />
           <input
             className="input"
@@ -353,7 +351,7 @@ const NewSchedule = () => {
           />
         </div>
         <div>
-          <label htmlFor="maxShifts">Maximum Shifts per Worker:</label>
+          <label htmlFor="maxShifts">Maximum Shifts per Worker</label>
           <br />
           <input
             className="input"
@@ -369,7 +367,7 @@ const NewSchedule = () => {
         </div>
         <br />
         <div className="submitContainer">
-          <button type="submit" className="submitBtn">
+          <button type="submit" className="submitBtn" disabled={createScheduleMutation.isPending}>
             Create Schedule
           </button>
         </div>

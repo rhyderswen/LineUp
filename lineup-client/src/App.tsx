@@ -1,10 +1,10 @@
 // App.tsx
 import "@/App.css";
 import Topbar from "@/components/Topbar";
+import Availability from "@/pages/Availability";
 import Error from "@/pages/Error";
 import Home from "@/pages/Home";
 import NewSchedule from "@/pages/NewSchedule";
-import Schedule from "@/pages/Schedule";
 import ViewEditSchedule from "@/pages/ViewEditSchedule";
 import { createBrowserRouter, Navigate, Outlet, RouterProvider, type LoaderFunctionArgs } from "react-router";
 
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
           },
           {
             path: ":guid", // matches /schedule/:guid
-            element: <Schedule />,
+            element: <Availability />,
             loader: scheduleLoader,
           },
           {

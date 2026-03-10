@@ -1,5 +1,5 @@
 import type { DateDay, TimeRange, ValidMinutes } from "@/types";
-import { addMinutesToTime, formatTime, getTimeIncrementLabel, weekdayToNum } from "@/utils/time";
+import { addMinutesToTime, formatTime, getTimeIncrementLabel, rangeIs24Hours, weekdayToNum } from "@/utils/time";
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { Fragment, useEffect, useState } from "react";
 import "./calendar.css";
@@ -10,19 +10,29 @@ interface CalendarProps {
   minutesPerCell: ValidMinutes;
   dates: DateDay[];
   range: TimeRange;
+  setFocusedCell?: React.Dispatch<React.SetStateAction<string | null>>;
+  colors?: { [key: string]: string }; // {"3/10-09:00": "var(--color)", ...}
 }
 
 // Children are each cell of the calendar
-const Calendar = ({ Cell, minutesPerCell, dates, range }: CalendarProps) => {
+const Calendar = ({ Cell, minutesPerCell, dates, range, setFocusedCell, colors }: CalendarProps) => {
   const [selectedCells, setSelectedCells] = useState<string[]>([]);
   const [isPointerDown, setIsPointerDown] = useState(false);
   const [isEnablingCells, setIsEnablingCells] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const numRows = Math.ceil(
-    (range.end.hour - range.start.hour) * (60 / minutesPerCell) +
-      (range.end.minute - range.start.minute) / minutesPerCell,
-  );
+  const numRows = calculateNumRows();
   const pageDates = getPageDates(currentPage);
+
+  function calculateNumRows() {
+    if (rangeIs24Hours(range)) {
+      return 24 * (60 / minutesPerCell);
+    }
+
+    return Math.ceil(
+      (range.end.hour - range.start.hour) * (60 / minutesPerCell) +
+        (range.end.minute - range.start.minute) / minutesPerCell,
+    );
+  }
 
   function calculatePageStarts() {
     const pageStarts = [0];
@@ -124,14 +134,22 @@ const Calendar = ({ Cell, minutesPerCell, dates, range }: CalendarProps) => {
     >
       <div className="pageButtonWrapper">
         {currentPage > 0 ? (
-          <button className="pageButton pageLeft" onClick={() => setCurrentPage((currentPage) => currentPage - 1)}>
+          <button
+            type="button"
+            className="pageButton pageLeft"
+            onClick={() => setCurrentPage((currentPage) => currentPage - 1)}
+          >
             <ArrowLeftIcon className="pageIcon" />
           </button>
         ) : (
           <div />
         )}
         {currentPage < calculatePageStarts().length - 1 ? (
-          <button className="pageButton pageRight" onClick={() => setCurrentPage((currentPage) => currentPage + 1)}>
+          <button
+            type="button"
+            className="pageButton pageRight"
+            onClick={() => setCurrentPage((currentPage) => currentPage + 1)}
+          >
             <ArrowRightIcon className="pageIcon" />
           </button>
         ) : (
@@ -164,12 +182,15 @@ const Calendar = ({ Cell, minutesPerCell, dates, range }: CalendarProps) => {
                 setIsPointerDown={setIsPointerDown}
                 isEnablingCells={isEnablingCells}
                 setIsEnablingCells={setIsEnablingCells}
+                setCurrentlyFocusedCell={setFocusedCell}
+                colors={colors ?? {}}
               />
             </div>
           ))}
         </Fragment>
       ))}
       <div className="calendarLabel calendarRowLabel">{formatTime(range.end)}</div>
+      <input type="hidden" name="calendarSelected" value={selectedCells} />
     </div>
   );
 };

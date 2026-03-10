@@ -135,3 +135,35 @@
     border-color: var(--primary-hover);
   }
 }
+
+.required::after {
+  content: "*";
+  color: var(--required);
+  position: absolute;
+}
+
+.scheduleName {
+  font-size: 150%;
+  color: var(--primary-active);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.formWrapper,
+.newSchedule {
+  text-align: left;
+  margin: 1rem;
+  font-size: 90%;
+}
+
+.inputGroup {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.availabilityLabel {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 0.5em;
+}

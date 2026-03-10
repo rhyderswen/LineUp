@@ -1,5 +1,5 @@
 import type { DateDay, Time } from "@/types";
-import { formatDate, formatDateTime, formatTime } from "@/utils/time";
+import { formatDateTime, formatTime } from "@/utils/time";
 import React from "react";
 
 export interface CalendarCellProps {
@@ -11,6 +11,8 @@ export interface CalendarCellProps {
   setIsPointerDown: React.Dispatch<React.SetStateAction<boolean>>;
   isEnablingCells: boolean;
   setIsEnablingCells: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentlyFocusedCell?: React.Dispatch<React.SetStateAction<string | null>>;
+  colors: { [key: string]: string };
 }
 
 const FillableCell = ({
@@ -26,7 +28,6 @@ const FillableCell = ({
   const isClicked = selectedCells.includes(formatDateTime(date.date, time));
 
   function updateCell() {
-    console.log(`Clicked on ${formatDate(date, time)}`);
     if (isClicked) {
       setSelectedCells((cells) => cells.filter((cell) => cell !== formatDateTime(date.date, time)));
     } else {
@@ -48,6 +49,7 @@ const FillableCell = ({
 
   return (
     <button
+      type="button"
       onPointerDown={onPointerDown}
       onPointerUp={() => setIsPointerDown(false)}
       onPointerEnter={onPointerEnter}
@@ -57,4 +59,16 @@ const FillableCell = ({
   );
 };
 
-export { FillableCell };
+const ColoredCell = ({ time, date, setCurrentlyFocusedCell, colors }: CalendarCellProps) => {
+  return (
+    <div
+      onPointerEnter={() => setCurrentlyFocusedCell && setCurrentlyFocusedCell(formatDateTime(date.date, time))}
+      onPointerLeave={() => setCurrentlyFocusedCell && setCurrentlyFocusedCell(null)}
+      className={"calendarInnerCell"}
+      title={date.day + " " + formatTime(time)}
+      style={{ backgroundColor: colors[formatDateTime(date.date, time)] ?? "transparent" }}
+    ></div>
+  );
+};
+
+export { ColoredCell, FillableCell };

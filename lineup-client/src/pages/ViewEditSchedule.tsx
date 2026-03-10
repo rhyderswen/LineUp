@@ -1,19 +1,18 @@
 import type { DateDay, TimeRange, ValidMinutes } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
+import { Calendar } from "@/components/Calendar";
 import { queryClient, useApi } from "@/utils/api";
 import { addToasts } from "@/utils/db";
-import toast from "react-hot-toast";
 import { convertToDateDays, parseTimeString } from "@/utils/time.ts";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import React, { type MouseEvent } from "react";
-import { useNavigate } from "react-router";
-import "./newschedule.css";
-import "../dateinput.css";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { useParams } from "react-router";
-import { Calendar } from "@/components/Calendar";
+import { useMutation } from "@tanstack/react-query";
+import React, { type MouseEvent } from "react";
+import { useNavigate, useParams } from "react-router";
+import "../dateinput.css";
+import "./newschedule.css";
 // TODO: Replace with availability viewable cell when that's made
-import { FillableCell } from "@/components/CalendarCells";
+import { ColoredCell } from "@/components/CalendarCells";
+import { useLoaderData } from "react-router";
 
 interface ScheduleData {
   name: string; //the name of the event
@@ -32,25 +31,7 @@ const ViewEditSchedule = () => {
   const navigate = useNavigate();
   const { fetchWithAuth } = useApi();
   const { guid } = useParams<{ guid: string }>();
-
-  const {
-    data: schedule,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["schedules", guid],
-    queryFn: () =>
-      fetchWithAuth(`/api/schedule/${guid}`).then(async (res) => {
-        if (!res.ok) {
-          toast.error(<b>Failed to fetch schedule</b>, { id: "fetch-schedule-error", duration: Infinity });
-          throw new Error("Failed to fetch schedule");
-        } else {
-          toast.dismiss("fetch-schedule-error");
-        }
-        const resJson = await res.json();
-        return resJson;
-      }),
-  });
+  const data = useLoaderData();
 
   type EditScheduleProps = {
     name: string;
@@ -115,30 +96,28 @@ const ViewEditSchedule = () => {
   });
 
   React.useEffect(() => {
-    if (!schedule) return;
-
-    const jsDates = schedule.dateCoverage?.map((d: string) => new Date(d)) ?? [];
-    console.log("Fetched schedule:", schedule);
+    const jsDates = data.dateCoverage?.map((d: string) => new Date(d)) ?? [];
+    console.log("Fetched schedule:", data);
     setScheduleData({
-      name: schedule.name,
-      shiftTimes: schedule.schedulePreferences?.minutesPerSlot || 15,
+      name: data.name,
+      shiftTimes: data.schedulePreferences?.minutesPerSlot || 15,
       dates: jsDates,
       dateDays: convertToDateDays(jsDates),
       hours: {
-        start: parseTimeString(schedule.startTime)!,
-        end: parseTimeString(schedule.endTime)!,
+        start: parseTimeString(data.startTime)!,
+        end: parseTimeString(data.endTime)!,
       },
-      pplPerShift: schedule.schedulePreferences?.usersPerShift || 1,
+      pplPerShift: data.schedulePreferences?.usersPerShift || 1,
       maxShiftLength:
-        schedule.schedulePreferences?.maximumShiftDurationMinutes === 0
+        data.schedulePreferences?.maximumShiftDurationMinutes === 0
           ? undefined
-          : schedule.schedulePreferences?.maximumShiftDurationMinutes,
+          : data.schedulePreferences?.maximumShiftDurationMinutes,
       maxShifts:
-        schedule.schedulePreferences?.maximumShiftsPerWorker === 0
+        data.schedulePreferences?.maximumShiftsPerWorker === 0
           ? undefined
-          : schedule.schedulePreferences?.maximumShiftsPerWorker,
+          : data.schedulePreferences?.maximumShiftsPerWorker,
     });
-  }, [schedule]);
+  }, [data]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
@@ -192,8 +171,7 @@ const ViewEditSchedule = () => {
     addToasts(deleteScheduleMutation.mutateAsync());
   };
 
-  if (isLoading || !scheduleData) return <div>Loading...</div>;
-  if (isError) return <div>Error loading schedule.</div>;
+  if (!scheduleData) return <div>Loading...</div>;
 
   return (
     <div className="newSchedule">
@@ -207,18 +185,26 @@ const ViewEditSchedule = () => {
         Home
       </button>{" "}
       <div>
-        <h3 className="pageHeader">{schedule.name}</h3>
+        <div className="scheduleName">
+          <b>{data.name}</b>
+        </div>
         {/* TODO: actually represent the number of respondents */}
         <h4 className="pageSubHeader">Respondents: {0}</h4>
       </div>
       <Calendar
-        Cell={FillableCell}
+        Cell={ColoredCell}
         minutesPerCell={scheduleData.shiftTimes as ValidMinutes}
         dates={scheduleData.dateDays}
         range={scheduleData.hours}
+        colors={{ "3/10-09:30": "red", "3/10-10:00": "blue" }} //TODO: replace with actual availability data when that's implemented
       ></Calendar>
       <div className="submitContainer">
-        <button type="button" className="submitBtn" onClick={handleGenerate}>
+        <button
+          type="button"
+          className="submitBtn"
+          onClick={handleGenerate}
+          disabled={updateScheduleMutation.isPending || deleteScheduleMutation.isPending}
+        >
           Generate Schedule
         </button>
       </div>
@@ -288,13 +274,22 @@ const ViewEditSchedule = () => {
         </div>
         <br />
         <div className="submitContainer">
-          <button type="submit" className="submitBtn">
+          <button
+            type="submit"
+            className="submitBtn"
+            disabled={updateScheduleMutation.isPending || deleteScheduleMutation.isPending}
+          >
             Confirm Changes
           </button>
         </div>
         <br />
         <div className="submitContainer">
-          <button type="button" className="deleteBtn" onClick={handleDelete}>
+          <button
+            type="button"
+            className="deleteBtn"
+            onClick={handleDelete}
+            disabled={updateScheduleMutation.isPending || deleteScheduleMutation.isPending}
+          >
             Delete Schedule
           </button>
         </div>

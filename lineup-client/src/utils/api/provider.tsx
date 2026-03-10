@@ -14,26 +14,40 @@ async function fetchWithoutAuth(path: string, init?: RequestInit) {
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated, getAccessTokenSilently, logout } = useAuth0();
 
   const fetchWithAuth = useCallback(
     async (path: string, init?: RequestInit) => {
-      let res;
       if (!isAuthenticated) {
-        res = await fetchWithoutAuth(path, init);
-      } else {
+        return await fetchWithoutAuth(path, init);
+      }
+
+      try {
         const token = await getAccessTokenSilently();
-        res = await fetch(path, {
+        const res = await fetch(path, {
           ...init,
           headers: {
             ...init?.headers,
             Authorization: `Bearer ${token}`,
           },
         });
+
+        return res;
+      } catch (err: any) {
+        if (err?.message?.includes("Missing Refresh Token")) {
+          logout({
+            logoutParams: {
+              returnTo: window.location.origin,
+            },
+          });
+
+          return new Response(null, { status: 401 });
+        }
+
+        throw err;
       }
-      return res;
     },
-    [isAuthenticated, getAccessTokenSilently],
+    [isAuthenticated, getAccessTokenSilently, logout],
   );
 
   const value: AuthContextValue = {

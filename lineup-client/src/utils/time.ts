@@ -1,4 +1,12 @@
-import { WEEKDAYS, type DateDay, type Time, type ValidHours, type ValidMinutes, type Weekday } from "@/types";
+import {
+  WEEKDAYS,
+  type DateDay,
+  type Time,
+  type TimeRange,
+  type ValidHours,
+  type ValidMinutes,
+  type Weekday,
+} from "@/types";
 
 function timesAreEqual(time1: Time, time2: Time): boolean {
   return time1.hour === time2.hour && time1.minute === time2.minute;
@@ -114,6 +122,15 @@ function convertToDateDays(dates: Date[]): DateDay[] {
   }));
 }
 
+function rangeIs24Hours(range: TimeRange): boolean {
+  if (range.start.hour === 0 && range.end.hour === 0) {
+    if (range.start.minute === 0 && range.end.minute === 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export {
   addMinutesToTime,
   convertToDateDays,
@@ -124,6 +141,7 @@ export {
   getTimeIncrementLabel,
   getValidMinutesForInterval,
   parseTimeString,
+  rangeIs24Hours,
   timesAreEqual,
   toMinutes,
   weekdayToNum,
