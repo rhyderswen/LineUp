@@ -18,4 +18,23 @@ var web = builder.AddViteApp("web", "../lineup-client")
     .WithReference(api)
     .WaitFor(api);
 
+builder.Eventing.Subscribe<ResourceEndpointsAllocatedEvent>((e, ct) => {
+    switch (e.Resource.Name)
+    {
+        case "api":
+            {
+                var endpoint = api.GetEndpoint("http");
+                Console.WriteLine($"Backend: {endpoint.Url}");
+                break;
+            }
+        case "web":
+            {
+                var endpoint = web.GetEndpoint("http");
+                Console.WriteLine($"Frontend: {endpoint.Url}");
+                break;
+            }
+    }
+    return Task.CompletedTask;
+});
+
 builder.Build().Run();
