@@ -1,5 +1,12 @@
 import type { TimeRange, ValidMinutes } from "@/types";
-import { addMinutesToTime, dayNumberToWeekday, formatTime, getTimeIncrementLabel, rangeIs24Hours } from "@/utils/time";
+import {
+  addMinutesToTime,
+  addTimeToDate,
+  dayNumberToWeekday,
+  formatTime,
+  getTimeIncrementLabel,
+  rangeIs24Hours,
+} from "@/utils/time";
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { Fragment, useEffect, useState } from "react";
 import "./calendar.css";
@@ -10,8 +17,8 @@ interface CalendarProps {
   minutesPerCell: ValidMinutes;
   dates: Date[];
   range: TimeRange;
+  colors?: { [key: string]: string }; // {"2026-03-10T16:15:00.000Z": "var(--color)", ...}
   setFocusedCell?: React.Dispatch<React.SetStateAction<string | null>>;
-  colors?: { [key: string]: string }; // {"3/10-09:00": "var(--color)", ...}
 }
 
 // Children are each cell of the calendar
@@ -172,7 +179,20 @@ const Calendar = ({ Cell, minutesPerCell, dates, range, setFocusedCell, colors }
             {getTimeIncrementLabel(row, range.start, minutesPerCell)}
           </div>
           {pageDates.map((date, col) => (
-            <div key={date.toISOString()} className={calculateCellClasses(row, col)} style={extraColMargin(col)}>
+            <div
+              key={date.toISOString()}
+              className={calculateCellClasses(row, col)}
+              style={extraColMargin(col)}
+              onPointerEnter={() =>
+                setFocusedCell &&
+                setFocusedCell(
+                  addTimeToDate(date, addMinutesToTime(range.start, (minutesPerCell * row) as ValidMinutes))
+                    .toISOString()
+                    .replace(".000", ""),
+                )
+              }
+              onPointerLeave={() => setFocusedCell && setFocusedCell(null)}
+            >
               <Cell
                 time={addMinutesToTime(range.start, (minutesPerCell * row) as ValidMinutes)}
                 date={date}
@@ -182,7 +202,6 @@ const Calendar = ({ Cell, minutesPerCell, dates, range, setFocusedCell, colors }
                 setIsPointerDown={setIsPointerDown}
                 isEnablingCells={isEnablingCells}
                 setIsEnablingCells={setIsEnablingCells}
-                setCurrentlyFocusedCell={setFocusedCell}
                 colors={colors ?? {}}
               />
             </div>

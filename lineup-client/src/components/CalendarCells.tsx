@@ -11,7 +11,6 @@ export interface CalendarCellProps {
   setIsPointerDown: React.Dispatch<React.SetStateAction<boolean>>;
   isEnablingCells: boolean;
   setIsEnablingCells: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentlyFocusedCell?: React.Dispatch<React.SetStateAction<string | null>>;
   colors: { [key: string]: string };
 }
 
@@ -60,18 +59,10 @@ const FillableCell = ({
   );
 };
 
-const ColoredCell = ({ time, date, setCurrentlyFocusedCell, colors }: CalendarCellProps) => {
-  const dateString = addTimeToDate(date, time).toISOString();
+const ColoredCell = ({ time, date, colors }: CalendarCellProps) => {
+  const dateString = addTimeToDate(date, time).toISOString().replace(".000", "");
 
-  return (
-    <div
-      onPointerEnter={() => setCurrentlyFocusedCell && setCurrentlyFocusedCell(dateString)}
-      onPointerLeave={() => setCurrentlyFocusedCell && setCurrentlyFocusedCell(null)}
-      className={"calendarInnerCell"}
-      title={dayNumberToWeekday(date.getDay()) + " " + formatTime(time)}
-      style={{ backgroundColor: colors[dateString] ?? "transparent" }}
-    ></div>
-  );
+  return <div className={"calendarInnerCell"} style={{ backgroundColor: colors[dateString] ?? "transparent" }}></div>;
 };
 
 export { ColoredCell, FillableCell };

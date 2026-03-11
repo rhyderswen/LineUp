@@ -1,15 +1,16 @@
 import { Calendar } from "@/components/Calendar";
 import { FillableCell } from "@/components/CalendarCells";
 import { queryClient, useApi } from "@/utils/api";
-import { addToasts } from "@/utils/db";
+import { addToasts, loaderQuery } from "@/utils/db";
 import { parseTimeString } from "@/utils/time";
-import { useMutation } from "@tanstack/react-query";
-import { useLoaderData, useNavigate } from "react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router";
 
 const Availability = () => {
-  const data = useLoaderData();
   const navigate = useNavigate();
   const { fetchWithAuth } = useApi();
+  const { guid } = useParams();
+  const { data } = useQuery(loaderQuery("/api/schedule/{}", guid!));
 
   console.log(data);
 
@@ -22,7 +23,7 @@ const Availability = () => {
   const createAvailabilityMutation = useMutation({
     mutationFn: async (newAvailability: CreateAvailabilityProps) => {
       console.log(newAvailability);
-      const res = await fetchWithAuth(`/api/schedule/${data.guid}/createAvailability`, {
+      const res = await fetchWithAuth(`/api/schedule/${guid}/createAvailability`, {
         method: "POST",
         body: JSON.stringify(newAvailability),
         headers: {
@@ -94,7 +95,7 @@ const Availability = () => {
           ></Calendar>
         </div>
         <div className="submitContainer">
-          <button type="submit" className="submitBtn">
+          <button type="submit" className="submitBtn" disabled={createAvailabilityMutation.isPending}>
             Submit
           </button>
         </div>

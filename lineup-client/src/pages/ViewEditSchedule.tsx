@@ -1,18 +1,17 @@
 import type { TimeRange, ValidMinutes } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
 import { Calendar } from "@/components/Calendar";
+import { ColoredCell } from "@/components/CalendarCells";
+import { MousePopup } from "@/components/MousePopup";
 import { queryClient, useApi } from "@/utils/api";
-import { addToasts } from "@/utils/db";
+import { addToasts, loaderQuery } from "@/utils/db";
 import { parseTimeString } from "@/utils/time.ts";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { type MouseEvent } from "react";
 import { useNavigate, useParams } from "react-router";
 import "../dateinput.css";
 import "./newschedule.css";
-// TODO: Replace with availability viewable cell when that's made
-import { ColoredCell } from "@/components/CalendarCells";
-import { useLoaderData } from "react-router";
 
 interface ScheduleData {
   name: string; //the name of the event
@@ -30,7 +29,44 @@ const ViewEditSchedule = () => {
   const navigate = useNavigate();
   const { fetchWithAuth } = useApi();
   const { guid } = useParams<{ guid: string }>();
-  const data = useLoaderData();
+  const { data } = useQuery(loaderQuery("/api/schedule/{}/details", guid!));
+  const [focusedTime, setFocusedTime] = React.useState<string | null>(null);
+  const availabilityPerTime = getAvailabilityPerTime();
+
+  function getAvailabilityPerTime() {
+    const timeSlots = new Map<string, string[]>();
+    for (const availability of data.availabilities) {
+      for (const slot of availability.availabilitySlots) {
+        if (timeSlots.has(slot)) {
+          timeSlots.get(slot)!.push(availability.userName);
+        } else {
+          timeSlots.set(slot, [availability.userName]);
+        }
+      }
+    }
+
+    return timeSlots;
+  }
+
+  function getMaxAvailability() {
+    let max = 0;
+    for (const slot of availabilityPerTime.values()) {
+      if (max < slot.length) {
+        max = slot.length;
+      }
+    }
+    return max;
+  }
+
+  function calculateColors() {
+    const colors: { [key: string]: string } = {};
+    const maxAvailability = getMaxAvailability();
+    for (const slot of availabilityPerTime.keys()) {
+      colors[slot] =
+        `color-mix(in srgb, var(--primary-active) ${(availabilityPerTime.get(slot)!.length / maxAvailability) * 100}%, transparent)`;
+    }
+    return colors;
+  }
 
   type EditScheduleProps = {
     name: string;
@@ -178,20 +214,22 @@ const ViewEditSchedule = () => {
       >
         <ArrowLeftIcon className="backIcon" />
         Home
-      </button>{" "}
+      </button>
       <div>
         <div className="scheduleName">
           <b>{data.name}</b>
         </div>
-        {/* TODO: actually represent the number of respondents */}
-        <h4 className="pageSubHeader">Respondents: {0}</h4>
+        <h4 className="pageSubHeader">
+          {data.availabilities.length} Respondent{data.availabilities.length !== 1 ? "s" : ""}
+        </h4>
       </div>
       <Calendar
         Cell={ColoredCell}
         minutesPerCell={scheduleData.shiftTimes as ValidMinutes}
         dates={scheduleData.dates ?? []}
         range={scheduleData.hours}
-        colors={{ "3/10-09:30": "red", "3/10-10:00": "blue" }} //TODO: replace with actual availability data when that's implemented
+        colors={calculateColors()}
+        setFocusedCell={setFocusedTime}
       ></Calendar>
       <div className="submitContainer">
         <button
@@ -289,6 +327,25 @@ const ViewEditSchedule = () => {
           </button>
         </div>
       </form>
+      <MousePopup isOpen={!!availabilityPerTime.get(focusedTime ?? "")} width={250}>
+        <div className="availablePeoplePopupRoot">
+          <div className="availablePeoplePopupHeader">
+            {availabilityPerTime.get(focusedTime ?? "")?.length || 0} Available Respondent
+            {availabilityPerTime.get(focusedTime ?? "")?.length !== 1 && "s"}:
+          </div>
+          {availabilityPerTime.get(focusedTime ?? "")?.join(", ") ?? ""}
+          {focusedTime && (
+            <div className="availablePeoplePopupTime">
+              {new Intl.DateTimeFormat("en-US", {
+                weekday: "long",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              }).format(new Date(focusedTime!))}
+            </div>
+          )}
+        </div>
+      </MousePopup>
     </div>
   );
 };
