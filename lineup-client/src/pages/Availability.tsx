@@ -11,6 +11,8 @@ const Availability = () => {
   const navigate = useNavigate();
   const { fetchWithAuth } = useApi();
 
+  console.log(data);
+
   type CreateAvailabilityProps = {
     userName: string;
     userEmail: string;

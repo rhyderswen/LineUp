@@ -17,33 +17,46 @@ function Layout() {
   );
 }
 
-async function scheduleLoader({ params }: LoaderFunctionArgs) {
+async function baseLoader(url: string, param: string) {
+  // url should use {} for where the param should be
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
   try {
-    const res = await fetch(`/api/schedule/${params.guid}`, {
+    const res = await fetch(url.replace("{}", param), {
       credentials: "include",
       signal: controller.signal,
     });
 
     if (!res.ok) {
-      throw new Response("Schedule not found", {
+      throw new Response("Parameter not found", {
         status: res.status,
         statusText: res.statusText,
       });
     }
 
     return res.json();
-  } catch (err) {
+  } catch (err: unknown) {
     if (err instanceof DOMException && err.name === "AbortError") {
       throw new Response("API request timed out", { status: 504, statusText: "Gateway Timeout" });
+    }
+
+    if (err instanceof Response) {
+      throw err;
     }
 
     throw new Response("Failed to reach API", { status: 503, statusText: "Service Unavailable" });
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function availabilityLoader({ params }: LoaderFunctionArgs) {
+  return baseLoader("/api/schedule/{}", params.guid!);
+}
+
+async function scheduleLoader({ params }: LoaderFunctionArgs) {
+  return baseLoader("/api/schedule/{}/details", params.guid!);
 }
 
 const router = createBrowserRouter([
@@ -69,7 +82,7 @@ const router = createBrowserRouter([
           {
             path: ":guid", // matches /schedule/:guid
             element: <Availability />,
-            loader: scheduleLoader,
+            loader: availabilityLoader,
           },
           {
             path: ":guid/edit", // matches /schedule/:guid/edit
