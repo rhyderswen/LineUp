@@ -20,4 +20,6 @@ public class GetScheduleUnauthenticatedDto
         new List<ShiftAssignment>();
 
     public required SchedulePreferences SchedulePreferences { get; set; } = new();
+
+    public required int AvailabilityCount { get; set; }
 }
