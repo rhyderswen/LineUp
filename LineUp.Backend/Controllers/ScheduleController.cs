@@ -52,6 +52,10 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             .FirstOrDefaultAsync(s => s.Guid == guid);
         if (schedule == null)
             return NotFound();
+        
+        var availabilityCount = await context
+            .Availabilities.Where(availability => availability.Schedule.Guid == guid)
+            .CountAsync();
 
         var availabilityCount = await context
             .Availabilities.Where(availability => availability.Schedule.Guid == guid)
