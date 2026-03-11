@@ -77,8 +77,15 @@ public class ScheduleController(LineUpContext context) : ControllerBase
     public async Task<IActionResult> GetSchedules()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        List<Schedule> result = await context
+
+        List<ScheduleListDto> result = await context
             .Schedules.Where(s => s.Auth0UserId == userId)
+            .Select(s => new ScheduleListDto
+            {
+                Name = s.Name,
+                Guid = s.Guid,
+                Respondents = context.Availabilities.Count(a => a.Schedule.Id == s.Id),
+            })
             .ToListAsync();
 
         return Ok(result);
