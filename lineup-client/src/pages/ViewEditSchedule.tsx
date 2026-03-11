@@ -1,9 +1,9 @@
-import type { DateDay, TimeRange, ValidMinutes } from "@/types";
+import type { TimeRange, ValidMinutes } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
 import { Calendar } from "@/components/Calendar";
 import { queryClient, useApi } from "@/utils/api";
 import { addToasts } from "@/utils/db";
-import { convertToDateDays, parseTimeString } from "@/utils/time.ts";
+import { parseTimeString } from "@/utils/time.ts";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { useMutation } from "@tanstack/react-query";
 import React, { type MouseEvent } from "react";
@@ -18,7 +18,6 @@ interface ScheduleData {
   name: string; //the name of the event
   shiftTimes: ValidMinutes | "" | undefined; //how the availability intervals are determined
   dates: Date[] | undefined; //the dates being scheduled (js Date version)
-  dateDays: DateDay[]; //the dates being schedules (DateDay version)
   hours: TimeRange; //the hours throughout the day that need covered
   pplPerShift: number | undefined; //how many people should work simultaneously
 
@@ -87,7 +86,6 @@ const ViewEditSchedule = () => {
     name: "",
     shiftTimes: "",
     dates: undefined,
-    dateDays: [{ date: "1/1", day: "Thursday" }] as DateDay[],
     hours: { start: { hour: 9, minute: 0 }, end: { hour: 17, minute: 0 } } as TimeRange,
     pplPerShift: undefined,
     //optional parameters
@@ -96,13 +94,11 @@ const ViewEditSchedule = () => {
   });
 
   React.useEffect(() => {
-    const jsDates = data.dateCoverage?.map((d: string) => new Date(d)) ?? [];
     console.log("Fetched schedule:", data);
     setScheduleData({
       name: data.name,
       shiftTimes: data.schedulePreferences?.minutesPerSlot || 15,
-      dates: jsDates,
-      dateDays: convertToDateDays(jsDates),
+      dates: data.dateCoverage?.map((d: string) => new Date(d)) ?? [],
       hours: {
         start: parseTimeString(data.startTime)!,
         end: parseTimeString(data.endTime)!,
@@ -158,7 +154,6 @@ const ViewEditSchedule = () => {
 
   const handleGenerate = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    console.log("Generate Schedule button clicked");
     //TODO: call backend to generate schedule
     // Note: when calling generate schedule, use 1440 and 99999 as default values for maxShiftDuration and maxShiftsPerWorker
   };
@@ -194,7 +189,7 @@ const ViewEditSchedule = () => {
       <Calendar
         Cell={ColoredCell}
         minutesPerCell={scheduleData.shiftTimes as ValidMinutes}
-        dates={scheduleData.dateDays}
+        dates={scheduleData.dates ?? []}
         range={scheduleData.hours}
         colors={{ "3/10-09:30": "red", "3/10-10:00": "blue" }} //TODO: replace with actual availability data when that's implemented
       ></Calendar>

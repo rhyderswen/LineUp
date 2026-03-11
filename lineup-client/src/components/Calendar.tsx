@@ -1,5 +1,5 @@
-import type { DateDay, TimeRange, ValidMinutes } from "@/types";
-import { addMinutesToTime, formatTime, getTimeIncrementLabel, rangeIs24Hours, weekdayToNum } from "@/utils/time";
+import type { TimeRange, ValidMinutes } from "@/types";
+import { addMinutesToTime, dayNumberToWeekday, formatTime, getTimeIncrementLabel, rangeIs24Hours } from "@/utils/time";
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { Fragment, useEffect, useState } from "react";
 import "./calendar.css";
@@ -8,7 +8,7 @@ import type { CalendarCellProps } from "./CalendarCells";
 interface CalendarProps {
   Cell: React.ComponentType<CalendarCellProps>;
   minutesPerCell: ValidMinutes;
-  dates: DateDay[];
+  dates: Date[];
   range: TimeRange;
   setFocusedCell?: React.Dispatch<React.SetStateAction<string | null>>;
   colors?: { [key: string]: string }; // {"3/10-09:00": "var(--color)", ...}
@@ -41,7 +41,7 @@ const Calendar = ({ Cell, minutesPerCell, dates, range, setFocusedCell, colors }
     }
 
     for (let i = 1; i < dates.length; i++) {
-      if (weekdayToNum(dates[i].day) <= weekdayToNum(dates[i - 1].day)) {
+      if (dates[i].getDay() <= dates[i - 1].getDay()) {
         pageStarts.push(i);
       }
     }
@@ -97,10 +97,10 @@ const Calendar = ({ Cell, minutesPerCell, dates, range, setFocusedCell, colors }
   function needsSpaceAfterCol(col: number) {
     if (col >= pageDates.length - 1) return false;
 
-    if (pageDates[col].day === "Sunday") {
-      return pageDates[col + 1].day !== "Monday";
+    if (pageDates[col].getDay() === 0) {
+      return pageDates[col + 1].getDay() !== 1;
     } else {
-      return weekdayToNum(pageDates[col].day) + 1 !== weekdayToNum(pageDates[col + 1].day);
+      return pageDates[col].getDay() + 1 !== pageDates[col + 1].getDay();
     }
   }
 
@@ -159,10 +159,10 @@ const Calendar = ({ Cell, minutesPerCell, dates, range, setFocusedCell, colors }
 
       <div className="calendarBlankCell" />
       {pageDates.map((date, col) => (
-        <div key={date.date} className="calendarLabel" style={extraColMargin(col)}>
-          {date.day}
+        <div key={date.toISOString()} className="calendarLabel" style={extraColMargin(col)}>
+          {dayNumberToWeekday(date.getDay())}
           <br />
-          {date.date}
+          {`${date.getMonth() + 1}/${date.getDate()}`}
         </div>
       ))}
 
@@ -172,7 +172,7 @@ const Calendar = ({ Cell, minutesPerCell, dates, range, setFocusedCell, colors }
             {getTimeIncrementLabel(row, range.start, minutesPerCell)}
           </div>
           {pageDates.map((date, col) => (
-            <div key={date.date} className={calculateCellClasses(row, col)} style={extraColMargin(col)}>
+            <div key={date.toISOString()} className={calculateCellClasses(row, col)} style={extraColMargin(col)}>
               <Cell
                 time={addMinutesToTime(range.start, (minutesPerCell * row) as ValidMinutes)}
                 date={date}

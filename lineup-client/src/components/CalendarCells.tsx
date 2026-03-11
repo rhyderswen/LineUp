@@ -1,10 +1,10 @@
-import type { DateDay, Time } from "@/types";
-import { formatDateTime, formatTime } from "@/utils/time";
+import type { Time } from "@/types";
+import { addTimeToDate, dayNumberToWeekday, formatTime } from "@/utils/time";
 import React from "react";
 
 export interface CalendarCellProps {
   time: Time;
-  date: DateDay;
+  date: Date;
   selectedCells: string[];
   setSelectedCells: React.Dispatch<React.SetStateAction<string[]>>;
   isPointerDown: boolean;
@@ -25,13 +25,14 @@ const FillableCell = ({
   isEnablingCells,
   setIsEnablingCells,
 }: CalendarCellProps) => {
-  const isClicked = selectedCells.includes(formatDateTime(date.date, time));
+  const dateString = addTimeToDate(date, time).toISOString();
+  const isClicked = selectedCells.includes(dateString);
 
   function updateCell() {
     if (isClicked) {
-      setSelectedCells((cells) => cells.filter((cell) => cell !== formatDateTime(date.date, time)));
+      setSelectedCells((cells) => cells.filter((cell) => cell !== dateString));
     } else {
-      setSelectedCells((cells) => [...cells, formatDateTime(date.date, time)]);
+      setSelectedCells((cells) => [...cells, dateString]);
     }
   }
 
@@ -54,19 +55,21 @@ const FillableCell = ({
       onPointerUp={() => setIsPointerDown(false)}
       onPointerEnter={onPointerEnter}
       className={"unstyledButton calendarInnerCell" + (isClicked ? " clicked" : "")}
-      title={date.day + " " + formatTime(time)}
+      title={dayNumberToWeekday(date.getDay()) + " " + formatTime(time)}
     ></button>
   );
 };
 
 const ColoredCell = ({ time, date, setCurrentlyFocusedCell, colors }: CalendarCellProps) => {
+  const dateString = addTimeToDate(date, time).toISOString();
+
   return (
     <div
-      onPointerEnter={() => setCurrentlyFocusedCell && setCurrentlyFocusedCell(formatDateTime(date.date, time))}
+      onPointerEnter={() => setCurrentlyFocusedCell && setCurrentlyFocusedCell(dateString)}
       onPointerLeave={() => setCurrentlyFocusedCell && setCurrentlyFocusedCell(null)}
       className={"calendarInnerCell"}
-      title={date.day + " " + formatTime(time)}
-      style={{ backgroundColor: colors[formatDateTime(date.date, time)] ?? "transparent" }}
+      title={dayNumberToWeekday(date.getDay()) + " " + formatTime(time)}
+      style={{ backgroundColor: colors[dateString] ?? "transparent" }}
     ></div>
   );
 };

@@ -36,6 +36,7 @@ const LoggedInHome = () => {
 
         const resJson = await res.json();
         toast.dismiss("fetch-schedules-error");
+        console.log(resJson);
         return resJson.map((schedule: { name: string; respondents: number; guid: string }) => ({
           name: schedule.name,
           respondents: schedule.respondents ?? 0,

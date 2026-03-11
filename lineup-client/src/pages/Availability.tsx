@@ -1,22 +1,60 @@
 import { Calendar } from "@/components/Calendar";
 import { FillableCell } from "@/components/CalendarCells";
-import { convertToDateDays, parseTimeString } from "@/utils/time";
-import { useLoaderData } from "react-router";
+import { queryClient, useApi } from "@/utils/api";
+import { addToasts } from "@/utils/db";
+import { parseTimeString } from "@/utils/time";
+import { useMutation } from "@tanstack/react-query";
+import { useLoaderData, useNavigate } from "react-router";
 
 const Availability = () => {
   const data = useLoaderData();
-  console.log(data);
+  const navigate = useNavigate();
+  const { fetchWithAuth } = useApi();
+
+  type CreateAvailabilityProps = {
+    userName: string;
+    userEmail: string;
+    availabilitySlots: string[]; // full of ISO strings
+  };
+
+  const createAvailabilityMutation = useMutation({
+    mutationFn: async (newAvailability: CreateAvailabilityProps) => {
+      console.log(newAvailability);
+      const res = await fetchWithAuth(`/api/schedule/${data.guid}/createAvailability`, {
+        method: "POST",
+        body: JSON.stringify(newAvailability),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create availability");
+      }
+
+      return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["availability"] });
+      navigate("/");
+    },
+  });
 
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    console.log(formData);
     if (formData.get("calendarSelected") === "") {
       alert("Please select at least one time slot.");
       return;
     }
 
-    // TODO actually submit it when the API is ready
+    addToasts(
+      createAvailabilityMutation.mutateAsync({
+        userName: formData.get("name") as string,
+        userEmail: formData.get("email") as string,
+        availabilitySlots: (formData.get("calendarSelected") as string).split(","),
+      }),
+    );
   };
 
   return (
@@ -46,7 +84,7 @@ const Availability = () => {
           <Calendar
             Cell={FillableCell}
             minutesPerCell={data.schedulePreferences?.minutesPerSlot || 15}
-            dates={convertToDateDays(data.dateCoverage?.map((d: string) => new Date(d)) ?? [])}
+            dates={data.dateCoverage?.map((d: string) => new Date(d)) ?? []}
             range={{
               start: parseTimeString(data.startTime)!,
               end: parseTimeString(data.endTime)!,

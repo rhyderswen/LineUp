@@ -1,14 +1,8 @@
-import type { DateDay, Time, TimeRange, ValidMinutes } from "@/types";
+import type { Time, TimeRange, ValidMinutes } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
 import { queryClient, useApi } from "@/utils/api";
 import { addToasts } from "@/utils/db";
-import {
-  convertToDateDays,
-  formatTimeForInput,
-  getValidMinutesForInterval,
-  parseTimeString,
-  toMinutes,
-} from "@/utils/time.ts";
+import { formatTimeForInput, getValidMinutesForInterval, parseTimeString, toMinutes } from "@/utils/time.ts";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
@@ -26,7 +20,6 @@ interface ScheduleData {
   name: string; //the name of the event
   shiftTimes: ValidMinutes | "" | undefined; //how the availability intervals are determined
   dates: Date[] | undefined; //the dates being scheduled (js Date version)
-  dateDays: DateDay[]; //the dates being schedules (DateDay version)
   hours: TimeRange; //the hours throughout the day that need covered
   pplPerShift: number | undefined; //how many people should work simultaneously
 
@@ -79,7 +72,6 @@ const NewSchedule = () => {
     name: "",
     shiftTimes: "",
     dates: undefined,
-    dateDays: [{ date: "1/1", day: "Thursday" }] as DateDay[],
     hours: { start: { hour: 9, minute: 0 }, end: { hour: 17, minute: 0 } } as TimeRange,
     pplPerShift: undefined,
     //optional parameters
@@ -192,7 +184,6 @@ const NewSchedule = () => {
       setScheduleData((prev) => ({
         ...prev,
         dates: [],
-        dateDays: [],
       }));
       return;
     }
@@ -203,7 +194,6 @@ const NewSchedule = () => {
     setScheduleData((prev) => ({
       ...prev,
       dates: jsDates,
-      dateDays: convertToDateDays(jsDates),
     }));
   };
 
