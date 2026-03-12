@@ -20,5 +20,8 @@ export default defineConfig(({ mode }) => {
         "/api": env.services__api__http__0,
       },
     },
+    test: {
+      environment: "jsdom",
+    },
   };
 });

@@ -85,7 +85,6 @@ describe("formatTimeForInput", () => {
   });
 });
 
-// PROBABLY WANT MORE TEST CASES HERE TO HIT ALL BRANCHES
 describe("getTimeIncrementLabel", () => {
   const start = { hour: 9, minute: 0 } as Time;
 
@@ -93,12 +92,33 @@ describe("getTimeIncrementLabel", () => {
     expect(getTimeIncrementLabel(0, start, 30)).toBe("09:00 AM");
   });
 
-  it("returns label when minute is 0", () => {
+  it("returns label for third row with minutesPerCell set to 30", () => {
     expect(getTimeIncrementLabel(2, start, 30)).toBe("10:00 AM");
   });
 
   it("returns empty string when not a labeled increment", () => {
     expect(getTimeIncrementLabel(1, start, 30)).toBe("");
+  });
+
+  it("returns label when minutesPerCell is 60", () => {
+    expect(getTimeIncrementLabel(3, start, 60)).toBe("12:00 PM");
+  });
+
+  it("returns label when minutesPerCell is 45", () => {
+    expect(getTimeIncrementLabel(2, start, 45)).toBe("10:30 AM");
+  });
+
+  it("returns label when minutesPerCell is 40", () => {
+    expect(getTimeIncrementLabel(3, start, 40)).toBe("11:00 AM");
+  });
+
+  it("returns label when minutesPerCell is 15", () => {
+    expect(getTimeIncrementLabel(2, start, 15)).toBe("09:30 AM");
+  });
+
+  const start2 = { hour: 9, minute: 15 } as Time;
+  it("returns label when minutesPerCell is 30 and starts at a 15 minute offset", () => {
+    expect(getTimeIncrementLabel(2, start2, 30)).toBe("10:15 AM");
   });
 });
 
