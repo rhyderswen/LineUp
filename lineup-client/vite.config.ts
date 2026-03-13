@@ -22,6 +22,11 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       environment: "jsdom",
+      coverage: {
+        enabled: true,
+        include: ["src/**/*.{ts,tsx}"],
+        exclude: ["src/**/*.d.ts", "src/api-client/**", "src/utils/api/**"],
+      },
     },
   };
 });
