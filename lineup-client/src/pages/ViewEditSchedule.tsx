@@ -31,22 +31,6 @@ const ViewEditSchedule = () => {
   const { guid } = useParams<{ guid: string }>();
   const { data } = useQuery(loaderQuery("/api/schedule/{}/details", guid!));
   const [focusedTime, setFocusedTime] = React.useState<string | null>(null);
-  const availabilityPerTime = getAvailabilityPerTime();
-
-  function getAvailabilityPerTime() {
-    const timeSlots = new Map<string, string[]>();
-    for (const availability of data.availabilities) {
-      for (const slot of availability.availabilitySlots) {
-        if (timeSlots.has(slot)) {
-          timeSlots.get(slot)!.push(availability.userName);
-        } else {
-          timeSlots.set(slot, [availability.userName]);
-        }
-      }
-    }
-
-    return timeSlots;
-  }
 
   function getMaxAvailability() {
     let max = 0;
@@ -130,6 +114,7 @@ const ViewEditSchedule = () => {
   });
 
   React.useEffect(() => {
+    if (!data) return;
     console.log("Fetched schedule:", data);
     setScheduleData({
       name: data.name,
@@ -150,6 +135,25 @@ const ViewEditSchedule = () => {
           : data.schedulePreferences?.maximumShiftsPerWorker,
     });
   }, [data]);
+
+  if (!data) return <div>Loading...</div>;
+
+  const availabilityPerTime = getAvailabilityPerTime();
+
+  function getAvailabilityPerTime() {
+    const timeSlots = new Map<string, string[]>();
+    for (const availability of data.availabilities) {
+      for (const slot of availability.availabilitySlots) {
+        if (timeSlots.has(slot)) {
+          timeSlots.get(slot)!.push(availability.userName);
+        } else {
+          timeSlots.set(slot, [availability.userName]);
+        }
+      }
+    }
+
+    return timeSlots;
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;

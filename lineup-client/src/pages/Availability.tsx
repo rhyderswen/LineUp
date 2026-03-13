@@ -60,6 +60,8 @@ const Availability = () => {
     );
   };
 
+  if (!data) return <div>Loading...</div>;
+
   return (
     <div className="availabilityRoot">
       <div className="scheduleName">
