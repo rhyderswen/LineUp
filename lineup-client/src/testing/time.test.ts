@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, it, expect } from "vitest";
 import {
   addMinutesToTime,
@@ -13,8 +16,8 @@ import {
   timesAreEqual,
   toMinutes,
   weekdayToNum,
-} from "../utils/time.ts";
-import type { Time } from "../types.ts";
+} from "../utils/time";
+import type { Time } from "../types";
 
 describe("addMinutesToTime", () => {
   it("adds minutes within same hour", () => {
@@ -120,6 +123,10 @@ describe("getTimeIncrementLabel", () => {
   it("returns label when minutesPerCell is 30 and starts at a 15 minute offset", () => {
     expect(getTimeIncrementLabel(2, start2, 30)).toBe("10:15 AM");
   });
+
+  it("returns label when minutesPerCell is 60 and minutes are not 0", () => {
+    expect(getTimeIncrementLabel(1, start2, 60)).toBe("10:15 AM");
+  });
 });
 
 describe("getValidMinutesForInterval", () => {
@@ -129,6 +136,22 @@ describe("getValidMinutesForInterval", () => {
 
   it("returns 20-minute increments", () => {
     expect(getValidMinutesForInterval(20)).toEqual([0, 20, 40]);
+  });
+
+  it("returns 30 minute increments", () => {
+    expect(getValidMinutesForInterval(30)).toEqual([0, 15, 30, 45]);
+  });
+
+  it("returns 40 minute increments", () => {
+    expect(getValidMinutesForInterval(40)).toEqual([0, 20, 40]);
+  });
+
+  it("returns 45 minute increments", () => {
+    expect(getValidMinutesForInterval(45)).toEqual([0, 15, 30, 45]);
+  });
+
+  it("returns 60 minute increments", () => {
+    expect(getValidMinutesForInterval(60)).toEqual([0, 15, 20, 30, 40, 45]);
   });
 
   it("returns default values for unknown interval", () => {
@@ -158,6 +181,15 @@ describe("rangeIs24Hours", () => {
         end: { hour: 0, minute: 0 },
       }),
     ).toBe(true);
+  });
+
+  it("returns false for partial range within 12-1 AM", () => {
+    expect(
+      rangeIs24Hours({
+        start: { hour: 0, minute: 0 },
+        end: { hour: 0, minute: 15 },
+      }),
+    ).toBe(false);
   });
 
   it("returns false for partial range", () => {

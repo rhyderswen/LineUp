@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
       coverage: {
         enabled: true,
         include: ["src/**/*.{ts,tsx}"],
-        exclude: ["src/**/*.d.ts", "src/api-client/**", "src/utils/api/**"],
+        exclude: ["src/**/*.d.ts", "src/api-client/**", "src/utils/api/**", "src/main.tsx"],
       },
     },
   };
