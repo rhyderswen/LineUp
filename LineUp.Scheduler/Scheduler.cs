@@ -185,6 +185,8 @@ public class Scheduler
 
         cpsatModel.Maximize(LinearExpr.WeightedSum(flatShifts, flatShiftRequests));
 
+        // todo: honor max shift per worker
+        // todo: honor max shift length
         var solver = new CpSolver();
         var status = solver.Solve(cpsatModel);
         Console.WriteLine($"Solve status: {status}");
