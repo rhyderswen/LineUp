@@ -1,10 +1,10 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, act, cleanup } from "@testing-library/react";
-import { MousePopup } from "../components/MousePopup";
 import "@testing-library/jest-dom/vitest";
+import { act, cleanup, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MousePopup } from "../components/MousePopup";
 
 vi.mock("@/utils/useMousePosition", () => ({
   default: () => ({ x: 100, y: 200 }),

@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { Mock } from "vitest";
-import { addToasts, loaderQuery } from "../utils/db";
 import * as authModule from "@/utils/api/auth-token";
 import { toast } from "react-hot-toast";
+import type { Mock } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { addToasts, loaderQuery } from "../utils/db";
 
 vi.mock("@/utils/api/auth-token", () => ({ getToken: vi.fn() }));
 vi.mock("react-hot-toast", () => ({ toast: { promise: vi.fn() } }));

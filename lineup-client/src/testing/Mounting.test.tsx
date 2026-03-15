@@ -1,11 +1,11 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, vi, afterEach } from "vitest";
-import { render, cleanup } from "@testing-library/react";
-import "@testing-library/jest-dom/vitest";
-import { MemoryRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "@testing-library/jest-dom/vitest";
+import { cleanup, render } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router";
+import { afterEach, describe, it, vi } from "vitest";
 
 import App from "../App";
 import Availability from "../pages/Availability";

@@ -89,12 +89,17 @@ const Availability = () => {
           <Calendar
             Cell={FillableCell}
             minutesPerCell={data.schedulePreferences?.minutesPerSlot || 15}
-            dates={data.dateCoverage?.map((d: string) => new Date(d)) ?? []}
+            dates={
+              data.dateCoverage?.map((d: string) => {
+                const [year, month, day] = d.split("-").map(Number);
+                return new Date(year, month - 1, day);
+              }) ?? []
+            }
             range={{
               start: parseTimeString(data.startTime)!,
               end: parseTimeString(data.endTime)!,
             }}
-          ></Calendar>
+          />
         </div>
         <div className="submitContainer">
           <button type="submit" className="submitBtn" disabled={createAvailabilityMutation.isPending}>

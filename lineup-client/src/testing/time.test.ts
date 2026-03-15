@@ -1,7 +1,8 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import type { Time } from "../types";
 import {
   addMinutesToTime,
   addTimeToDate,
@@ -17,7 +18,6 @@ import {
   toMinutes,
   weekdayToNum,
 } from "../utils/time";
-import type { Time } from "../types";
 
 describe("addMinutesToTime", () => {
   it("adds minutes within same hour", () => {

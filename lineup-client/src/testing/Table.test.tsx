@@ -1,10 +1,10 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
-import Table from "../components/Table";
 import "@testing-library/jest-dom/vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import Table from "../components/Table";
 
 interface TestData {
   name: string;

@@ -1,10 +1,10 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
-import CopyableLink from "../components/CopyableLink";
 import "@testing-library/jest-dom/vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import CopyableLink from "../components/CopyableLink";
 
 describe("CopyableLink component", () => {
   const testUrl = "https://example.com";

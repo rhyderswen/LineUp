@@ -119,7 +119,11 @@ const ViewEditSchedule = () => {
     setScheduleData({
       name: data.name,
       shiftTimes: data.schedulePreferences?.minutesPerSlot || 15,
-      dates: data.dateCoverage?.map((d: string) => new Date(d)) ?? [],
+      dates:
+        data.dateCoverage?.map((d: string) => {
+          const [year, month, day] = d.split("-").map(Number);
+          return new Date(year, month - 1, day);
+        }) ?? [],
       hours: {
         start: parseTimeString(data.startTime)!,
         end: parseTimeString(data.endTime)!,
@@ -234,7 +238,7 @@ const ViewEditSchedule = () => {
         range={scheduleData.hours}
         colors={calculateColors()}
         setFocusedCell={setFocusedTime}
-      ></Calendar>
+      />
       <div className="submitContainer">
         <button
           type="button"
