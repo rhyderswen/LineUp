@@ -14,12 +14,12 @@ public class AvailabilityMatrixToolsTest
         Name = null,
         DateCoverage =
         [
-            DateOnly.FromDateTime(DateTime.Today),
-            DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-            DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
+            DateOnly.FromDateTime(DateTime.UtcNow),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)),
         ],
-        StartTime = TimeOnly.FromDateTime(DateTime.Today),
-        EndTime = TimeOnly.FromDateTime(DateTime.Today.AddHours(1)),
+        StartTime = new TimeOnly(9, 0),
+        EndTime = new TimeOnly(10, 0),
         Form = null,
         FormId = null,
         ShiftAssignments = [],
@@ -38,7 +38,7 @@ public class AvailabilityMatrixToolsTest
     public void GenerateMatrixFromSchedule_IsCorrectSize()
     {
         // Act
-        var result = AvailabilityMatrixTools.GenerateMatrixFromSchedule(schedule);
+        var result = AvailabilityMatrixTools.GenerateEmptyMatrixFromSchedule(schedule);
         
         // Assert
         Assert.NotNull(result);
@@ -50,7 +50,7 @@ public class AvailabilityMatrixToolsTest
     public void GenerateMatrixPointerHashSet_IsCorrectLength()
     {
         // Act
-        Dictionary<TimeOnly, int> result = AvailabilityMatrixTools.GenerateMatrixPointerHashSet(schedule);
+        Dictionary<TimeOnly, int> result = AvailabilityMatrixTools.GenerateMatrixTimePointerHashSet(schedule);
         
         // Assert
         Assert.NotNull(result);

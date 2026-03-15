@@ -2,9 +2,138 @@
 
 import { z } from "zod";
 
+export const zAvailabilityPreferences = z.object({
+  id: z.optional(z.uuid()),
+});
+
+export const zQuestionOptions = z.object({
+  id: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  optionText: z.string().max(64),
+  sortOrder: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+});
+
+export const zQuestionType = z.int();
+
+export const zFormQuestion = z.object({
+  id: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  questionText: z.optional(z.string().max(512)),
+  type: z.optional(zQuestionType),
+  options: z.optional(z.array(zQuestionOptions)),
+});
+
+export const zFormQuestionAnswer = z.object({
+  id: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  formQuestionId: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  answerId: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  question: zFormQuestion,
+  answerText: z.string(),
+});
+
+export const zAvailability = z.object({
+  id: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  guid: z.optional(z.uuid()),
+  availabilitySlots: z.optional(z.array(z.iso.datetime())),
+  userName: z.string().max(64),
+  userEmail: z.optional(z.union([z.null(), z.string().max(256)])),
+  preferences: z.optional(z.union([z.null(), zAvailabilityPreferences])),
+  formAnswers: z.optional(z.array(zFormQuestionAnswer)),
+});
+
 export const zSchedulePreferences = z.object({
   id: z.optional(z.uuid()),
   minutesPerSlot: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  shiftIntervals: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  usersPerShift: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  maximumShiftDurationMinutes: z.optional(
+    z.union([
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  maximumShiftsPerWorker: z.optional(
     z.union([
       z
         .int()
@@ -27,6 +156,7 @@ export const zShiftAssignment = z.object({
   ),
   startTime: z.optional(z.iso.datetime()),
   endTime: z.optional(z.iso.datetime()),
+  availability: z.optional(z.union([z.null(), zAvailability])),
 });
 
 export const zScheduleDto = z.object({
@@ -46,6 +176,24 @@ export const zScheduleDto = z.object({
   endTime: z.iso.time(),
   shiftAssignments: z.optional(z.array(zShiftAssignment)),
   schedulePreferences: zSchedulePreferences,
+  name: z.string(),
+});
+
+export const zScheduleUpdateDto = z.object({
+  id: z.optional(
+    z.union([
+      z.null(),
+      z
+        .int()
+        .min(-2147483648, { error: "Invalid value: Expected int32 to be >= -2147483648" })
+        .max(2147483647, { error: "Invalid value: Expected int32 to be <= 2147483647" }),
+      z.string().regex(/^-?(?:0|[1-9]\d*)$/),
+    ]),
+  ),
+  guid: z.optional(z.union([z.null(), z.uuid()])),
+  shiftAssignments: z.optional(z.union([z.null(), z.array(zShiftAssignment)])),
+  schedulePreferences: z.optional(z.union([z.null(), zSchedulePreferences])),
+  name: z.optional(z.union([z.null(), z.string()])),
 });
 
 export const zGetApiPublicData = z.object({
@@ -94,18 +242,6 @@ export const zGetApiAvailabilityByGuidGenerateLinkData = z.object({
   query: z.optional(z.never()),
 });
 
-export const zGetApiSchedulePublicData = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
-});
-
-export const zGetApiScheduleClaimsData = z.object({
-  body: z.optional(z.never()),
-  path: z.optional(z.never()),
-  query: z.optional(z.never()),
-});
-
 export const zDeleteApiScheduleByGuidData = z.object({
   body: z.optional(z.never()),
   path: z.object({
@@ -122,15 +258,15 @@ export const zGetApiScheduleByGuidData = z.object({
   query: z.optional(z.never()),
 });
 
-export const zPutApiScheduleByGuidData = z.object({
-  body: zScheduleDto,
+export const zPatchApiScheduleByGuidData = z.object({
+  body: zScheduleUpdateDto,
   path: z.object({
     guid: z.uuid(),
   }),
   query: z.optional(z.never()),
 });
 
-export const zGetData = z.object({
+export const zGetApiScheduleData = z.object({
   body: z.optional(z.never()),
   path: z.optional(z.never()),
   query: z.optional(z.never()),
@@ -139,5 +275,13 @@ export const zGetData = z.object({
 export const zPostApiScheduleData = z.object({
   body: zScheduleDto,
   path: z.optional(z.never()),
+  query: z.optional(z.never()),
+});
+
+export const zGetApiScheduleByGuidGenerateScheduleData = z.object({
+  body: z.optional(z.never()),
+  path: z.object({
+    guid: z.uuid(),
+  }),
   query: z.optional(z.never()),
 });

@@ -26,5 +26,5 @@ public class Availability
 
     // Navigation properties, ignored in JSON to not loop forever
     [JsonIgnore]
-    public required Schedule Schedule { get; set; }
+    public Schedule Schedule { get; set; }
 }

@@ -94,4 +94,27 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             scheduleToInsert
         );
     }
+
+    [HttpGet("{guid:guid}/generateSchedule")]
+    [Authorize]
+    public async Task<IActionResult> GenerateSchedule(Guid guid)
+    {
+        var schedule = await context
+            .Schedules.Include(schedule => schedule.SchedulePreferences)
+            .FirstOrDefaultAsync(s => s.Guid == guid);
+        if (schedule == null)
+            return NotFound();
+        List<Availability> availabilities = await context
+            .Availabilities.Where(a => a.Schedule == schedule)
+            .ToListAsync();
+        if (schedule.Auth0UserId != User.FindFirst(ClaimTypes.NameIdentifier)!.Value)
+        return Unauthorized();
+
+        var result = Scheduler.Scheduler.RunScheduler(
+            schedule,
+            availabilities,
+            schedule.SchedulePreferences
+        );
+        return Ok(result);
+    }
 }

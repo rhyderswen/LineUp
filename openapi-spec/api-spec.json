@@ -237,10 +237,192 @@
           }
         }
       }
+    },
+    "/api/schedule/{guid}/generateSchedule": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "Availability": {
+        "required": [
+          "userName"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "availabilitySlots": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "userName": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "userEmail": {
+            "maxLength": 256,
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "preferences": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AvailabilityPreferences"
+              }
+            ]
+          },
+          "formAnswers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormQuestionAnswer"
+            }
+          }
+        }
+      },
+      "AvailabilityPreferences": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "FormQuestion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "questionText": {
+            "maxLength": 512,
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/QuestionType"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionOptions"
+            }
+          }
+        }
+      },
+      "FormQuestionAnswer": {
+        "required": [
+          "question",
+          "answerText"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "formQuestionId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "answerId": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "question": {
+            "$ref": "#/components/schemas/FormQuestion"
+          },
+          "answerText": {
+            "type": "string"
+          }
+        }
+      },
+      "QuestionOptions": {
+        "required": [
+          "optionText"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "optionText": {
+            "maxLength": 64,
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "QuestionType": {
+        "type": "integer"
+      },
       "ScheduleDto": {
         "required": [
           "dateCoverage",
@@ -409,6 +591,16 @@
           "endTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "availability": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Availability"
+              }
+            ]
           }
         }
       }
