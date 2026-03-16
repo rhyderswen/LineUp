@@ -4,6 +4,7 @@ namespace LineUp.AppHost;
 
 public static class Extensions
 {
+    // credz: https://github.com/dotnet/aspire/issues/12697#issue-3589382651
     /// <summary>
     /// Configures this JavaScript/Vite app to be deployed as a standalone service
     /// rather than build-only. By default, JavaScript apps are build-only.
