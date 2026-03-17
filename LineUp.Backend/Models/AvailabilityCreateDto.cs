@@ -1,13 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-<<<<<<<< HEAD:LineUp.Backend/Models/AvailabilityCreateDto.cs
-using LineUp.Backend.Models.Forms;
-========
 using System.Text.Json.Serialization;
+using LineUp.Core.Models;
 using LineUp.Core.Models.Forms;
-using Microsoft.EntityFrameworkCore;
->>>>>>>> origin/er/or-tools-scheduler:LineUp.Core/Models/Availability.cs
 
-namespace LineUp.Core.Models;
+namespace LineUp.Backend.Models;
 
 public class AvailabilityCreateDto
 {
@@ -23,11 +19,8 @@ public class AvailabilityCreateDto
 
     public ICollection<FormQuestionAnswer> FormAnswers { get; set; } =
         new List<FormQuestionAnswer>();
-<<<<<<<< HEAD:LineUp.Backend/Models/AvailabilityCreateDto.cs
-========
 
     // Navigation properties, ignored in JSON to not loop forever
     [JsonIgnore]
     public Schedule Schedule { get; set; }
->>>>>>>> origin/er/or-tools-scheduler:LineUp.Core/Models/Availability.cs
 }

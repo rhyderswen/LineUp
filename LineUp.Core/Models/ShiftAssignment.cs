@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using LineUp.Backend.Attributes;
+using LineUp.Core.Attributes;
 
 namespace LineUp.Core.Models;
 

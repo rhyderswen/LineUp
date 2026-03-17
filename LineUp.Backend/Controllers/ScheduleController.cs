@@ -166,7 +166,7 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             .Availabilities.Where(a => a.Schedule == schedule)
             .ToListAsync();
         if (schedule.Auth0UserId != User.FindFirst(ClaimTypes.NameIdentifier)!.Value)
-        return Unauthorized();
+            return Unauthorized();
 
         var result = Scheduler.Scheduler.RunScheduler(
             schedule,

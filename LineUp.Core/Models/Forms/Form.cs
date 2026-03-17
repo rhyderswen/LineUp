@@ -1,3 +1,5 @@
+using LineUp.Core.Attributes;
+
 namespace LineUp.Core.Models.Forms;
 
 public class Form
