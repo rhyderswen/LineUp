@@ -3,6 +3,7 @@ using LineUp.Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Trace;
 
 namespace LineUp.Backend.Controllers;
 
@@ -10,15 +11,65 @@ namespace LineUp.Backend.Controllers;
 [ApiController]
 public class ScheduleController(LineUpContext context) : ControllerBase
 {
+    [HttpGet("{guid:guid}/details")]
+    [Authorize]
+    public async Task<IActionResult> GetScheduleAuthenticated(Guid guid)
+    {
+        var schedule = await context
+            .Schedules.Include(s => s.SchedulePreferences)
+            .Include(schedule => schedule.Form)
+            .Include(schedule => schedule.ShiftAssignments)
+            .FirstOrDefaultAsync(s => s.Guid == guid);
+        if (schedule == null)
+            return NotFound();
+
+        if (User.FindFirstValue(ClaimTypes.NameIdentifier) != schedule.Auth0UserId)
+            return Unauthorized();
+        List<Availability> availabilities = await context
+            .Availabilities.Where(availability => availability.Schedule.Guid == guid)
+            .ToListAsync();
+        var dto = new GetScheduleAuthenticatedDto
+        {
+            Name = schedule.Name,
+            DateCoverage = schedule.DateCoverage,
+            StartTime = schedule.StartTime,
+            EndTime = schedule.EndTime,
+            Form = schedule.Form,
+            ShiftAssignments = schedule.ShiftAssignments,
+            SchedulePreferences = schedule.SchedulePreferences,
+            Availabilities = availabilities,
+        };
+        return Ok(dto);
+    }
+
     [HttpGet("{guid:guid}")]
     public async Task<IActionResult> GetSchedule(Guid guid)
     {
-        var result = await context
+        var schedule = await context
             .Schedules.Include(s => s.SchedulePreferences)
+            .Include(schedule => schedule.Form)
+            .Include(schedule => schedule.ShiftAssignments)
             .FirstOrDefaultAsync(s => s.Guid == guid);
-        if (result != null)
-            return Ok(result);
-        return NotFound();
+        if (schedule == null)
+            return NotFound();
+
+        var availabilityCount = context.Availabilities.Count(availability =>
+            availability.Schedule.Guid == guid
+        );
+
+        var dto = new GetScheduleUnauthenticatedDto
+        {
+            Name = schedule.Name,
+            DateCoverage = schedule.DateCoverage,
+            StartTime = schedule.StartTime,
+            EndTime = schedule.EndTime,
+            Form = schedule.Form,
+            ShiftAssignments = schedule.ShiftAssignments,
+            SchedulePreferences = schedule.SchedulePreferences,
+            AvailabilityCount = availabilityCount,
+        };
+
+        return Ok(dto);
     }
 
     [HttpGet]
@@ -26,8 +77,15 @@ public class ScheduleController(LineUpContext context) : ControllerBase
     public async Task<IActionResult> GetSchedules()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-        List<Schedule> result = await context
+
+        List<ScheduleListDto> result = await context
             .Schedules.Where(s => s.Auth0UserId == userId)
+            .Select(s => new ScheduleListDto
+            {
+                Name = s.Name,
+                Guid = s.Guid,
+                Respondents = context.Availabilities.Count(a => a.Schedule.Id == s.Id),
+            })
             .ToListAsync();
 
         return Ok(result);
@@ -92,5 +150,34 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             new { guid = scheduleToInsert.Guid },
             scheduleToInsert
         );
+    }
+
+    [HttpPost("{scheduleGuid:Guid}/createAvailability")]
+    public async Task<IActionResult> CreateAvailability(
+        Guid scheduleGuid,
+        [FromBody] AvailabilityCreateDto availability
+    )
+    {
+        var schedule = await context.Schedules.FirstOrDefaultAsync(s => s.Guid == scheduleGuid);
+        if (schedule == null)
+        {
+            return NotFound();
+        }
+
+        var availabilityToInsert = new Availability
+        {
+            Guid = Guid.NewGuid(),
+            Schedule = schedule,
+            AvailabilitySlots = availability.AvailabilitySlots,
+            UserName = availability.UserName,
+            UserEmail = availability.UserEmail,
+            Preferences = availability.Preferences,
+            FormAnswers = availability.FormAnswers,
+        };
+
+        context.Availabilities.Add(availabilityToInsert);
+        await context.SaveChangesAsync();
+
+        return Ok();
     }
 }

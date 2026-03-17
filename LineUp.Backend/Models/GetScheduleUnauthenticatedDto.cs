@@ -1,18 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using LineUp.Backend.Models.Forms;
-using Microsoft.EntityFrameworkCore;
 
 namespace LineUp.Backend.Models;
 
-[Index(nameof(Auth0UserId), nameof(Guid))]
-public class Schedule
+public class GetScheduleUnauthenticatedDto
 {
-    public int Id { get; set; }
-    public Guid Guid { get; init; } = Guid.NewGuid();
-
-    [MaxLength(256)]
-    public required string Auth0UserId { get; set; }
-
     [MaxLength(256)]
     public required string Name { get; set; }
 
@@ -28,4 +20,6 @@ public class Schedule
         new List<ShiftAssignment>();
 
     public required SchedulePreferences SchedulePreferences { get; set; } = new();
+
+    public required int AvailabilityCount { get; set; }
 }
