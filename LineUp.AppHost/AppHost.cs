@@ -34,6 +34,8 @@ if (builder.ExecutionContext.IsRunMode)
 {
     web = builder.AddViteApp("web", "../lineup-client")
         .WithPnpm()
+        .WithEnvironment("PORT", "5173")
+        .WithEndpoint("http", endpointAnnotation => endpointAnnotation.Port = 5173)
         .WithExternalHttpEndpoints()
         .WithReference(api)
         .WaitFor(api)
