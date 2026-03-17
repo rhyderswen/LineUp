@@ -8,11 +8,20 @@ builder.AddDockerComposeEnvironment("env");
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume();
 
-var postgresdb = postgres.AddDatabase("postgresdb");
+var postgresdb = postgres.AddDatabase("lineupdb");
 
 var api = builder.AddProject<LineUp_Backend>("api")
     .WaitFor(postgresdb)
     .WithReference(postgresdb);
+
+if (!builder.ExecutionContext.IsRunMode)
+{
+    api.WithEndpoint("http", e =>
+    {
+        e.Port = 3010;
+        e.IsExternal = true;
+    });
+}
 
 IResourceBuilder<IResourceWithEndpoints> web;
 
