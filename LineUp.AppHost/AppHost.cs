@@ -8,7 +8,7 @@ builder.AddDockerComposeEnvironment("env");
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume();
 
-var postgresdb = postgres.AddDatabase("postgresdb");
+var postgresdb = postgres.AddDatabase("lineupdb");
 
 var migrations = builder.AddProject<LineUp_MigrationService>("migrations")
     .WithReference(postgresdb)

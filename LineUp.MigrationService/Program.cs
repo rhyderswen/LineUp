@@ -7,7 +7,7 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.AddServiceDefaults();
 builder.Services.AddHostedService<Worker>();
 
-builder.AddNpgsqlDbContext<LineUpContext>("postgresdb");
+builder.AddNpgsqlDbContext<LineUpContext>("lineupdb");
 
 builder
     .Services.AddOpenTelemetry()
