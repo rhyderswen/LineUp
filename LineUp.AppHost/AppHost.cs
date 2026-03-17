@@ -21,7 +21,7 @@ var api = builder.AddProject<LineUp_Backend>("api")
 
 if (!builder.ExecutionContext.IsRunMode)
 {
-    api.WithEndpoint("api-http", e =>
+    api.WithEndpoint("http", e =>
     {
         e.Port = 3010;
         e.IsExternal = true;
