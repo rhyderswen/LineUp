@@ -8,15 +8,20 @@ builder.AddDockerComposeEnvironment("env");
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume();
 
-var postgresdb = postgres.AddDatabase("lineupdb");
+var postgresdb = postgres.AddDatabase("postgresdb");
+
+var migrations = builder.AddProject<LineUp_MigrationService>("migrations")
+    .WithReference(postgresdb)
+    .WaitFor(postgresdb);
 
 var api = builder.AddProject<LineUp_Backend>("api")
-    .WaitFor(postgresdb)
-    .WithReference(postgresdb);
+    .WithReference(postgresdb)
+    .WithReference(migrations)
+    .WaitForCompletion(migrations);
 
 if (!builder.ExecutionContext.IsRunMode)
 {
-    api.WithEndpoint("http", e =>
+    api.WithEndpoint("api-http", e =>
     {
         e.Port = 3010;
         e.IsExternal = true;
@@ -29,7 +34,6 @@ if (builder.ExecutionContext.IsRunMode)
 {
     web = builder.AddViteApp("web", "../lineup-client")
         .WithPnpm()
-        .WithHttpEndpoint(port: 5173, env: "PORT")
         .WithExternalHttpEndpoints()
         .WithReference(api)
         .WaitFor(api)
