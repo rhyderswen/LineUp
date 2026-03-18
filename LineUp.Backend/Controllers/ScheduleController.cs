@@ -175,7 +175,7 @@ public class ScheduleController(LineUpContext context) : ControllerBase
         );
 
         await context
-            .ShiftAssignments.Where(shiftAssignment => shiftAssignment.Schedule == schedule)
+            .ShiftAssignments.Where(shiftAssignment => shiftAssignment.Schedule!.Id == schedule.Id)
             .ExecuteDeleteAsync();
 
         if (result.Assignments != null)
