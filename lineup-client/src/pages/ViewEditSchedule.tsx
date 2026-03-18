@@ -9,7 +9,7 @@ import { parseTimeString } from "@/utils/time.ts";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { type MouseEvent } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import "../dateinput.css";
 import "./newSchedule.css";
 
@@ -271,6 +271,11 @@ const ViewEditSchedule = () => {
         setFocusedCell={setFocusedTime}
       />
       <div className="submitContainer">
+        {scheduleGenerated && (
+          <Link to={`/schedule/${guid}`} className="generatedScheduleLink">
+            Generated Schedule
+          </Link>
+        )}
         <button
           type="button"
           className="submitBtn"
@@ -279,7 +284,7 @@ const ViewEditSchedule = () => {
             updateScheduleMutation.isPending || deleteScheduleMutation.isPending || generateScheduleMutation.isPending
           }
         >
-          Generate Schedule
+          {scheduleGenerated ? "Regenerate Schedule" : "Generate Schedule"}
         </button>
       </div>
       <hr />

@@ -74,6 +74,7 @@
   height: 100%;
   padding-left: 1px;
   transition: none;
+  font-size: 12px;
 
   &button {
     cursor: pointer;

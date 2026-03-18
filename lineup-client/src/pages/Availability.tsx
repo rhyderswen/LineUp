@@ -11,7 +11,6 @@ const Availability = () => {
   const { fetchWithAuth } = useApi();
   const { guid } = useParams();
   const { data } = useQuery(loaderQuery("/api/schedule/{}", guid!));
-  const scheduleGenerated = data.shiftAssignments.length > 0;
 
   console.log(data);
 
@@ -44,6 +43,25 @@ const Availability = () => {
     },
   });
 
+  if (!data) return <div>Loading...</div>;
+
+  const scheduleGenerated = data.shiftAssignments.length > 0;
+  const [colors, text] = mapAssignments();
+
+  function mapAssignments() {
+    const colors: { [key: string]: string } = {};
+    const text: { [key: string]: string } = {};
+    if (!scheduleGenerated) {
+      return [colors, text];
+    }
+
+    for (const availability of data.shiftAssignments) {
+      colors[availability.startTime] = "var(--primary-active)";
+      text[availability.startTime] = availability.userName;
+    }
+    return [colors, text];
+  }
+
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -67,14 +85,15 @@ const Availability = () => {
     );
   };
 
-  if (!data) return <div>Loading...</div>;
-
   return (
     <div className="availabilityRoot">
       {scheduleGenerated ? (
         <>
           <div className="scheduleName">
             Schedule for <b>{data.name}</b>
+          </div>
+          <div>
+            <em>New submissions are no longer being accepted.</em>
           </div>
           <br />
           <Calendar
@@ -90,6 +109,8 @@ const Availability = () => {
               start: parseTimeString(data.startTime)!,
               end: parseTimeString(data.endTime)!,
             }}
+            colors={colors}
+            text={text}
           />
         </>
       ) : (
