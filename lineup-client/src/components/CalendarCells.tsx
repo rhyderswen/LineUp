@@ -12,6 +12,7 @@ export interface CalendarCellProps {
   isEnablingCells: boolean;
   setIsEnablingCells: React.Dispatch<React.SetStateAction<boolean>>;
   colors: { [key: string]: string };
+  text: { [key: string]: string };
 }
 
 const FillableCell = ({
@@ -59,7 +60,7 @@ const FillableCell = ({
   );
 };
 
-const ColoredCell = ({ time, date, colors }: CalendarCellProps) => {
+const ColoredCell = ({ time, date, colors, text }: CalendarCellProps) => {
   const dateString = standardizeDateAndTime(date, time);
 
   return (
@@ -67,7 +68,9 @@ const ColoredCell = ({ time, date, colors }: CalendarCellProps) => {
       className={"calendarInnerCell"}
       style={{ backgroundColor: colors[dateString] ?? "transparent" }}
       aria-label={dayNumberToWeekday(date.getDay()) + " " + formatTime(time)}
-    ></div>
+    >
+      {text[dateString] ?? ""}
+    </div>
   );
 };
 

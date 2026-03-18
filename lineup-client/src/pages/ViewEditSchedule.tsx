@@ -31,6 +31,7 @@ const ViewEditSchedule = () => {
   const { guid } = useParams<{ guid: string }>();
   const { data } = useQuery(loaderQuery("/api/schedule/{}/details", guid!));
   const [focusedTime, setFocusedTime] = React.useState<string | null>(null);
+  const scheduleGenerated = data.shiftAssignments.length > 0;
 
   function getMaxAvailability() {
     let max = 0;
@@ -218,6 +219,16 @@ const ViewEditSchedule = () => {
 
   const handleGenerate = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    if (
+      (scheduleGenerated &&
+        !confirm("Are you sure you want to generate this schedule? This will override the current schedule.")) ||
+      !confirm(
+        "Are you sure you want to generate this schedule? Once it's generated, no new responses will be accepted.",
+      )
+    ) {
+      return;
+    }
 
     addToasts(generateScheduleMutation.mutateAsync(), "Generating schedule... This may take a while...");
   };
