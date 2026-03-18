@@ -229,6 +229,7 @@ public class Scheduler
                     StartTime = startTime,
                     EndTime = endTime,
                     Availability = availability,
+                    ScheduleId = schedule.Id,
                 }
             );
         }
