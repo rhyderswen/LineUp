@@ -119,8 +119,9 @@ function addTimeToDate(date: Date, time: Time): Date {
 }
 
 function standardizeDateAndTime(date: Date, time: Time): string {
-  const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  return addTimeToDate(utcDate, time).toISOString().replace(".000", "");
+  const dateWithTime = addTimeToDate(date, time);
+  const utcDate = new Date(dateWithTime.getTime() - dateWithTime.getTimezoneOffset() * 60 * 1000);
+  return utcDate.toISOString().replace(".000", "");
 }
 
 export {
