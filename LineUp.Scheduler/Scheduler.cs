@@ -120,7 +120,8 @@ public class Scheduler
 
                     x[i] = shifts[key];
                 }
-                cpsatModel.Add(LinearExpr.Sum(x) == preferences.UsersPerShift);
+
+                cpsatModel.Add(LinearExpr.Sum(x) <= preferences.UsersPerShift);
             }
         }
 
