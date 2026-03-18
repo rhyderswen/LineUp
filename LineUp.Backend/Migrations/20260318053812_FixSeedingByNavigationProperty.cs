@@ -12,7 +12,8 @@ namespace LineUp.Backend.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_ShiftAssignments_Schedules_ScheduleId",
-                table: "ShiftAssignments");
+                table: "ShiftAssignments"
+            );
 
             migrationBuilder.AlterColumn<int>(
                 name: "ScheduleId",
@@ -20,14 +21,16 @@ namespace LineUp.Backend.Migrations
                 type: "integer",
                 nullable: true,
                 oldClrType: typeof(int),
-                oldType: "integer");
+                oldType: "integer"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ShiftAssignments_Schedules_ScheduleId",
                 table: "ShiftAssignments",
                 column: "ScheduleId",
                 principalTable: "Schedules",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
 
         /// <inheritdoc />
@@ -35,7 +38,8 @@ namespace LineUp.Backend.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_ShiftAssignments_Schedules_ScheduleId",
-                table: "ShiftAssignments");
+                table: "ShiftAssignments"
+            );
 
             migrationBuilder.AlterColumn<int>(
                 name: "ScheduleId",
@@ -45,7 +49,8 @@ namespace LineUp.Backend.Migrations
                 defaultValue: 0,
                 oldClrType: typeof(int),
                 oldType: "integer",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ShiftAssignments_Schedules_ScheduleId",
@@ -53,7 +58,8 @@ namespace LineUp.Backend.Migrations
                 column: "ScheduleId",
                 principalTable: "Schedules",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
     }
 }

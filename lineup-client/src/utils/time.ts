@@ -118,6 +118,11 @@ function addTimeToDate(date: Date, time: Time): Date {
   return newDate;
 }
 
+function standardizeDateAndTime(date: Date, time: Time): string {
+  const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  return addTimeToDate(utcDate, time).toISOString().replace(".000", "");
+}
+
 export {
   addMinutesToTime,
   addTimeToDate,
@@ -129,6 +134,7 @@ export {
   getValidMinutesForInterval,
   parseTimeString,
   rangeIs24Hours,
+  standardizeDateAndTime,
   timesAreEqual,
   toMinutes,
   weekdayToNum,

@@ -102,6 +102,26 @@ const ViewEditSchedule = () => {
     },
   });
 
+  const generateScheduleMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetchWithAuth(`/api/schedule/${guid}/generateSchedule`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to generate schedule");
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
+    },
+  });
+
   const [scheduleData, setScheduleData] = React.useState<ScheduleData>({
     name: "",
     shiftTimes: "",
@@ -198,8 +218,8 @@ const ViewEditSchedule = () => {
 
   const handleGenerate = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    //TODO: call backend to generate schedule
-    // Note: when calling generate schedule, use 1440 and 99999 as default values for maxShiftDuration and maxShiftsPerWorker
+
+    addToasts(generateScheduleMutation.mutateAsync(), "Generating schedule... This may take a while...");
   };
 
   const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
@@ -244,7 +264,9 @@ const ViewEditSchedule = () => {
           type="button"
           className="submitBtn"
           onClick={handleGenerate}
-          disabled={updateScheduleMutation.isPending || deleteScheduleMutation.isPending}
+          disabled={
+            updateScheduleMutation.isPending || deleteScheduleMutation.isPending || generateScheduleMutation.isPending
+          }
         >
           Generate Schedule
         </button>
@@ -318,7 +340,9 @@ const ViewEditSchedule = () => {
           <button
             type="submit"
             className="submitBtn"
-            disabled={updateScheduleMutation.isPending || deleteScheduleMutation.isPending}
+            disabled={
+              updateScheduleMutation.isPending || deleteScheduleMutation.isPending || generateScheduleMutation.isPending
+            }
           >
             Confirm Changes
           </button>
@@ -329,7 +353,9 @@ const ViewEditSchedule = () => {
             type="button"
             className="deleteBtn"
             onClick={handleDelete}
-            disabled={updateScheduleMutation.isPending || deleteScheduleMutation.isPending}
+            disabled={
+              updateScheduleMutation.isPending || deleteScheduleMutation.isPending || generateScheduleMutation.isPending
+            }
           >
             Delete Schedule
           </button>
