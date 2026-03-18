@@ -11,6 +11,8 @@ public class ShiftAssignment
     public DateTime EndTime { get; set; }
     public Availability? Availability { get; set; }
     // Navigation properties, ignored in JSON to not loop forever
+    
+    public int? ScheduleId { get; set; }
     [JsonDoNotSerialize]
     public Schedule? Schedule => Availability?.Schedule;
 }
