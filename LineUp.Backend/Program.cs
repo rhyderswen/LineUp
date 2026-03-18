@@ -126,7 +126,7 @@ if (seed)
     var db = scope.ServiceProvider.GetRequiredService<LineUpContext>();
     //TODO DONT DO THIS IN PROD!!!!!!!!!!!!!! :(((((
     db.Database.EnsureDeleted();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 
     DbSeeder seeder = new(db);
     seeder.Seed();
