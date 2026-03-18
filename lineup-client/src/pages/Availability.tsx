@@ -1,9 +1,11 @@
 import { Calendar } from "@/components/Calendar";
 import { ColoredCell, FillableCell } from "@/components/CalendarCells";
+import { MousePopup } from "@/components/MousePopup";
 import { queryClient, useApi } from "@/utils/api";
 import { addToasts, loaderQuery } from "@/utils/db";
 import { parseTimeString } from "@/utils/time";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 const Availability = () => {
@@ -11,6 +13,7 @@ const Availability = () => {
   const { fetchWithAuth } = useApi();
   const { guid } = useParams();
   const { data } = useQuery(loaderQuery("/api/schedule/{}", guid!));
+  const [focusedTime, setFocusedTime] = useState<string | null>(null);
 
   console.log(data);
 
@@ -46,7 +49,7 @@ const Availability = () => {
   if (!data) return <div>Loading...</div>;
 
   const scheduleGenerated = data.shiftAssignments.length > 0;
-  const [colors, text] = mapAssignments();
+  const [assignmentColors, assignmentText] = mapAssignments();
 
   function mapAssignments() {
     const colors: { [key: string]: string } = {};
@@ -57,7 +60,11 @@ const Availability = () => {
 
     for (const availability of data.shiftAssignments) {
       colors[availability.startTime] = "var(--primary-active)";
-      text[availability.startTime] = availability.userName;
+      if (availability.startTime in text) {
+        text[availability.startTime] = text[availability.startTime] + ", " + availability.userName;
+      } else {
+        text[availability.startTime] = availability.userName;
+      }
     }
     return [colors, text];
   }
@@ -109,9 +116,26 @@ const Availability = () => {
               start: parseTimeString(data.startTime)!,
               end: parseTimeString(data.endTime)!,
             }}
-            colors={colors}
-            text={text}
+            colors={assignmentColors}
+            text={assignmentText}
+            setFocusedCell={setFocusedTime}
           />
+          <MousePopup isOpen={focusedTime !== null && focusedTime in assignmentText} width={250}>
+            <div className="availablePeoplePopupRoot">
+              <div className="availablePeoplePopupHeader">{focusedTime && assignmentText[focusedTime]}</div>
+              {focusedTime && (
+                <div className="availablePeoplePopupTime">
+                  {new Intl.DateTimeFormat("en-US", {
+                    weekday: "long",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                    timeZone: "UTC",
+                  }).format(new Date(focusedTime!))}
+                </div>
+              )}
+            </div>
+          </MousePopup>
         </>
       ) : (
         <>
