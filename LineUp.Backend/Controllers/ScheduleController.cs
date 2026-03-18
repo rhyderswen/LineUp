@@ -53,6 +53,14 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             .FirstOrDefaultAsync(s => s.Guid == guid);
         if (schedule == null)
             return NotFound();
+        if (schedule.ShiftAssignments != null && schedule.ShiftAssignments.Count != 0)
+        {
+            foreach (var shiftAssignment in schedule.ShiftAssignments)
+            {
+                //TODO CREATE DTO FOR AVAILABILITY TO NOT EXPOSE GUID
+                await context.Entry(shiftAssignment).Reference(sa => sa.Availability).LoadAsync();
+            }
+        }
 
         var availabilityCount = context.Availabilities.Count(availability =>
             availability.Schedule.Guid == guid

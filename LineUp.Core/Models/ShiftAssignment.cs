@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using LineUp.Core.Attributes;
 
 namespace LineUp.Core.Models;
@@ -9,6 +8,9 @@ public class ShiftAssignment
 
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
+    
+    public string? UserName => Availability?.UserName;
+    public int? AvailabilityDbId => Availability?.Id;
     public Availability? Availability { get; set; }
     // Navigation properties, ignored in JSON to not loop forever
     
