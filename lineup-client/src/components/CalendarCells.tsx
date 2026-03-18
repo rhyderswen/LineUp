@@ -24,7 +24,7 @@ const FillableCell = ({
   isEnablingCells,
   setIsEnablingCells,
 }: CalendarCellProps) => {
-  const dateString = addTimeToDate(date, time).toISOString();
+  const dateString = addTimeToDate(date, time).toISOString().replace(".000", "");
   const isClicked = selectedCells.includes(dateString);
 
   function updateCell() {
