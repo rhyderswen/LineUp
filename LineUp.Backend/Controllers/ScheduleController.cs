@@ -212,6 +212,6 @@ public class ScheduleController(LineUpContext context) : ControllerBase
         context.Availabilities.Add(availabilityToInsert);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok(availabilityToInsert.Guid);
     }
 }
