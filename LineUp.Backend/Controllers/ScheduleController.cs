@@ -173,6 +173,18 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             availabilities,
             schedule.SchedulePreferences
         );
+
+        await context
+            .ShiftAssignments.Where(shiftAssignment => shiftAssignment.Schedule == schedule)
+            .ExecuteDeleteAsync();
+
+        // ReSharper disable once InvertIf
+        if (result.Assignments != null)
+        {
+            await context.ShiftAssignments.AddRangeAsync(result.Assignments);
+            await context.SaveChangesAsync();
+        }
+
         return Ok(result);
     }
 
