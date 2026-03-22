@@ -10,10 +10,11 @@ import { useNavigate } from "react-router";
 interface TableData {
   name: string;
   respondents: number;
+  isGenerated: boolean;
   guid: string;
 }
 
-const headers = ["Name", "Respondents", "Availability Link", "Schedule"];
+const headers = ["Name", "Respondents", "Availability Link", "Generated?", "Schedule"];
 
 const LoggedInHome = () => {
   const { user } = useAuth0();
@@ -37,9 +38,10 @@ const LoggedInHome = () => {
         const resJson = await res.json();
         toast.dismiss("fetch-schedules-error");
         console.log(resJson);
-        return resJson.map((schedule: { name: string; respondents: number; guid: string }) => ({
+        return resJson.map((schedule: { name: string; respondents: number; isGenerated: boolean; guid: string }) => ({
           name: schedule.name,
           respondents: schedule.respondents ?? 0,
+          isGenerated: schedule.isGenerated ?? false,
           guid: schedule.guid,
         }));
       }),
@@ -47,11 +49,12 @@ const LoggedInHome = () => {
 
   const renderRow = (row: TableData) => (
     <>
-      <td>{row.name}</td>
-      <td>{row.respondents}</td>
+      <td className="tableShrinkCol">{row.name}</td>
+      <td className="tableShrinkCol">{row.respondents}</td>
       <td>
         <CopyableLink url={`${globalThis.location.origin}/schedule/${row.guid}`} />
       </td>
+      <td className="tableShrinkCol">{row.isGenerated}</td>
       <td className="btnCol">
         <button
           className="scheduleBtn"
