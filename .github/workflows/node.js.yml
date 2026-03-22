@@ -18,7 +18,7 @@ jobs:
         working-directory: "./lineup-client"
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -31,5 +31,6 @@ jobs:
       with:
         version: 10
         run_install: true
+        cache: true
     - run: pnpm run build
     - run: pnpm test
