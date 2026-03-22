@@ -206,6 +206,11 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             return NotFound();
         }
 
+        if (availability.UserName.Trim().Length == 0)
+        {
+            return BadRequest("User name cannot be empty");
+        }
+
         var availabilityToInsert = new Availability
         {
             Guid = Guid.NewGuid(),
