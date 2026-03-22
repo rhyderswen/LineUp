@@ -89,6 +89,7 @@ public class ScheduleController(LineUpContext context) : ControllerBase
 
         List<ScheduleListDto> result = await context
             .Schedules.Where(s => s.Auth0UserId == userId)
+            .OrderByDescending(s => s.Id)
             .Include(s => s.ShiftAssignments)
             .Select(s => new ScheduleListDto
             {
