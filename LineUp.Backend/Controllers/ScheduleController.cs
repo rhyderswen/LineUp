@@ -38,6 +38,7 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             Form = schedule.Form,
             ShiftAssignments = schedule.ShiftAssignments,
             SchedulePreferences = schedule.SchedulePreferences,
+            HasScheduleGenerated = schedule.ShiftAssignments != null && schedule.ShiftAssignments.Count != 0,
             Availabilities = availabilities,
         };
         return Ok(dto);

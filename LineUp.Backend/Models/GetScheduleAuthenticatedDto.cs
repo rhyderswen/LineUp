@@ -22,5 +22,7 @@ public class GetScheduleAuthenticatedDto
     public required SchedulePreferences SchedulePreferences { get; set; } = new();
 
     public required List<Availability> Availabilities { get; set; } = [];
+    
+    public required bool HasScheduleGenerated { get; set; }
     public int AvailabilityCount => Availabilities.Count;
 }
