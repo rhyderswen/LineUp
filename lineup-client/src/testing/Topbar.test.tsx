@@ -78,6 +78,14 @@ describe("Topbar", () => {
     expect(screen.getByRole("button", { name: /log out/i })).toBeInTheDocument();
   });
 
+  // Added this test specifically to cover the uncovered line in Topbar.tsx
+  // but it's still showing up as uncovered for some reason
+  it("shows sign in button when not authenticated", () => {
+    mockState.isAuthenticated = false;
+    renderTopbar();
+    expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
+  });
+
   it("hides logout button when not authenticated", () => {
     mockState.isAuthenticated = false;
     renderTopbar();

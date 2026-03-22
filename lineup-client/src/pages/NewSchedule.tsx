@@ -26,11 +26,14 @@ interface ScheduleData {
   // optional parameters
   maxShiftLength: number | undefined; //maximum length of time a single person can work continuously, in minutes
   maxShifts: number | undefined; //maximum number of shifts a single person can work
+  minShifts: number | undefined; //minimum number of shifts a single person must work
 }
 
 const NewSchedule = () => {
   const navigate = useNavigate();
   const { fetchWithAuth } = useApi();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); //needed for the date picker to consider today properly without considering current time
 
   type CreateScheduleProps = {
     name: string;
@@ -43,6 +46,7 @@ const NewSchedule = () => {
       usersPerShift: number;
       maximumShiftDurationMinutes: number | undefined;
       maximumShiftsPerWorker: number | undefined;
+      //minimumShiftsPerWorker: number | undefined;
     };
   };
 
@@ -77,6 +81,7 @@ const NewSchedule = () => {
     //optional parameters
     maxShiftLength: undefined,
     maxShifts: undefined,
+    minShifts: undefined,
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -84,14 +89,10 @@ const NewSchedule = () => {
 
     setScheduleData((prev) => {
       if (event.target instanceof HTMLInputElement && event.target.type === "number") {
-        if (value === "") return { ...prev, [name]: undefined };
+        if (value === "") return { ...prev, [name]: null };
 
-        let numericValue = Number(value);
-        const maxValue = event.target.max ? Number(event.target.max) : undefined;
-        const minValue = event.target.min ? Number(event.target.min) : undefined;
-
-        if (maxValue !== undefined && numericValue > maxValue) numericValue = maxValue;
-        if (minValue !== undefined && numericValue < minValue) numericValue = minValue;
+        const numericValue = Number(value);
+        if (Number.isNaN(numericValue)) return prev;
 
         return { ...prev, [name]: numericValue };
       }
@@ -124,6 +125,11 @@ const NewSchedule = () => {
         break;
     }
 
+    if (!checkValidMinMax(scheduleData.minShifts, scheduleData.maxShifts)) {
+      alert("Maximum shifts per worker cannot be less than minimum shifts per worker.");
+      return;
+    }
+
     addToasts(
       createScheduleMutation.mutateAsync({
         name: scheduleData.name.trim(),
@@ -136,6 +142,7 @@ const NewSchedule = () => {
           usersPerShift: Number(scheduleData.pplPerShift),
           maximumShiftDurationMinutes: scheduleData.maxShiftLength,
           maximumShiftsPerWorker: scheduleData.maxShifts,
+          //minimumShiftsPerWorker: scheduleData.minShifts,
         },
       }),
     );
@@ -184,6 +191,39 @@ const NewSchedule = () => {
     };
   };
 
+  const handleNumberBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    if (value === "") return;
+
+    let numericValue = Number(value);
+    if (Number.isNaN(numericValue)) return;
+
+    if (name === "maxShiftLength") {
+      const step = scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60;
+      const min = step;
+      const max = 1440;
+
+      numericValue = snapToStep(numericValue, step, min);
+
+      if (numericValue > max) numericValue = max;
+    }
+
+    setScheduleData((prev) => ({
+      ...prev,
+      [name]: numericValue,
+    }));
+  };
+
+  const snapToStep = (value: number, step: number, min: number) => {
+    if (value < min) return min;
+
+    const remainder = (value - min) % step;
+    const lower = value - remainder;
+    const upper = lower + step;
+
+    return Math.abs(value - lower) <= Math.abs(value - upper) ? lower : upper;
+  };
+
   const handleDateChange = (value: DateObject | DateObject[] | null) => {
     if (!value) {
       setScheduleData((prev) => ({
@@ -216,6 +256,11 @@ const NewSchedule = () => {
     if ((endMinutes - startMinutes) % interval !== 0) return 4;
 
     return 0;
+  };
+
+  const checkValidMinMax = (min: number | undefined, max: number | undefined): boolean => {
+    if (min !== undefined && max !== undefined && min > max) return false;
+    return true;
   };
 
   return (
@@ -308,7 +353,7 @@ const NewSchedule = () => {
             multiple
             value={scheduleData.dates?.map((d) => new DateObject(d)) || []}
             onChange={handleDateChange}
-            minDate={new Date()}
+            minDate={today}
             required
           />
           <br />
@@ -343,6 +388,7 @@ const NewSchedule = () => {
             max="1440"
             value={scheduleData.maxShiftLength ?? ""}
             onChange={handleInputChange}
+            onBlur={handleNumberBlur}
           />
         </div>
         <div>
@@ -357,6 +403,21 @@ const NewSchedule = () => {
             min="1"
             max="99999"
             value={scheduleData.maxShifts ?? ""}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="minShifts">Minimum Shifts per Worker</label>
+          <br />
+          <input
+            className="input"
+            type="number"
+            id="minShifts"
+            name="minShifts"
+            step="1"
+            min="0"
+            max="99999"
+            value={scheduleData.minShifts ?? ""}
             onChange={handleInputChange}
           />
         </div>
