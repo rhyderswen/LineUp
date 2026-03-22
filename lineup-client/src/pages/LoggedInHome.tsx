@@ -54,7 +54,7 @@ const LoggedInHome = () => {
       <td>
         <CopyableLink url={`${globalThis.location.origin}/schedule/${row.guid}`} />
       </td>
-      <td className="tableShrinkCol">{row.isGenerated}</td>
+      <td className="tableShrinkCol">{row.isGenerated ? "Yes" : "No"}</td>
       <td className="btnCol">
         <button
           className="scheduleBtn"
