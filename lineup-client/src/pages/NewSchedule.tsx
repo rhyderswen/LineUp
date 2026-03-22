@@ -26,7 +26,6 @@ interface ScheduleData {
   // optional parameters
   maxShiftLength: number | undefined; //maximum length of time a single person can work continuously, in minutes
   maxShifts: number | undefined; //maximum number of shifts a single person can work
-  minShifts: number | undefined; //minimum number of shifts a single person must work
 }
 
 const NewSchedule = () => {
@@ -46,7 +45,6 @@ const NewSchedule = () => {
       usersPerShift: number;
       maximumShiftDurationMinutes: number | undefined;
       maximumShiftsPerWorker: number | undefined;
-      //minimumShiftsPerWorker: number | undefined;
     };
   };
 
@@ -81,7 +79,6 @@ const NewSchedule = () => {
     //optional parameters
     maxShiftLength: undefined,
     maxShifts: undefined,
-    minShifts: undefined,
   });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -125,11 +122,6 @@ const NewSchedule = () => {
         break;
     }
 
-    if (!checkValidMinMax(scheduleData.minShifts, scheduleData.maxShifts)) {
-      alert("Maximum shifts per worker cannot be less than minimum shifts per worker.");
-      return;
-    }
-
     addToasts(
       createScheduleMutation.mutateAsync({
         name: scheduleData.name.trim(),
@@ -142,7 +134,6 @@ const NewSchedule = () => {
           usersPerShift: Number(scheduleData.pplPerShift),
           maximumShiftDurationMinutes: scheduleData.maxShiftLength,
           maximumShiftsPerWorker: scheduleData.maxShifts,
-          //minimumShiftsPerWorker: scheduleData.minShifts,
         },
       }),
     );
@@ -256,11 +247,6 @@ const NewSchedule = () => {
     if ((endMinutes - startMinutes) % interval !== 0) return 4;
 
     return 0;
-  };
-
-  const checkValidMinMax = (min: number | undefined, max: number | undefined): boolean => {
-    if (min !== undefined && max !== undefined && min > max) return false;
-    return true;
   };
 
   return (
@@ -403,21 +389,6 @@ const NewSchedule = () => {
             min="1"
             max="99999"
             value={scheduleData.maxShifts ?? ""}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="minShifts">Minimum Shifts per Worker</label>
-          <br />
-          <input
-            className="input"
-            type="number"
-            id="minShifts"
-            name="minShifts"
-            step="1"
-            min="0"
-            max="99999"
-            value={scheduleData.minShifts ?? ""}
             onChange={handleInputChange}
           />
         </div>

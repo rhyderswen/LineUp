@@ -23,7 +23,6 @@ interface ScheduleData {
   // optional parameters
   maxShiftLength: number | undefined; //maximum length of time a single person can work continuously, in minutes
   maxShifts: number | undefined; //maximum number of shifts a single person can work
-  minShifts: number | undefined; //minimum number of shifts a single person must work
 }
 
 const ViewEditSchedule = () => {
@@ -134,7 +133,6 @@ const ViewEditSchedule = () => {
     //optional parameters
     maxShiftLength: undefined,
     maxShifts: undefined,
-    minShifts: undefined,
   });
 
   React.useEffect(() => {
@@ -161,7 +159,6 @@ const ViewEditSchedule = () => {
         data.schedulePreferences?.maximumShiftsPerWorker === 0
           ? undefined
           : data.schedulePreferences?.maximumShiftsPerWorker,
-      minShifts: undefined, //TODO: update when min shift functionality added to backend
     });
   }, [data]);
 
@@ -236,11 +233,6 @@ const ViewEditSchedule = () => {
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!checkValidMinMax(scheduleData.minShifts, scheduleData.maxShifts)) {
-      alert("Maximum shifts per worker cannot be less than minimum shifts per worker.");
-      return;
-    }
-
     addToasts(
       updateScheduleMutation.mutateAsync({
         name: scheduleData.name,
@@ -250,7 +242,6 @@ const ViewEditSchedule = () => {
           usersPerShift: Number(scheduleData.pplPerShift),
           maximumShiftDurationMinutes: scheduleData.maxShiftLength,
           maximumShiftsPerWorker: scheduleData.maxShifts,
-          //minimumShiftsPerWorker: scheduleData.minShifts,
         },
       }),
     );
@@ -278,11 +269,6 @@ const ViewEditSchedule = () => {
     if (!confirm("Are you sure you want to delete this schedule?")) return;
 
     addToasts(deleteScheduleMutation.mutateAsync());
-  };
-
-  const checkValidMinMax = (min: number | undefined, max: number | undefined): boolean => {
-    if (min !== undefined && max !== undefined && min > max) return false;
-    return true;
   };
 
   if (!scheduleData) return <div>Loading...</div>;
@@ -393,21 +379,6 @@ const ViewEditSchedule = () => {
             min="1"
             max="99999"
             value={scheduleData.maxShifts ?? ""}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="minShifts">Minimum Shifts per Worker</label>
-          <br />
-          <input
-            className="input"
-            type="number"
-            id="minShifts"
-            name="minShifts"
-            step="1"
-            min="0"
-            max="99999"
-            value={scheduleData.minShifts ?? ""}
             onChange={handleInputChange}
           />
         </div>
