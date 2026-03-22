@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: 22
           cache: "pnpm"
+          cache-dependency-path: lineup-client/pnpm-lock.yaml
 
       - name: Install libraries
         run: pnpm install
