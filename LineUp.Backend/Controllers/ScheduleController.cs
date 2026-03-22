@@ -38,7 +38,6 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             Form = schedule.Form,
             ShiftAssignments = schedule.ShiftAssignments,
             SchedulePreferences = schedule.SchedulePreferences,
-            HasScheduleGenerated = schedule.ShiftAssignments != null && schedule.ShiftAssignments.Count != 0,
             Availabilities = availabilities,
         };
         return Ok(dto);
@@ -90,11 +89,13 @@ public class ScheduleController(LineUpContext context) : ControllerBase
 
         List<ScheduleListDto> result = await context
             .Schedules.Where(s => s.Auth0UserId == userId)
+            .Include(s => s.ShiftAssignments)
             .Select(s => new ScheduleListDto
             {
                 Name = s.Name,
                 Guid = s.Guid,
                 Respondents = context.Availabilities.Count(a => a.Schedule.Id == s.Id),
+                IsGenerated = s.ShiftAssignments != null && s.ShiftAssignments.Count != 0,
             })
             .ToListAsync();
 
