@@ -1,18 +1,15 @@
-import type { DateDay, Time, TimeRange, ValidMinutes } from "@/types";
+import type { Time, TimeRange, ValidMinutes } from "@/types";
 //import { useAuth0 } from "@auth0/auth0-react";
 import { queryClient, useApi } from "@/utils/api";
 import { addToasts } from "@/utils/db";
-import {
-  convertToDateDays,
-  formatTimeForInput,
-  getValidMinutesForInterval,
-  parseTimeString,
-  toMinutes,
-} from "@/utils/time.ts";
+import { formatTimeForInput, getValidMinutesForInterval, parseTimeString, toMinutes } from "@/utils/time.ts";
+import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import DatePickerModule, { DateObject } from "react-multi-date-picker";
 import { useNavigate } from "react-router";
+import "../dateinput.css";
+import "./newSchedule.css";
 
 // This is because importing DatePicker directly didn't work with Vite for some reason
 // Trust me that this is somehow the most elegant solution I could find
@@ -23,7 +20,6 @@ interface ScheduleData {
   name: string; //the name of the event
   shiftTimes: ValidMinutes | "" | undefined; //how the availability intervals are determined
   dates: Date[] | undefined; //the dates being scheduled (js Date version)
-  dateDays: DateDay[]; //the dates being schedules (DateDay version)
   hours: TimeRange; //the hours throughout the day that need covered
   pplPerShift: number | undefined; //how many people should work simultaneously
 
@@ -45,8 +41,8 @@ const NewSchedule = () => {
       minutesPerSlot: number;
       shiftIntervals: number;
       usersPerShift: number;
-      maximumShiftDurationMinutes: number;
-      maximumShiftsPerWorker: number;
+      maximumShiftDurationMinutes: number | undefined;
+      maximumShiftsPerWorker: number | undefined;
     };
   };
 
@@ -76,7 +72,6 @@ const NewSchedule = () => {
     name: "",
     shiftTimes: "",
     dates: undefined,
-    dateDays: [{ date: "1/1", day: "Thursday" }] as DateDay[],
     hours: { start: { hour: 9, minute: 0 }, end: { hour: 17, minute: 0 } } as TimeRange,
     pplPerShift: undefined,
     //optional parameters
@@ -87,14 +82,30 @@ const NewSchedule = () => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
 
-    setScheduleData((prev) => ({
-      ...prev,
-      [name]: event.target.type === "number" || name === "shiftTimes" ? Number(value) : value,
-    }));
+    setScheduleData((prev) => {
+      if (event.target instanceof HTMLInputElement && event.target.type === "number") {
+        if (value === "") return { ...prev, [name]: undefined };
+
+        let numericValue = Number(value);
+        const maxValue = event.target.max ? Number(event.target.max) : undefined;
+        const minValue = event.target.min ? Number(event.target.min) : undefined;
+
+        if (maxValue !== undefined && numericValue > maxValue) numericValue = maxValue;
+        if (minValue !== undefined && numericValue < minValue) numericValue = minValue;
+
+        return { ...prev, [name]: numericValue };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (scheduleData.name.trim() === "") {
+      alert("You must enter a name with letters!");
+      return;
+    }
 
     switch (checkValidTimeRange(scheduleData.shiftTimes, scheduleData.hours)) {
       case 1:
@@ -113,14 +124,9 @@ const NewSchedule = () => {
         break;
     }
 
-    if (checkValidTimeRange(scheduleData.shiftTimes, scheduleData.hours) === 1) {
-      alert("Invalid time range based on selected shift interval.");
-      return;
-    }
-
     addToasts(
       createScheduleMutation.mutateAsync({
-        name: scheduleData.name,
+        name: scheduleData.name.trim(),
         dateCoverage: scheduleData.dates?.map((d) => d.toISOString().split("T")[0]) || [],
         startTime: formatTimeForInput(scheduleData.hours.start),
         endTime: formatTimeForInput(scheduleData.hours.end),
@@ -128,8 +134,8 @@ const NewSchedule = () => {
           minutesPerSlot: Number(scheduleData.shiftTimes),
           shiftIntervals: Number(scheduleData.shiftTimes),
           usersPerShift: Number(scheduleData.pplPerShift),
-          maximumShiftDurationMinutes: scheduleData.maxShiftLength ?? 1440,
-          maximumShiftsPerWorker: scheduleData.maxShifts ?? 99999,
+          maximumShiftDurationMinutes: scheduleData.maxShiftLength,
+          maximumShiftsPerWorker: scheduleData.maxShifts,
         },
       }),
     );
@@ -183,7 +189,6 @@ const NewSchedule = () => {
       setScheduleData((prev) => ({
         ...prev,
         dates: [],
-        dateDays: [],
       }));
       return;
     }
@@ -194,7 +199,6 @@ const NewSchedule = () => {
     setScheduleData((prev) => ({
       ...prev,
       dates: jsDates,
-      dateDays: convertToDateDays(jsDates),
     }));
   };
 
@@ -216,18 +220,42 @@ const NewSchedule = () => {
 
   return (
     <div className="newSchedule">
+      <button
+        className="returnButton"
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        <ArrowLeftIcon className="backIcon" />
+        Home
+      </button>{" "}
+      <div>
+        <h3 className="pageHeader">New Schedule</h3>
+      </div>
+      <hr />
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="scheduleName">
-            Schedule Name<label className="requiredStar">*</label>:{" "}
+          <label htmlFor="scheduleName" className="required">
+            Schedule Name
           </label>
-          <input type="text" id="name" name="name" value={scheduleData.name} onChange={handleInputChange} required />
+          <br />
+          <input
+            className="input"
+            type="text"
+            id="name"
+            name="name"
+            value={scheduleData.name}
+            onChange={handleInputChange}
+            required
+          />
         </div>
         <div>
-          <label htmlFor="shiftTimes">
-            Shift Intervals (in minutes)<label className="requiredStar">*</label>:{" "}
+          <label htmlFor="shiftTimes" className="required">
+            Shift Intervals (in minutes)
           </label>
+          <br />
           <select
+            className="input"
             name="shiftTimes"
             id="shiftTimes"
             value={scheduleData.shiftTimes ?? ""}
@@ -246,10 +274,12 @@ const NewSchedule = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="scheduleDuration">
-            Schedule Duration<label className="requiredStar">*</label>:{" "}
+          <label htmlFor="scheduleDuration" className="required">
+            Schedule Duration
           </label>
+          <br />
           <input
+            className="input"
             type="time"
             id="startTime"
             name="startTime"
@@ -260,6 +290,7 @@ const NewSchedule = () => {
           />
           <label> to </label>
           <input
+            className="endInput"
             type="time"
             id="endTime"
             name="endTime"
@@ -269,10 +300,11 @@ const NewSchedule = () => {
             required
           />
           <br />
-          <label>
-            Dates<label className="requiredStar">*</label>:{" "}
-          </label>
+          <label className="required">Dates</label>
+          <br />
           <DatePicker
+            inputClass="input"
+            className="purple"
             multiple
             value={scheduleData.dates?.map((d) => new DateObject(d)) || []}
             onChange={handleDateChange}
@@ -282,10 +314,12 @@ const NewSchedule = () => {
           <br />
         </div>
         <div>
-          <label htmlFor="peoplePerShift">
-            Workers per shift<label className="requiredStar">*</label>:{" "}
+          <label htmlFor="peoplePerShift" className="required">
+            Workers per shift
           </label>
+          <br />
           <input
+            className="input"
             type="number"
             id="pplPerShift"
             name="pplPerShift"
@@ -297,41 +331,42 @@ const NewSchedule = () => {
           />
         </div>
         <div>
-          <label htmlFor="maxShiftLength">Maximum Shift Duration (in minutes): </label>
+          <label htmlFor="maxShiftLength">Maximum Shift Duration (in minutes)</label>
+          <br />
           <input
+            className="input"
             type="number"
             id="maxShiftLength"
             name="maxShiftLength"
             step={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60}
             min={scheduleData.shiftTimes ? Number(scheduleData.shiftTimes) : 60}
+            max="1440"
             value={scheduleData.maxShiftLength ?? ""}
             onChange={handleInputChange}
           />
         </div>
         <div>
-          <label htmlFor="maxShifts">Maximum Shifts per Worker: </label>
+          <label htmlFor="maxShifts">Maximum Shifts per Worker</label>
+          <br />
           <input
+            className="input"
             type="number"
             id="maxShifts"
             name="maxShifts"
             step="1"
             min="1"
+            max="99999"
             value={scheduleData.maxShifts ?? ""}
             onChange={handleInputChange}
           />
         </div>
-        <button type="submit" className="scheduleBtn">
-          Create Schedule
-        </button>
+        <br />
+        <div className="submitContainer">
+          <button type="submit" className="submitBtn" disabled={createScheduleMutation.isPending}>
+            Create Schedule
+          </button>
+        </div>
       </form>
-      <button
-        className="rightButton"
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        Back to Home
-      </button>{" "}
     </div>
   );
 };

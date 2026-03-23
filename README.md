@@ -13,12 +13,13 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
 - [.NET 10](https://dotnet.microsoft.com/en-us/download)
 - [Node.js](https://nodejs.org/en/download)
 - [PNPM](https://pnpm.io/installation)
+- [.NET Aspire CLI](https://aspire.dev/get-started/install-cli/)
+- Docker or Podman (Podman is lighter-weight)
 
 ### Setup and Run
 
 1. **Install backend dependencies**
    ```bash
-   cd LineUp.Backend
    dotnet restore
    ```
 
@@ -28,24 +29,30 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
    cp .env.example .env # Make sure to populate .env!
    pnpm install
    ```
+   > Note: If you need the API client to be generated, see the "API Client Generation" section below.
 
-3. **Start the backend** (in `LineUp.Backend/`)
+3. **Start the app, seeding with test data**
    ```bash
-   dotnet run
+   SEED=true aspire run
    ```
-
-4. **Start the frontend** (in `lineup-client/`)
-   ```bash
-   pnpm run dev
+   or for PowerShell users:
+   ```powershell
+   $env:SEED = "true"
+   aspire run
    ```
+Note: On subsequent runs, do not use the `SEED` flag, unless you want to re-seed the database (which will delete all existing data).
 
 #### API Client Generation
 
 To regenerate the API client after backend changes:
 ```bash
-cd LineUp.Backend
-GEN=true dotnet build
+GEN=true aspire run
+```
+or for PowerShell users:
+```powershell
+$env:GEN = "true"
+aspire run
 ```
 
 ## Versions:
-Postrgess: 18.1
+Postgres: 18.1
