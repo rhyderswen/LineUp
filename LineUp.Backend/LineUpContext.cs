@@ -1,4 +1,5 @@
 using CSharpVitamins;
+using LineUp.Backend.Models;
 using LineUp.Core.Models;
 using LineUp.Core.Models.Forms;
 using Microsoft.EntityFrameworkCore;
