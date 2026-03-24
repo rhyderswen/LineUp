@@ -209,6 +209,15 @@ public class ScheduleController(LineUpContext context) : ControllerBase
             return NotFound();
         }
 
+        if (
+            context.Availabilities.Any(a =>
+                a.UserName == availability.UserName && a.Schedule.Guid == scheduleGuid
+            )
+        )
+        {
+            return Conflict("Conflicting user name!");
+        }
+
         var availabilityToInsert = new Availability
         {
             Guid = Guid.NewGuid(),
