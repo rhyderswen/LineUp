@@ -206,8 +206,8 @@ const Calendar = ({
               <Cell
                 time={addMinutesToTime(range.start, (minutesPerCell * row) as ValidMinutes)}
                 date={date}
-                selectedCells={selectedCells ?? []}
-                setSelectedCells={setSelectedCells ?? (() => {})}
+                selectedCells={selectedCells}
+                setSelectedCells={setSelectedCells}
                 isPointerDown={isPointerDown}
                 setIsPointerDown={setIsPointerDown}
                 isEnablingCells={isEnablingCells}
