@@ -58,6 +58,7 @@ jobs:
           shard: ${{ matrix.shard }}
           total-shards: 4
           no-build: 'true'
+          test-project: './LineUp.slnx
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
