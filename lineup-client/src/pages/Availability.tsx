@@ -15,7 +15,8 @@ const Availability = () => {
   const { data } = useQuery(loaderQuery("/api/schedule/{}", guid!));
   const [focusedTime, setFocusedTime] = useState<string | null>(null);
   const storageKey = `availability-${guid}`;
-  const backgroundColors = ["red", "orange", "yellow", "green", "blue", "purple"];
+  const backgroundColors = Array.from({ length: 10 }, (_, i) => `hsl(${Math.round((360 / 10) * i)}, 100%, 80%)`);
+  console.log(backgroundColors);
 
   console.log(data);
 
@@ -47,7 +48,6 @@ const Availability = () => {
 
   const createAvailabilityMutation = useMutation({
     mutationFn: async (newAvailability: CreateAvailabilityProps) => {
-      console.log(newAvailability);
       const res = await fetchWithAuth(`/api/schedule/${guid}/createAvailability`, {
         method: "POST",
         body: JSON.stringify(newAvailability),
@@ -100,6 +100,7 @@ const Availability = () => {
       if (text[time] in nameToColor) {
         colors[time] = nameToColor[text[time]];
       } else {
+        nameToColor[text[time]] = backgroundColors[numColors % backgroundColors.length];
         colors[time] = backgroundColors[numColors % backgroundColors.length];
         numColors++;
       }
