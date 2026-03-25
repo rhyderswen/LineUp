@@ -4,7 +4,6 @@ using LineUp.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OpenTelemetry.Trace;
 
 namespace LineUp.Backend.Controllers;
 
@@ -89,11 +88,14 @@ public class ScheduleController(LineUpContext context) : ControllerBase
 
         List<ScheduleListDto> result = await context
             .Schedules.Where(s => s.Auth0UserId == userId)
+            .OrderByDescending(s => s.Id)
+            .Include(s => s.ShiftAssignments)
             .Select(s => new ScheduleListDto
             {
                 Name = s.Name,
                 Guid = s.Guid,
                 Respondents = context.Availabilities.Count(a => a.Schedule.Id == s.Id),
+                IsGenerated = s.ShiftAssignments != null && s.ShiftAssignments.Count != 0,
             })
             .ToListAsync();
 
@@ -104,11 +106,20 @@ public class ScheduleController(LineUpContext context) : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteSchedule(Guid guid)
     {
-        var scheduleToDelete = await context.Schedules.FirstOrDefaultAsync(s => s.Guid == guid);
+        var scheduleToDelete = await context
+            .Schedules.Include(schedule => schedule.ShiftAssignments)
+            .FirstOrDefaultAsync(s => s.Guid == guid);
         if (scheduleToDelete == null)
             return NotFound();
         if (scheduleToDelete.Auth0UserId != User.FindFirst(ClaimTypes.NameIdentifier)!.Value)
             return Unauthorized();
+        if (
+            scheduleToDelete.ShiftAssignments != null
+            && scheduleToDelete.ShiftAssignments.Count != 0
+        )
+        {
+            return Forbid("Cannot delete schedule with assigned shifts");
+        }
         context.Schedules.Remove(scheduleToDelete);
         await context.SaveChangesAsync();
         return NoContent();
@@ -209,6 +220,15 @@ public class ScheduleController(LineUpContext context) : ControllerBase
         if (availability.UserName.Trim().Length == 0)
         {
             return BadRequest("User name cannot be empty");
+        }
+
+        if (
+            await context.Availabilities.AnyAsync(a =>
+                a.UserEmail == availability.UserEmail && a.Schedule.Guid == scheduleGuid
+            )
+        )
+        {
+            return UnprocessableEntity("Email already exists in this schedule!");
         }
 
         var availabilityToInsert = new Availability
