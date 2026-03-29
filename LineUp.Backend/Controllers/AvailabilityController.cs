@@ -33,7 +33,9 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
     [HttpGet("{guid:guid}")]
     public async Task<IActionResult> GetAvailability(Guid guid)
     {
-        var result = await context.Availabilities.FirstOrDefaultAsync(a => a.Guid == guid);
+        var result = await context
+            .Availabilities.Include(a => a.Schedule)
+            .FirstOrDefaultAsync(a => a.Guid == guid);
         if (result != null)
             return Ok(result);
         return NotFound();
