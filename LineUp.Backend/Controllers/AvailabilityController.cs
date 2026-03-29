@@ -1,3 +1,4 @@
+using LineUp.Backend.Models;
 using LineUp.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,26 +45,21 @@ public class AvailabilityController(LineUpContext context) : ControllerBase
     [HttpPatch("{guid:guid}/edit")]
     public async Task<IActionResult> EditAvailability(
         Guid guid,
-        [FromBody] Availability availability
+        [FromBody] EditAvailabilityDto availability
     )
     {
-        if (guid != availability.Guid)
-        {
-            return BadRequest();
-        }
-        context.Entry(availability).State = EntityState.Modified;
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!context.Availabilities.Any(a => a.Guid == guid))
-            {
-                return NotFound();
-            }
-            throw;
-        }
+        var availabilityToUpdate = await context.Availabilities.FirstOrDefaultAsync(a =>
+            a.Guid == guid
+        );
+        if (availabilityToUpdate == null)
+            return NotFound();
+
+        availabilityToUpdate.UserName = availability.UserName ?? availabilityToUpdate.UserName;
+        availabilityToUpdate.UserEmail = availability.UserEmail ?? availabilityToUpdate.UserEmail;
+        availabilityToUpdate.AvailabilitySlots =
+            availability.AvailabilitySlots ?? availabilityToUpdate.AvailabilitySlots;
+
+        await context.SaveChangesAsync();
 
         return NoContent();
     }
