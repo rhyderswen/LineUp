@@ -20,9 +20,7 @@ const EditAvailability = () => {
   const { fetchWithAuth } = useApi();
   const { guid: availabilityGuid } = useParams<{ guid: string }>();
   const { data: availabilityData } = useQuery(loaderQuery("/api/availability/{}", availabilityGuid!));
-  const { data: scheduleData } = useQuery(
-    loaderQuery("/api/schedule/{}", availabilityData?.scheduleGuid ?? "06861f93-4422-430d-ae2c-a72ab1a2125f"),
-  );
+  const { data: scheduleData } = useQuery(loaderQuery("/api/schedule/{}", availabilityData?.scheduleGuid ?? ""));
   const storageKey = `availability-${availabilityGuid}`;
 
   const storedForm = (() => {
@@ -58,11 +56,9 @@ const EditAvailability = () => {
   }, [availabilityData]);
 
   type EditAvailabilityProps = {
-    guid: string;
     userName: string;
     userEmail: string;
     availabilitySlots: string[];
-    scheduleGuid: string;
   };
 
   const updateAvailabilityMutation = useMutation({
@@ -78,6 +74,8 @@ const EditAvailability = () => {
       if (!res.ok) {
         throw new Error("Failed to edit availability");
       }
+
+      return true;
     },
     onSuccess: () => {
       try {
@@ -110,11 +108,9 @@ const EditAvailability = () => {
 
     addToasts(
       updateAvailabilityMutation.mutateAsync({
-        guid: availabilityData.guid,
         userName: name.trim(),
         userEmail: email.trim(),
         availabilitySlots: selectedCells,
-        scheduleGuid: availabilityData.scheduleGuid,
       }),
     );
   };
@@ -133,7 +129,7 @@ const EditAvailability = () => {
       ) : (
         <>
           <div className="scheduleName">
-            Edit {availabilityData.userName}'s availability for <b>{scheduleData.name}</b>
+            Edit <b>{availabilityData.userName}</b>'s availability for <b>{scheduleData.name}</b>
           </div>
           <form onSubmit={handleSubmit} className="newSchedule">
             <div className="inputGroup">

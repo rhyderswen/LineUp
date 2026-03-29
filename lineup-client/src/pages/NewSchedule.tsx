@@ -341,6 +341,7 @@ const NewSchedule = () => {
             onChange={handleDateChange}
             minDate={today}
             required
+            sort
           />
           <br />
         </div>
