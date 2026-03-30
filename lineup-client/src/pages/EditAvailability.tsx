@@ -5,14 +5,15 @@ import { addToasts, loaderQuery } from "@/utils/db";
 import { parseTimeString } from "@/utils/time";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { useNavigate, Link, useParams } from "react-router";
 
 const EditAvailability = () => {
+  const navigate = useNavigate();
   const { fetchWithAuth } = useApi();
   const { guid: availabilityGuid } = useParams<{ guid: string }>();
   const { data: availabilityData } = useQuery(loaderQuery("/api/availability/{}", availabilityGuid!));
   const { data: scheduleData } = useQuery(loaderQuery("/api/schedule/{}", availabilityData?.scheduleGuid ?? ""));
-  const storageKey = `availability-${availabilityGuid}`;
+  const storageKey = `editAvailability-${availabilityGuid}`;
 
   const storedForm = (() => {
     try {
@@ -75,6 +76,7 @@ const EditAvailability = () => {
         // ignore storage errors
       }
       queryClient.invalidateQueries({ queryKey: ["availability"] });
+      navigate("/");
     },
   });
 
