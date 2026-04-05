@@ -70,6 +70,21 @@ aspire run
 - **`LineUp.ServiceDefaults/`** - Shared service defaults and logic for Aspire
 - **`LineUp.AppHost/`** - Aspire app host
 
+```mermaid
+flowchart TB
+    ReactFrontend["React Frontend"] -- Manager CRUDs schedule --> DotNetBackend[".NET Backend"]
+    ReactFrontend -- User defines availability --> DotNetBackend
+    ReactFrontend -- Manager generates schedule --> DotNetBackend
+    DotNetBackend -- CRUD schedules --> PostgresDB[("Postgres Database")]
+    DotNetBackend -- CRUD user availability --> PostgresDB
+    DotNetBackend -- Send availabilites --> Scheduler["Scheduler"]
+    Scheduler -- Send Generated Schedule --> DotNetBackend
+    DotNetBackend -- Return Generated Schedule --> ReactFrontend
+    DotNetBackend -- Send email to users upon schedule generation --> ResendApi["Resend API"]
+    Auth0Api["Auth0 API"] <-- Verify authenticated user --> DotNetBackend
+    Auth0Api <-- Authenticate with Google --> ReactFrontend
+```
+
 ## Versions
 
 Postgres: 18.1
