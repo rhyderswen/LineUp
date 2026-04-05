@@ -1,6 +1,8 @@
 # LineUp
 
 LineUp is a scheduling tool for when you need 100% coverage over a period of time.
+It is designed to help teams ensure that everyone is available to work during any given period of time, whether for staffing a table or scheduling radio shows.
+
 
 ## Quickstart
 
@@ -101,6 +103,7 @@ flowchart TB
 ## Versions
 
 Postgres: 18.1
+
 Moq: 4.20.72
 
 ## AI Usage
