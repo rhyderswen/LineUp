@@ -2,11 +2,6 @@
 
 LineUp is a scheduling tool for when you need 100% coverage over a period of time.
 
-## Project Structure
-
-- **`LineUp.Backend/`** - .NET backend API
-- **`lineup-client/`** - React frontend with auto-generated API client
-
 ## Quickstart
 
 ### Prerequisites
@@ -64,6 +59,16 @@ or for PowerShell users:
 $env:GEN = "true"
 aspire run
 ```
+
+## Project Structure
+- **`LineUp.Backend/`** - .NET backend API
+- **`lineup-client/`** - React frontend
+- **`LineUp.Core/`** - Shared models and utilities
+- **`LineUp.Scheduler/`** - Scheduler logic
+- **`LineUp.EndToEndTests/`** - End-to-end tests
+- **`LineUp.MigrationService/`** - Database migration service (needed for Aspire)
+- **`LineUp.ServiceDefaults/`** - Shared service defaults and logic for Aspire
+- **`LineUp.AppHost/`** - Aspire app host
 
 ## Versions
 
