@@ -45,6 +45,19 @@ LineUp is a scheduling tool for when you need 100% coverage over a period of tim
 
 Note: On subsequent runs, do not use the `SEED` flag, unless you want to re-seed the database (which will delete all existing data).
 
+### Testing
+To run the backend tests:
+```bash
+dotnet test
+```
+in the root of the repository.
+
+To run the frontend tests:
+```bash
+pnpm test
+```
+in the `lineup-client` directory.
+
 #### API Client Generation
 
 To regenerate the API client after backend changes:
