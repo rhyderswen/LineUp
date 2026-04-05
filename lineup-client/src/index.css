@@ -6,6 +6,8 @@
 
   color: var(--primary);
   background-color: var(--background);
+  background-image: url("./assets/LineUp_BG.png");
+  background-size: 100% auto;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,6 +15,8 @@
   -moz-osx-font-smoothing: grayscale;
 
   --background: #343434;
+  --background-alt: #454545;
+
   --primary: #b09cff;
   --primary-active: #bad8ff;
   --primary-hover: #907cdf;
