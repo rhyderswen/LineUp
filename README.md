@@ -76,8 +76,10 @@ aspire run
 ```
 
 ## Project Structure
-- **`LineUp.Backend/`** - .NET backend API
 - **`lineup-client/`** - React frontend
+- **`LineUp.Backend/`** - .NET backend API
+
+
 - **`LineUp.Core/`** - Shared models and utilities
 - **`LineUp.Scheduler/`** - Scheduler logic
 - **`LineUp.EndToEndTests/`** - End-to-end tests
