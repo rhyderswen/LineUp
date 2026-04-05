@@ -5,9 +5,7 @@
   font-size: 24px;
 
   color: var(--primary);
-  background-color: var(--background);
-  background-image: url("./assets/LineUp_BG.png");
-  background-size: 100% auto;
+  background-color: var(--background-alt);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
