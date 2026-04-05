@@ -150,7 +150,6 @@ const ViewEditSchedule = () => {
   // When the page is loaded, fill in information about the schedule based on the fetched data
   React.useEffect(() => {
     if (!data) return;
-    console.log("Fetched schedule:", data);
     setScheduleData({
       name: data.name,
       shiftTimes: data.schedulePreferences?.minutesPerSlot || 15,
