@@ -12,8 +12,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --background: #343434;
-  --background-alt: #454545;
+  --background: #454545;
+  --background-alt: #343434;
 
   --primary: #b09cff;
   --primary-active: #bad8ff;
