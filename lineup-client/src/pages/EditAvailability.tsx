@@ -124,6 +124,7 @@ const EditAvailability = () => {
         // if a schedule has been generated, show a message stating so with a link to the generated schedule
         // if not, show the form to edit availability
       }
+      <title>{scheduleData.name + " - LineUp"}</title>
       {scheduleGenerated ? (
         <div>
           <div>Schedule already generated. Editing availability is closed</div>

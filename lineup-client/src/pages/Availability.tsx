@@ -148,6 +148,7 @@ const Availability = () => {
         // if a schedule has been generated, show the generated schedule
         // if not, show the form to add availability
       }
+      <title>{data.name + " - LineUp"}</title>
       {scheduleGenerated ? (
         <>
           <div className="scheduleName">

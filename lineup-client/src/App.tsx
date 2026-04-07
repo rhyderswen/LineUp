@@ -1,4 +1,3 @@
-// App.tsx
 import "@/App.css";
 import Topbar from "@/components/Topbar";
 import Availability from "@/pages/Availability";

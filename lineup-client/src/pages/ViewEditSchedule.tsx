@@ -305,6 +305,7 @@ const ViewEditSchedule = () => {
       {
         // button to navigate back home
       }
+      <title>{scheduleData.name + " - LineUp"}</title>
       <button
         className="returnButton"
         onClick={() => {
