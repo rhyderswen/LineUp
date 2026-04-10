@@ -1,5 +1,4 @@
 import type { TimeRange, ValidMinutes } from "@/types";
-//import { useAuth0 } from "@auth0/auth0-react";
 import { Calendar } from "@/components/Calendar";
 import { ColoredCell } from "@/components/CalendarCells";
 import { MousePopup } from "@/components/MousePopup";
