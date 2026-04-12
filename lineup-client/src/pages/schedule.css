@@ -55,7 +55,12 @@
   }
 }
 
-.selectedRespondent {
-  color: var(--primary-active);
+.respondentList li.selectedRespondent {
+  color: var(--primary-hover);
+  background-color: var(--primary-active);
   font-weight: 800;
+
+  &:hover {
+    background-color: var(--primary-active-hover);
+  }
 }
