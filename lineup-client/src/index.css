@@ -1,18 +1,20 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Figtree", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   font-size: 24px;
 
   color: var(--primary);
-  background-color: var(--background);
+  background-color: var(--background-alt);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --background: #343434;
+  --background: #454545;
+  --background-alt: #343434;
+
   --primary: #b09cff;
   --primary-active: #bad8ff;
   --primary-hover: #907cdf;
@@ -73,4 +75,13 @@ button:disabled {
 
 img {
   display: block;
+}
+
+/* Width chosen since practically every phone screen is about 450px wide at most
+   Also the smallest my browser goes is 500px and I needed to test the mobile view there */
+@media (max-width: 525px) {
+  #root {
+    font-size: 20px;
+    padding: 0.5rem 0.75rem;
+  }
 }
