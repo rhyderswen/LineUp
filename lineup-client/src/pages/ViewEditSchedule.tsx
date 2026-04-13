@@ -1,7 +1,7 @@
-import type { TimeRange, ValidMinutes } from "@/types";
 import { Calendar } from "@/components/Calendar";
 import { ColoredCell } from "@/components/CalendarCells";
 import { MousePopup } from "@/components/MousePopup";
+import type { TimeRange, ValidMinutes } from "@/types";
 import { queryClient, useApi } from "@/utils/api";
 import { addToasts, loaderQuery } from "@/utils/db";
 import { parseTimeString } from "@/utils/time.ts";
@@ -162,9 +162,6 @@ const ViewEditSchedule = () => {
       }
 
       return true;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schedules"] });
     },
   });
 
@@ -438,15 +435,17 @@ const ViewEditSchedule = () => {
           {scheduleGenerated ? "Regenerate Schedule" : "Generate Schedule"}
         </button>
 
-        <button
-          type="button"
-          className="submitBtn"
-          onClick={handleSendEmails}
-          disabled={data.latestEmailsSent || data.availabilities.length == 0}
-          style={{ marginLeft: "10px" }}
-        >
-          Send Shift Assignment Emails
-        </button>
+        {scheduleGenerated && (
+          <button
+            type="button"
+            className="submitBtn"
+            onClick={handleSendEmails}
+            disabled={sendEmailsMutation.isPending}
+            style={{ marginLeft: "10px" }}
+          >
+            Send Assignment Emails
+          </button>
+        )}
       </div>
       <hr />
       <div>

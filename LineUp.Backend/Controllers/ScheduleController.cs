@@ -215,7 +215,7 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
 
             if (result.Assignments != null)
                 await context.ShiftAssignments.AddRangeAsync(result.Assignments);
-                
+
             schedule.LatestEmailsSent = false;
 
             await context.SaveChangesAsync();
