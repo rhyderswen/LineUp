@@ -1,7 +1,7 @@
 import { Calendar } from "@/components/Calendar";
 import { FillableCell } from "@/components/CalendarCells";
 import { queryClient, useApi } from "@/utils/api";
-import { addToasts, loaderQuery } from "@/utils/db";
+import { addToasts, unauthorizedLoaderQuery } from "@/utils/db";
 import { parseTimeString } from "@/utils/time";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -11,8 +11,10 @@ const EditAvailability = () => {
   const navigate = useNavigate();
   const { fetchWithAuth } = useApi();
   const { guid: availabilityGuid } = useParams<{ guid: string }>();
-  const { data: availabilityData } = useQuery(loaderQuery("/api/availability/{}", availabilityGuid!));
-  const { data: scheduleData } = useQuery(loaderQuery("/api/schedule/{}", availabilityData?.scheduleGuid ?? ""));
+  const { data: availabilityData } = useQuery(unauthorizedLoaderQuery("/api/availability/{}", availabilityGuid!));
+  const { data: scheduleData } = useQuery(
+    unauthorizedLoaderQuery("/api/schedule/{}", availabilityData?.scheduleGuid ?? ""),
+  );
   const storageKey = `editAvailability-${availabilityGuid}`;
 
   // Locally store any information the user has entered so that the information can be prefilled if they
