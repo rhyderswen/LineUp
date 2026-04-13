@@ -124,6 +124,26 @@ const ViewEditSchedule = () => {
     },
   });
 
+  const sendEmailsMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetchWithAuth(`/api/schedule/${guid}/sendEmails`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to send shift assignment emails");
+      }
+
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
+    },
+  });
+
   const [scheduleData, setScheduleData] = React.useState<ScheduleData>({
     name: "",
     shiftTimes: "",
@@ -271,6 +291,14 @@ const ViewEditSchedule = () => {
     addToasts(deleteScheduleMutation.mutateAsync());
   };
 
+  const handleSendEmails = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    if (!confirm("Are you sure you want to send shift assignment emails?")) return;
+
+    addToasts(sendEmailsMutation.mutateAsync(), "Sending shift assignment emails...");
+  };
+
   if (!scheduleData) return <div>Loading...</div>;
 
   return (
@@ -316,6 +344,16 @@ const ViewEditSchedule = () => {
           }
         >
           {scheduleGenerated ? "Regenerate Schedule" : "Generate Schedule"}
+        </button>
+
+        <button
+          type="button"
+          className="submitBtn"
+          onClick={handleSendEmails}
+          disabled={data.latestEmailsSent || data.availabilities.length == 0}
+          style={{ marginLeft: "10px" }}
+        >
+          Send Shift Assignment Emails
         </button>
       </div>
       <hr />

@@ -39,6 +39,7 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
             ShiftAssignments = schedule.ShiftAssignments,
             SchedulePreferences = schedule.SchedulePreferences,
             Availabilities = availabilities,
+            LatestEmailsSent = schedule.LatestEmailsSent,
         };
         return Ok(dto);
     }
@@ -201,20 +202,38 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         if (result.Assignments != null)
             await context.ShiftAssignments.AddRangeAsync(result.Assignments);
 
+        schedule.LatestEmailsSent = false;
+
         await context.SaveChangesAsync();
+
+        return Ok(result);
+    }
+
+    [HttpPost("{scheduleGuid:Guid}/sendEmails")]
+    [Authorize]
+    public async Task<IActionResult> SendEmails(Guid scheduleGuid)
+    {
+        var schedule = await context
+            .Schedules.Include(schedule => schedule.SchedulePreferences)
+            .Include(schedule => schedule.ShiftAssignments)
+            .FirstOrDefaultAsync(s => s.Guid == scheduleGuid);
+        if (schedule == null)
+            return NotFound();
+        List<Availability> availabilities = await context
+            .Availabilities.Where(a => a.Schedule == schedule)
+            .ToListAsync();
 
         foreach (var availability in availabilities)
         {
-            if (availability.UserEmail != null)
-            {
-                await emailService.SendShiftAssignmentEmail(
-                    (schedule.ShiftAssignments ?? []).Count != 0,
-                    availability
-                );
-            }
+            await emailService.SendShiftAssignmentEmail(
+                (schedule.ShiftAssignments ?? []).Count != 0,
+                availability
+            );
         }
 
-        return Ok(result);
+        schedule.LatestEmailsSent = true;
+        await context.SaveChangesAsync();
+        return Ok();
     }
 
     [HttpPost("{scheduleGuid:Guid}/createAvailability")]

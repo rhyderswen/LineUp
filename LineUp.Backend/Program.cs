@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using LineUp.Backend;
@@ -8,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Polly;
+using Polly.Retry;
 using Resend;
 using Scalar.AspNetCore;
 
@@ -88,12 +91,16 @@ builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
 builder.AddNpgsqlDbContext<LineUpContext>("lineupdb");
 
-var resendApiKey = builder.Configuration["Parameters:resend-api-key"] ?? Environment.GetEnvironmentVariable("RESEND_APITOKEN");
+var resendApiKey =
+    builder.Configuration["Parameters:resend-api-key"]
+    ?? Environment.GetEnvironmentVariable("RESEND_APITOKEN");
 
 if (string.IsNullOrEmpty(resendApiKey))
 {
     builder.Services.AddScoped<IEmailService, MockEmailService>();
-    Console.WriteLine("WARNING: No RESEND_APITOKEN environment variable or Parameters:resend-api-key user secret set. Mocking email service.");
+    Console.WriteLine(
+        "WARNING: No RESEND_APITOKEN environment variable or Parameters:resend-api-key user secret set. Mocking email service."
+    );
 }
 else
 {
@@ -104,9 +111,27 @@ else
     });
     builder.Services.AddTransient<IResend, ResendClient>();
 
+    builder.Services.AddResiliencePipeline(
+        "email-retry",
+        pipelineBuilder =>
+        {
+            pipelineBuilder.AddRetry(
+                new RetryStrategyOptions
+                {
+                    MaxRetryAttempts = 5,
+                    BackoffType = DelayBackoffType.Exponential,
+                    UseJitter = true,
+                    Delay = TimeSpan.FromSeconds(2),
+                    ShouldHandle = new PredicateBuilder()
+                        .Handle<ResendException>(ex => ex.IsTransient)
+                        .Handle<Exception>(ex => ex is HttpRequestException or TimeoutException),
+                }
+            );
+        }
+    );
+
     builder.Services.AddScoped<IEmailService, ResendEmailService>();
 }
-
 
 var app = builder.Build();
 
