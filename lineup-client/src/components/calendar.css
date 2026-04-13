@@ -60,7 +60,7 @@
 .calendarCell {
   border-right: 1px solid var(--primary);
   min-width: 0;
-  touch-action: pan-y pinch-zoom;
+  touch-action: pan-x;
 }
 
 .calendarTopBorder {
