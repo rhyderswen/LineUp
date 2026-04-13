@@ -52,12 +52,21 @@ const FillableCell = ({
     }
   }
 
+  function onPointerMove(e: React.PointerEvent) {
+    if (!isPointerDown) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    if (el && el !== e.currentTarget) {
+      el.dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+    }
+  }
+
   return (
     <button
       type="button"
       onPointerDown={onPointerDown}
       onPointerUp={() => setIsPointerDown(false)}
       onPointerEnter={onPointerEnter}
+      onPointerMove={onPointerMove}
       className={"unstyledButton calendarInnerCell" + (isClicked ? " clicked" : "")}
       title={dayNumberToWeekday(date.getDay()) + " " + formatTime(time)}
     ></button>

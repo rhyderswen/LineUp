@@ -129,7 +129,7 @@ const EditAvailability = () => {
       <title>{scheduleData.name + " - LineUp"}</title>
       {scheduleGenerated ? (
         <div>
-          <div>Schedule already generated. Editing availability is closed</div>
+          <div>The schedule is already generated. You can no longer edit your availability.</div>
           <div>
             <Link to={`/schedule/${availabilityData.scheduleGuid}`} className="generatedScheduleLink">
               View Schedule
