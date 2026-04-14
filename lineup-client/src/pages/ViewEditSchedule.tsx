@@ -348,7 +348,12 @@ const ViewEditSchedule = () => {
   const handleSendEmails = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    if (!confirm("Are you sure you want to send shift assignment emails?")) return;
+    if (
+      !confirm(
+        `Are you sure you want to send shift assignment emails?${data.latestEmailsSent ? " You've already sent emails for these shifts!" : ""}`,
+      )
+    )
+      return;
 
     addToasts(sendEmailsMutation.mutateAsync(), "Sending shift assignment emails...");
   };
