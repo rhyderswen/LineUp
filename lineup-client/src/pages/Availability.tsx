@@ -197,7 +197,7 @@ const Availability = () => {
           <div className="scheduleName">
             Add availability for <b>{data.name}</b>
           </div>
-          <form onSubmit={handleSubmit} className="newSchedule" style={{ margin: 0, padding: "0.5rem 0 0" }}>
+          <form onSubmit={handleSubmit} className="scheduleForm">
             <div className="inputGroup">
               <div>
                 <label htmlFor="name" className="required">

@@ -141,7 +141,7 @@ const EditAvailability = () => {
           <div className="scheduleName">
             Edit <b>{availabilityData.userName}</b>'s availability for <b>{scheduleData.name}</b>
           </div>
-          <form onSubmit={handleSubmit} className="newSchedule">
+          <form onSubmit={handleSubmit} className="scheduleForm">
             <div className="inputGroup">
               <div>
                 <label htmlFor="name" className="required">
