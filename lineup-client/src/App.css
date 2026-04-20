@@ -261,3 +261,12 @@
   text-align: inherit;
   border-radius: 0;
 }
+
+.swapBtn {
+  margin-left: 1em;
+}
+
+.swapPartnerLabel {
+  display: flex;
+  align-items: left;
+}

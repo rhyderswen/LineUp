@@ -3,6 +3,7 @@ using System;
 using LineUp.Backend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LineUp.Backend.Migrations
 {
     [DbContext(typeof(LineUpContext))]
-    partial class LineUpContextModelSnapshot : ModelSnapshot
+    [Migration("20260330203452_SwapSystem")]
+    partial class SwapSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,6 @@ namespace LineUp.Backend.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("UserEmail")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 

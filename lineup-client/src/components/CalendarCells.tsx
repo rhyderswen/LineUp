@@ -7,6 +7,7 @@ export interface CalendarCellProps {
   date: Date;
   selectedCells?: string[];
   setSelectedCells?: React.Dispatch<React.SetStateAction<string[]>>;
+  selectableCells?: string[];
   isPointerDown: boolean;
   setIsPointerDown: React.Dispatch<React.SetStateAction<boolean>>;
   isEnablingCells: boolean;
@@ -21,10 +22,13 @@ const FillableCell = ({
   date,
   selectedCells,
   setSelectedCells,
+  selectableCells,
   isPointerDown,
   setIsPointerDown,
   isEnablingCells,
   setIsEnablingCells,
+  text,
+  colors,
 }: CalendarCellProps) => {
   const dateString = standardizeDateAndTime(date, time);
   const isClicked = selectedCells?.includes(dateString);
@@ -77,8 +81,12 @@ const FillableCell = ({
       onPointerEnter={onPointerEnter}
       onPointerMove={onPointerMove}
       className={"unstyledButton calendarInnerCell" + (isClicked ? " clicked" : "")}
+      style={{ backgroundColor: !isClicked ? (colors[dateString] ?? "transparent") : undefined }}
+      disabled={!selectableCells?.includes(dateString)}
       title={dayNumberToWeekday(date.getDay()) + " " + formatTime(time)}
-    ></button>
+    >
+      {text[dateString] ?? ""}
+    </button>
   );
 };
 

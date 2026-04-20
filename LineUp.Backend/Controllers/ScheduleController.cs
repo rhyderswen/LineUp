@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Security.Claims;
 using LineUp.Backend.Models;
 using LineUp.Backend.Services;
@@ -5,6 +6,8 @@ using LineUp.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
+using SQLitePCL;
 
 namespace LineUp.Backend.Controllers;
 
@@ -295,5 +298,85 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
             new { guid = availabilityToInsert.Guid },
             availabilityToInsert
         );
+    }
+
+    [HttpGet("{guid:guid}/getByEmail")]
+    public async Task<IActionResult> GetAvailability(Guid guid, [FromQuery] string email)
+    {
+        var result = await context
+            .Availabilities.Include(a => a.Schedule)
+            .FirstOrDefaultAsync(a => a.UserEmail == email && a.Schedule.Guid == guid);
+        if (result != null)
+            return Ok(result);
+        return StatusCode(StatusCodes.Status406NotAcceptable);
+    }
+
+    [HttpPost("{guid:guid}/requestSwap")]
+    public async Task<IActionResult> RequestSwap(Guid guid, [FromBody] SwapRequestDto request)
+    {
+        DateTime[] shiftStartTimes = request.shiftStartTimes;
+        int requesterId = request.RequesterId;
+        int recipientId = request.RecipientId;
+
+        Schedule? schedule = context.Schedules.FirstOrDefault<Schedule>(s => s.Guid == guid);
+        if (schedule == null || shiftStartTimes == null || !shiftStartTimes.Any())
+        {
+            return BadRequest("Request does not specify all necessary fields.");
+        }
+        List<ShiftAssignment> requesterShiftCollection = new List<ShiftAssignment>();
+        List<ShiftAssignment> recipientShiftCollection = new List<ShiftAssignment>();
+        var scheduleResult = await context.Schedules.FirstOrDefaultAsync(s => s.Guid == guid);
+
+        if (scheduleResult == null)
+            return NotFound("The provided schedule could not be found.");
+        int scheduleID = scheduleResult.Id;
+
+        try
+        { //Attempt to find the shift assignments from the backend.
+            foreach (DateTime start in shiftStartTimes)
+            {
+                var result = await context.ShiftAssignments.FirstOrDefaultAsync(s =>
+                    s.ScheduleId == scheduleID
+                    && s.StartTime == start
+                    && s.Availability.Id == requesterId
+                ); //Attempt to find if the given shift belongs to requester
+                if (result != null)
+                    requesterShiftCollection.Add(result);
+                else
+                {
+                    result = await context.ShiftAssignments.FirstOrDefaultAsync(s =>
+                        s.ScheduleId == scheduleID
+                        && s.StartTime == start
+                        && s.Availability.Id == recipientId
+                    );  //Attempt to find if the given shift belongs to recipient
+                    if (result != null)
+                        requesterShiftCollection.Add(result);
+                    else
+                    { //If it doesn't belong to either, throw an exception
+                        throw new FileNotFoundException();
+                    }
+                }
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            return UnprocessableEntity(
+                "One or more of the dates provided did not have a shift assigned to either party."
+            );
+        }
+        if (requesterShiftCollection.Count < 1 && recipientShiftCollection.Count < 1)
+            return UnprocessableEntity("No shift assignments were found for the time specified.");
+
+        //Sort through the shifts (assume an unsorted list)
+        SwapRequest swapRequest = new SwapRequest
+        {
+            FromPartyA = requesterShiftCollection,
+            FromPartyB = recipientShiftCollection,
+            Schedule = schedule,
+        };
+        Console.WriteLine("\n Creating Swap Request: " + swapRequest.ToJson());
+        context.SwapRequests.Add(swapRequest);
+        context.SaveChanges();
+        return Ok(swapRequest.Guid);
     }
 }
