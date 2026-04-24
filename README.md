@@ -5,7 +5,7 @@ It is designed to help teams ensure that everyone is available to work during an
 
 ## Link
 
-Access the desployed version [here](https://lineup.rem.bi/)
+Access the deployed version [here](https://lineup.rem.bi/)
 
 ## Usage Example
 
