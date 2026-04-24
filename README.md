@@ -3,6 +3,10 @@
 LineUp is a scheduling tool for when you need 100% coverage over a period of time.
 It is designed to help teams ensure that everyone is available to work during any given period of time, whether for staffing a table or scheduling radio shows.
 
+## Link
+
+Access the desployed version [here](https://lineup.rem.bi/)
+
 ## Usage Example
 
 - A club president is planning tabling to advertise an upcoming event and needs to organize their committee members based on their availability
