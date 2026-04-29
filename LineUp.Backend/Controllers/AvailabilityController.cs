@@ -16,7 +16,6 @@ namespace LineUp.Backend.Controllers;
 public class AvailabilityController(LineUpContext context, IEmailService emailService)
     : ControllerBase
 {
-    
     /// <summary>
     /// Checks if an availability with the given guid exists.
     /// </summary>

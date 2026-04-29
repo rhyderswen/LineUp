@@ -13,6 +13,7 @@ public class HasScopeRequirement(string scope, string issuer) : IAuthorizationRe
     /// The issuer of the scope.
     /// </summary>
     public string Issuer { get; } = issuer ?? throw new ArgumentNullException(nameof(issuer));
+
     /// <summary>
     /// The scope required.
     /// </summary>
