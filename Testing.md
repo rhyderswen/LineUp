@@ -55,4 +55,4 @@ _(493 Requirement)_
 
 - Thanks to Vitest, our frontend tests will generate a coverage report after each successful test run. This report shows all of the files that ran code, the percent of lines that were involved in the tests, and any lines that may have been missed by the tests. An example can be seen below: ![An image displaying multiple successful tests across the frontend webpages.](./SampleTestingReport.png)
 
-This allowed us to ensure we were as throrough as possible in our testing, and it may also help any interested onlookers to be confident that our software is without oversights.
+This allowed us to ensure we were as thorough as possible in our testing, and it may also help any interested onlookers to be confident that our software is without oversights.
