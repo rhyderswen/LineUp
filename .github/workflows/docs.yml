@@ -7,6 +7,7 @@ on:
 jobs:
   # Build job
   build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -19,10 +20,15 @@ jobs:
           version: 10.31.0
       - name: Build JS docs
         run: cd lineup-client && pnpm install && pnpm exec typedoc
-      - uses: nunit/docfx-action@v2.4.0
-        name: Build Documentation
+      - name: Restore dependencies
+        run: dotnet restore && dotnet tool restore
+      - name: Build Documentation
+        run: dotnet docfx docfx.json
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         with:
-          args: docfx.json
+          path: _site/
 
 
   # Deploy job
@@ -45,4 +51,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # or specific "vX.X.X" version tag for this action
+        uses: actions/deploy-pages@v5 # or specific "vX.X.X" version tag for this action
