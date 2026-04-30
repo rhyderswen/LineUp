@@ -3,4 +3,4 @@ _layout: landing
 ---
 
 # LineUp Documentation
-See the toolbar to navigate between client/server documentation.
+See the top bar to navigate between client/server documentation.
