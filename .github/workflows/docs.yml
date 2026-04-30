@@ -23,7 +23,7 @@ jobs:
           cd lineup-client
           pnpm install
           pnpm exec typedoc
-          cp docs-toc.yml docs/toc.yml
+          cp client-toc.yml docs/toc.yml
       - name: Restore dependencies
         run: dotnet restore && dotnet tool restore
       - name: Build Documentation
