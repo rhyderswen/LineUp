@@ -80,6 +80,8 @@ Note: On subsequent runs, do not use the `SEED` flag, unless you want to re-seed
 
 ### Testing
 
+_A more-detailed testing guide can be found in [testing.md](testing.md)._
+
 To run the backend tests:
 
 ```bash
