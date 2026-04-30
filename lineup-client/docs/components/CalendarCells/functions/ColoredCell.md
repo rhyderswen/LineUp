@@ -8,7 +8,7 @@
 
 > **ColoredCell**(`props`): `Element`
 
-Defined in: [components/CalendarCells.tsx:117](https://github.com/rhyderswen/LineUp/blob/b2755005f655d50dd5f2fef681fc2f663505ff02/lineup-client/src/components/CalendarCells.tsx#L117)
+Defined in: [components/CalendarCells.tsx:117](https://github.com/rhyderswen/LineUp/blob/e2f17bae616784da1758a5d11711773573512737/lineup-client/src/components/CalendarCells.tsx#L117)
 
 A cell type that is colored based on the provided input and includes text information, but cannot be clicked.
 

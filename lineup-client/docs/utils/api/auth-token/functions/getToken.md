@@ -8,7 +8,7 @@
 
 > **getToken**(): `Promise`\<`string` \| `null`\>
 
-Defined in: [utils/api/auth-token.ts:24](https://github.com/rhyderswen/LineUp/blob/b2755005f655d50dd5f2fef681fc2f663505ff02/lineup-client/src/utils/api/auth-token.ts#L24)
+Defined in: [utils/api/auth-token.ts:24](https://github.com/rhyderswen/LineUp/blob/e2f17bae616784da1758a5d11711773573512737/lineup-client/src/utils/api/auth-token.ts#L24)
 
 Returns a token once [registerGetToken](registerGetToken.md) has been successfully called.
 

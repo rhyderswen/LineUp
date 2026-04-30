@@ -213,3 +213,4 @@ openapi-spec/
 # docfx
 api/
 _site/
+lineup-client/docs/toc.yml
