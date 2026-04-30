@@ -8,3 +8,5 @@ The Frontend for LineUp uses React, TypeScript, Vite, and pnpm. The frontend wil
 
 - `pnpm i`
 - `pnpm test`
+
+For documentation on the individual modules, please go to [Modules](/client-docs/modules.html).
