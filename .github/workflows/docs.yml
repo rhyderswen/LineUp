@@ -19,7 +19,11 @@ jobs:
         with:
           version: 10.31.0
       - name: Build JS docs
-        run: cd lineup-client && pnpm install && pnpm exec typedoc
+        run: |
+          cd lineup-client
+          pnpm install
+          pnpm exec typedoc
+          cp docs-toc.yml docs/toc.yml
       - name: Restore dependencies
         run: dotnet restore && dotnet tool restore
       - name: Build Documentation

@@ -8,7 +8,7 @@
 
 > **unauthorizedLoaderQuery**(`url`, `param`): `object`
 
-Defined in: [utils/db.tsx:28](https://github.com/rhyderswen/LineUp/blob/b2755005f655d50dd5f2fef681fc2f663505ff02/lineup-client/src/utils/db.tsx#L28)
+Defined in: [utils/db.tsx:28](https://github.com/rhyderswen/LineUp/blob/e2f17bae616784da1758a5d11711773573512737/lineup-client/src/utils/db.tsx#L28)
 
 A [React Router Loader](https://reactrouter.com/start/framework/data-loading) function for checking if a dynamic route exists and getting that page's associated data. Used for pages that users don't need to log in for (Availability and EditAvailability pages).
 

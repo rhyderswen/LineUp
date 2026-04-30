@@ -8,6 +8,6 @@
 
 > `const` **queryClient**: `QueryClient`
 
-Defined in: [utils/api/context.ts:13](https://github.com/rhyderswen/LineUp/blob/b2755005f655d50dd5f2fef681fc2f663505ff02/lineup-client/src/utils/api/context.ts#L13)
+Defined in: [utils/api/context.ts:13](https://github.com/rhyderswen/LineUp/blob/e2f17bae616784da1758a5d11711773573512737/lineup-client/src/utils/api/context.ts#L13)
 
 The TanStack Query Client, which manages all caching.

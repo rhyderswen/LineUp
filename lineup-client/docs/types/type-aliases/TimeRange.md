@@ -8,7 +8,7 @@
 
 > **TimeRange** = `object`
 
-Defined in: [types.ts:15](https://github.com/rhyderswen/LineUp/blob/b2755005f655d50dd5f2fef681fc2f663505ff02/lineup-client/src/types.ts#L15)
+Defined in: [types.ts:15](https://github.com/rhyderswen/LineUp/blob/e2f17bae616784da1758a5d11711773573512737/lineup-client/src/types.ts#L15)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [types.ts:15](https://github.com/rhyderswen/LineUp/blob/b2755005f655
 
 > **end**: [`Time`](Time.md)
 
-Defined in: [types.ts:17](https://github.com/rhyderswen/LineUp/blob/b2755005f655d50dd5f2fef681fc2f663505ff02/lineup-client/src/types.ts#L17)
+Defined in: [types.ts:17](https://github.com/rhyderswen/LineUp/blob/e2f17bae616784da1758a5d11711773573512737/lineup-client/src/types.ts#L17)
 
 ---
 
@@ -24,4 +24,4 @@ Defined in: [types.ts:17](https://github.com/rhyderswen/LineUp/blob/b2755005f655
 
 > **start**: [`Time`](Time.md)
 
-Defined in: [types.ts:16](https://github.com/rhyderswen/LineUp/blob/b2755005f655d50dd5f2fef681fc2f663505ff02/lineup-client/src/types.ts#L16)
+Defined in: [types.ts:16](https://github.com/rhyderswen/LineUp/blob/e2f17bae616784da1758a5d11711773573512737/lineup-client/src/types.ts#L16)

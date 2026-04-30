@@ -8,7 +8,7 @@
 
 > **default**(): `Element`
 
-Defined in: [pages/LoggedOutHome.tsx:4](https://github.com/rhyderswen/LineUp/blob/b2755005f655d50dd5f2fef681fc2f663505ff02/lineup-client/src/pages/LoggedOutHome.tsx#L4)
+Defined in: [pages/LoggedOutHome.tsx:4](https://github.com/rhyderswen/LineUp/blob/e2f17bae616784da1758a5d11711773573512737/lineup-client/src/pages/LoggedOutHome.tsx#L4)
 
 The default page displayed when a user is _not_ logged in. Displays very basic information about how to log in.
 
