@@ -8,10 +8,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LineUp.Backend.Controllers;
 
+/// <summary>
+/// Controller for managing schedules.
+/// </summary>
+/// <param name="context"></param>
+/// <param name="emailService"></param>
 [Route("api/schedule")]
 [ApiController]
 public class ScheduleController(LineUpContext context, IEmailService emailService) : ControllerBase
 {
+    /// <summary>
+    /// Gets a schedule by its guid.
+    /// Requires authentication.
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <returns>HTTP 200 OK with schedule details, otherwise HTTP 404 Not Found.</returns>
     [HttpGet("{guid:guid}/details")]
     [Authorize]
     public async Task<IActionResult> GetScheduleAuthenticated(Guid guid)
@@ -44,6 +55,11 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         return Ok(dto);
     }
 
+    /// <summary>
+    /// Gets a schedule by its guid.
+    /// </summary>
+    /// <param name="guid">The Schedule's GUID.</param>
+    /// <returns>HTTP 200 OK with schedule details, otherwise HTTP 404 Not Found.</returns>
     [HttpGet("{guid:guid}")]
     public async Task<IActionResult> GetSchedule(Guid guid)
     {
@@ -81,6 +97,10 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         return Ok(dto);
     }
 
+    /// <summary>
+    /// Gets all schedules for the authenticated user.
+    /// </summary>
+    /// <returns>HTTP 200 OK with list of schedules, otherwise HTTP 401 Unauthorized.</returns>
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetSchedules()
@@ -103,6 +123,11 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         return Ok(result);
     }
 
+    /// <summary>
+    /// Deletes a schedule.
+    /// </summary>
+    /// <param name="guid">The GUID of the schedule you want to delete.</param>
+    /// <returns>HTTP 204 No Content on successful deletion, otherwise HTTP 401 Unauthorized or HTTP 404 Not Found.</returns>
     [HttpDelete("{guid:guid}")]
     [Authorize]
     public async Task<IActionResult> DeleteSchedule(Guid guid)
@@ -125,6 +150,12 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         return NoContent();
     }
 
+    /// <summary>
+    /// Updates a schedule.
+    /// </summary>
+    /// <param name="guid">The GUID of the schedule you want to update.</param>
+    /// <param name="schedule">The updated schedule details.</param>
+    /// <returns>HTTP 204 No Content on successful update, otherwise HTTP 401 Unauthorized or HTTP 404 Not Found.</returns>
     [HttpPatch("{guid:guid}")]
     [Authorize]
     public async Task<IActionResult> UpdateSchedule(
@@ -147,6 +178,11 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         return NoContent();
     }
 
+    /// <summary>
+    /// Creates a new schedule.
+    /// </summary>
+    /// <param name="schedule">The details of the schedule to create.</param>
+    /// <returns>HTTP 201 Created with the created schedule's details, otherwise HTTP 401 Unauthorized.</returns>
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateSchedule([FromBody] ScheduleDto schedule)
@@ -172,6 +208,12 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         );
     }
 
+    /// <summary>
+    /// Generates a schedule.
+    /// </summary>
+    /// <param name="guid">The GUID of the schedule to generate based on users' availabilities.</param>
+    /// <param name="random">Whether to randomize the schedule or not.</param>
+    /// <returns>HTTP 201 Created with the generated schedule's details, otherwise HTTP 401 Unauthorized or HTTP 404 Not Found.</returns>
     [HttpGet("{guid:guid}/generateSchedule")]
     [Authorize]
     public async Task<IActionResult> GenerateSchedule(Guid guid, [FromQuery] bool random = true)
@@ -232,6 +274,11 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         return Ok(result);
     }
 
+    /// <summary>
+    /// Sends emails to all users in a schedule.
+    /// </summary>
+    /// <param name="scheduleGuid">The GUID of the schedule to send emails for.</param>
+    /// <returns>HTTP 200 OK, otherwise HTTP 401 Unauthorized or HTTP 404 Not Found.</returns>
     [HttpPost("{scheduleGuid:Guid}/sendEmails")]
     [Authorize]
     public async Task<IActionResult> SendEmails(Guid scheduleGuid)
@@ -260,6 +307,12 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         return Ok();
     }
 
+    /// <summary>
+    /// Creates an availability for a schedule.
+    /// </summary>
+    /// <param name="scheduleGuid">The GUID of the schedule to create an availability for.</param>
+    /// <param name="availability">The details of the availability to create.</param>
+    /// <returns>HTTP 200 OK, otherwise HTTP 401 Unauthorized or HTTP 404 Not Found.</returns>
     [HttpPost("{scheduleGuid:Guid}/createAvailability")]
     public async Task<IActionResult> CreateAvailability(
         Guid scheduleGuid,

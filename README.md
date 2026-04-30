@@ -11,7 +11,7 @@ It is designed to help teams ensure that everyone is available to work during an
 
 Frontend documentation can be found in [lineup-client/docs](lineup-client/docs/modules.md).
 
-Backend documentation can be found somewhere!
+Backend documentation along with a web view of all documentation can be found at [rhyderswen.github.io/LineUp](https://rhyderswen.github.io/LineUp/)
 
 ## Usage Example
 

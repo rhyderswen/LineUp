@@ -1,18 +1,21 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using LineUp.Core.Models;
 using LineUp.Core.Models.Forms;
 
 namespace LineUp.Backend.Models;
 
 /// <summary>
-/// DTO for creating an availability.
+/// DTO for updating an availability.
 /// </summary>
-public class AvailabilityCreateDto
+public class AvailabilityUpdateDto
 {
     /// <summary>
-    /// The date and time slots that the user is available.
-    /// The slots are in UTC and indicated by the START time of the slot.
+    /// The ID of the availability to update.
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// The availability slots.
     /// </summary>
     public DateTime[] AvailabilitySlots { get; set; } = [];
 
@@ -20,7 +23,7 @@ public class AvailabilityCreateDto
     /// The user's name.
     /// </summary>
     [MaxLength(64)]
-    public required string UserName { get; set; } //NOT a "username" in the traditional sense. This holds the real name of the user.
+    public required string UserName { get; set; }
 
     /// <summary>
     /// The user's email address.

@@ -6,11 +6,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LineUp.Backend.Controllers;
 
+/// <summary>
+/// Controller for managing availabilities.
+/// </summary>
+/// <param name="context"></param>
+/// <param name="emailService"></param>
 [Route("api/availability")]
 [ApiController]
 public class AvailabilityController(LineUpContext context, IEmailService emailService)
     : ControllerBase
 {
+    /// <summary>
+    /// Checks if an availability with the given guid exists.
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <returns>HTTP 200 OK if found, otherwise HTTP 404 Not Found.</returns>
     [HttpGet("{guid:guid}/exists")]
     public IActionResult Exists(Guid guid)
     {
@@ -22,6 +32,11 @@ public class AvailabilityController(LineUpContext context, IEmailService emailSe
         return NotFound();
     }
 
+    /// <summary>
+    /// Gets an availability by its guid.
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <returns>HTTP 200 OK with availability details, otherwise HTTP 404 Not Found.</returns>
     [HttpGet("{guid:guid}")]
     public async Task<IActionResult> GetAvailability(Guid guid)
     {
@@ -34,10 +49,16 @@ public class AvailabilityController(LineUpContext context, IEmailService emailSe
         return Ok(result);
     }
 
+    /// <summary>
+    /// Edits an availability.
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <param name="availability"></param>
+    /// <returns>HTTP 204 No Content if successful, HTTP 404 Not Found if availability not found, HTTP 403 Forbidden if shift assignments exist.</returns>
     [HttpPatch("{guid:guid}/edit")]
     public async Task<IActionResult> EditAvailability(
         Guid guid,
-        [FromBody] AvailabilityUpdateDTO availability
+        [FromBody] AvailabilityUpdateDto availability
     )
     {
         var availabilityToUpdate = await context
