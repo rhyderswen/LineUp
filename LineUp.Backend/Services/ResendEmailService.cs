@@ -10,6 +10,7 @@ namespace LineUp.Backend.Services;
 /// </summary>
 /// <param name="resend">The Resend API client for sending emails.</param>
 /// <param name="pipelineProvider">Provider for resilience pipelines to handle retries.</param>
+[Obsolete("Use MailKitService instead")]
 public class ResendEmailService(IResend resend, ResiliencePipelineProvider<string> pipelineProvider)
     : IEmailService
 {

@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using FluentEmail.MailKitSmtp;
 using LineUp.Backend;
 using LineUp.Backend.Services;
 using LineUp.Backend.Support;
@@ -91,47 +92,26 @@ builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
 builder.AddNpgsqlDbContext<LineUpContext>("lineupdb");
 
-var resendApiKey =
-    builder.Configuration["Parameters:resend-api-key"]
-    ?? Environment.GetEnvironmentVariable("RESEND_APITOKEN");
-
-if (string.IsNullOrEmpty(resendApiKey))
-{
-    builder.Services.AddScoped<IEmailService, MockEmailService>();
-    Console.WriteLine(
-        "WARNING: No RESEND_APITOKEN environment variable or Parameters:resend-api-key user secret set. Mocking email service."
-    );
-}
-else
-{
-    builder.Services.AddHttpClient<ResendClient>();
-    builder.Services.Configure<ResendClientOptions>(o =>
-    {
-        o.ApiToken = resendApiKey;
-    });
-    builder.Services.AddTransient<IResend, ResendClient>();
-
-    builder.Services.AddResiliencePipeline(
-        "email-retry",
-        pipelineBuilder =>
+builder
+    .Services.AddFluentEmail("")
+    .AddRazorRenderer()
+    .AddMailKitSender(
+        new SmtpClientOptions
         {
-            pipelineBuilder.AddRetry(
-                new RetryStrategyOptions
-                {
-                    MaxRetryAttempts = 5,
-                    BackoffType = DelayBackoffType.Exponential,
-                    UseJitter = true,
-                    Delay = TimeSpan.FromSeconds(2),
-                    ShouldHandle = new PredicateBuilder()
-                        .Handle<ResendException>(ex => ex.IsTransient)
-                        .Handle<Exception>(ex => ex is HttpRequestException or TimeoutException),
-                }
-            );
+            Server = null,
+            Port = 0,
+            User = null,
+            Password = null,
+            UseSsl = false,
+            RequiresAuthentication = false,
+            PreferredEncoding = null,
+            UsePickupDirectory = false,
+            MailPickupDirectory = null,
+            SocketOptions = null,
         }
     );
 
-    builder.Services.AddScoped<IEmailService, ResendEmailService>();
-}
+builder.Services.AddScoped<IEmailService, MailKitService>();
 
 var app = builder.Build();
 
