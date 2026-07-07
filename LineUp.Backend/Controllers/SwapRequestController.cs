@@ -40,4 +40,18 @@ public class SwapRequestController(LineUpContext context) : ControllerBase
         context.SaveChanges();
         return Ok();
     }
+
+    [HttpGet("{guid:guid}")]
+    public async Task<IActionResult> GetSwapRequest(Guid guid)
+    {
+        SwapRequest? result = await context
+            .SwapRequests.Include(a => a.Schedule)
+            .Include(a => a.FromPartyA)
+            .Include(a => a.FromPartyB)
+            .FirstOrDefaultAsync(a => a.Guid == guid);
+        if (result == null)
+            return NotFound();
+
+        return Ok(result);
+    }
 }

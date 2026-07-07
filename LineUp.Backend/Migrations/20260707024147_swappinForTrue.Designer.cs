@@ -3,6 +3,7 @@ using System;
 using LineUp.Backend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LineUp.Backend.Migrations
 {
     [DbContext(typeof(LineUpContext))]
-    partial class LineUpContextModelSnapshot : ModelSnapshot
+    [Migration("20260707024147_swappinForTrue")]
+    partial class swappinForTrue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -300,12 +303,6 @@ namespace LineUp.Backend.Migrations
 
                     b.Property<int>("ScheduleId")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("partyAConfirm")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("partyBConfirm")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

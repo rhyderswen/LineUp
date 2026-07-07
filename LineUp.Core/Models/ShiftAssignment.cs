@@ -11,7 +11,7 @@ public class ShiftAssignment
 
     public string? UserName => Availability?.UserName;
     public int? AvailabilityDbId => Availability?.Id;
-    
+
     [JsonDoNotSerialize]
     public Availability? Availability { get; set; }
     // Navigation properties, ignored in JSON to not loop forever

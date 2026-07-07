@@ -3,6 +3,7 @@ using System;
 using LineUp.Backend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LineUp.Backend.Migrations
 {
     [DbContext(typeof(LineUpContext))]
-    partial class LineUpContextModelSnapshot : ModelSnapshot
+    [Migration("20260707034657_ForPosterity")]
+    partial class ForPosterity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,10 +271,10 @@ namespace LineUp.Backend.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("SwapRequestId")
+                    b.Property<int?>("SwapRequestPartyAId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("SwapRequestId1")
+                    b.Property<int?>("SwapRequestPartyBId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -280,9 +283,9 @@ namespace LineUp.Backend.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.HasIndex("SwapRequestId");
+                    b.HasIndex("SwapRequestPartyAId");
 
-                    b.HasIndex("SwapRequestId1");
+                    b.HasIndex("SwapRequestPartyBId");
 
                     b.ToTable("ShiftAssignments");
                 });
@@ -300,12 +303,6 @@ namespace LineUp.Backend.Migrations
 
                     b.Property<int>("ScheduleId")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("partyAConfirm")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("partyBConfirm")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -389,15 +386,21 @@ namespace LineUp.Backend.Migrations
                         .WithMany("ShiftAssignments")
                         .HasForeignKey("ScheduleId");
 
-                    b.HasOne("LineUp.Core.Models.SwapRequest", null)
+                    b.HasOne("LineUp.Core.Models.SwapRequest", "PartyASwapRequest")
                         .WithMany("FromPartyA")
-                        .HasForeignKey("SwapRequestId");
+                        .HasForeignKey("SwapRequestPartyAId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("LineUp.Core.Models.SwapRequest", null)
+                    b.HasOne("LineUp.Core.Models.SwapRequest", "PartyBSwapRequest")
                         .WithMany("FromPartyB")
-                        .HasForeignKey("SwapRequestId1");
+                        .HasForeignKey("SwapRequestPartyBId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Availability");
+
+                    b.Navigation("PartyASwapRequest");
+
+                    b.Navigation("PartyBSwapRequest");
                 });
 
             modelBuilder.Entity("LineUp.Core.Models.SwapRequest", b =>

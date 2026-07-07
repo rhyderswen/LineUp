@@ -13,9 +13,9 @@ public class SwapRequest
 
     public required List<ShiftAssignment> FromPartyB { get; set; }
 
-    public bool partyAConfirm = false;
+    public bool partyAConfirm { get; set; } = false;
 
-    public bool partyBConfirm = false;
+    public bool partyBConfirm { get; set; } = false;
 
     [JsonDoNotSerialize]
     public required Schedule Schedule { get; set; }

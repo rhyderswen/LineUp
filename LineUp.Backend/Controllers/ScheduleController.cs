@@ -335,30 +335,40 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         { //Attempt to find the shift assignments from the backend.
             foreach (DateTime start in shiftStartTimes)
             {
+                // Console.WriteLine("\n Finding owner of shift " + start + " ...");
                 var result = await context.ShiftAssignments.FirstOrDefaultAsync(s =>
                     s.ScheduleId == scheduleID
                     && s.StartTime == start
                     && s.Availability.Id == requesterId
                 ); //Attempt to find if the given shift belongs to requester
                 if (result != null)
+                {
                     requesterShiftCollection.Add(result);
+                    // Console.WriteLine("\n Shift found for " + requesterId);
+                    // Console.WriteLine("Look: " + requesterShiftCollection.ToString());
+                }
                 else
                 {
                     result = await context.ShiftAssignments.FirstOrDefaultAsync(s =>
                         s.ScheduleId == scheduleID
                         && s.StartTime == start
                         && s.Availability.Id == recipientId
-                    );  //Attempt to find if the given shift belongs to recipient
+                    ); //Attempt to find if the given shift belongs to recipient
                     if (result != null)
-                        requesterShiftCollection.Add(result);
+                    {
+                        recipientShiftCollection.Add(result);
+                        // Console.WriteLine("\n Shift found for " + recipientId);
+                        // Console.WriteLine("Look: " + recipientShiftCollection[^1].ToJson);
+                    }
                     else
                     { //If it doesn't belong to either, throw an exception
+                        // Console.WriteLine("\n shift aint go nowhere hon");
                         throw new FileNotFoundException();
                     }
                 }
             }
         }
-        catch (FileNotFoundException e)
+        catch (FileNotFoundException)
         {
             return UnprocessableEntity(
                 "One or more of the dates provided did not have a shift assigned to either party."
@@ -376,7 +386,7 @@ public class ScheduleController(LineUpContext context, IEmailService emailServic
         };
         Console.WriteLine("\n Creating Swap Request: " + swapRequest.ToJson());
         context.SwapRequests.Add(swapRequest);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return Ok(swapRequest.Guid);
     }
 }

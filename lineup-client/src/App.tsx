@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import NewSchedule from "@/pages/NewSchedule";
 import ViewEditSchedule from "@/pages/ViewEditSchedule";
 import RequestSwap from "@/pages/RequestSwap";
+import ViewSwapRequest from "@/pages/ViewSwapRequest";
 import { queryClient } from "@/utils/api";
 import { authorizedLoaderQuery, unauthorizedLoaderQuery } from "@/utils/db";
 import { createBrowserRouter, Navigate, Outlet, RouterProvider, type LoaderFunctionArgs } from "react-router";
@@ -25,6 +26,10 @@ async function availabilityLoader({ params }: LoaderFunctionArgs) {
 }
 
 async function scheduleLoader({ params }: LoaderFunctionArgs) {
+  return queryClient.ensureQueryData(authorizedLoaderQuery("/api/schedule/{}/details", params.guid!));
+}
+
+async function requestSwapLoader({ params }: LoaderFunctionArgs) {
   return queryClient.ensureQueryData(authorizedLoaderQuery("/api/schedule/{}/details", params.guid!));
 }
 
@@ -65,7 +70,7 @@ const router = createBrowserRouter([
           {
             path: ":guid/requestSwap", // matches /schedule/:guid/edit
             element: <RequestSwap />,
-            loader: scheduleLoader,
+            loader: requestSwapLoader,
           },
         ],
       },
@@ -82,6 +87,10 @@ const router = createBrowserRouter([
             loader: editAvailabilityLoader,
           },
         ],
+      },
+      {
+        path: "/viewSwapRequest/:swapRequestGuid/:viewerGuid",
+        element: <ViewSwapRequest />,
       },
     ],
   },
